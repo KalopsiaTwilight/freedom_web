@@ -6,10 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FreedomUtils.MvcUtils;
+using Newtonsoft.Json;
 
 namespace FreedomLogic.Entities
 {
     [Table("commands")]
+    [Serializable]
     public class FreedomCommand
     {
         [Key]
@@ -24,5 +27,12 @@ namespace FreedomLogic.Entities
 
         [Column("gmlevel")]
         public GMLevel GMLevel { get; set; }
+
+        [NotMapped]
+        [JsonProperty(PropertyName = "GMLevel")]
+        public string GMLevelDisplay
+        {
+            get { return GMLevel.DisplayName(); }
+        }
     }
 }

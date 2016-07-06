@@ -70,9 +70,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTables\DTModelBinder.cs" />
+    <Compile Include="DataTables\DTParameterModel.cs" />
+    <Compile Include="DataTables\DTResponseModel.cs" />
+    <Compile Include="LINQ\QueryExtensions.cs" />
     <Compile Include="MvcUtils\Attributes\PasswordAttribute.cs" />
     <Compile Include="MvcUtils\ControllerExtensions.cs" />
     <Compile Include="MvcUtils\EnumExtensions.cs" />
+    <Compile Include="MvcUtils\StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\CommonRes.Designer.cs">
       <AutoGen>True</AutoGen>

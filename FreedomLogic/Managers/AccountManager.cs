@@ -3,6 +3,8 @@ using FreedomLogic.Entities;
 using FreedomLogic.Identity;
 using FreedomLogic.Infrastructure;
 using FreedomLogic.Resources;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

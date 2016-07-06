@@ -40,6 +40,7 @@ namespace FreedomWeb
             // CUSTOM
             bundles.Add(new ScriptBundle("~/bundles/freedom_common").Include(
                       "~/Scripts/Common/common.js",
+                      "~/Scripts/Common/common_datatables.js",
                       "~/Scripts/Common/site.js"));
         }
     }

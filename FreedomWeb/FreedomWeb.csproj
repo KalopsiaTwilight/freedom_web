@@ -171,6 +171,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
+    <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ServerController.cs" />
@@ -181,7 +182,6 @@
     <Compile Include="Infrastructure\FreedomAuthorizeAttribute.cs" />
     <Compile Include="Infrastructure\FreedomController.cs" />
     <Compile Include="Models\AdminListItem.cs" />
-    <Compile Include="Models\CommandListItem.cs" />
     <Compile Include="Models\CustomItemResultListItem.cs" />
     <Compile Include="Models\StatusCharListItem.cs" />
     <Compile Include="Models\UserListItem.cs" />
@@ -281,6 +281,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\Common\common.js" />
+    <Content Include="Scripts\Common\common_datatables.js" />
     <Content Include="Scripts\Common\site.js" />
     <Content Include="Scripts\dataTables.bootstrap.min.js" />
     <None Include="Scripts\jquery-2.2.0.intellisense.js" />

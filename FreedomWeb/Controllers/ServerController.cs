@@ -51,10 +51,7 @@ namespace FreedomWeb.Controllers
         [HttpGet]
         public ActionResult CommandList()
         {
-            var model = new CommandListViewModel();
-            var user = GetCurrentUser();
-            model.CommandList = ServerManager.GetAvailableFreedomCommands(user.UserData.GameAccountAccess.GMLevel);
-            return View(model);
+            return View();
         }
     }
 }
