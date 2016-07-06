@@ -1,0 +1,4 @@
+﻿<?xml version="1.0"?>
+<smtp deliveryMethod="Network" from="noreply@yourdomain.com">
+  <network host="mail.yourdomain.com" port="26" userName="noreply@yourdomain.com" password="mailAccPass" />
+</smtp>

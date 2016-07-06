@@ -1,0 +1,8 @@
+﻿<?xml version="1.0"?>
+<connectionStrings>
+  <clear />
+  <add name="DBAuthContext" providerName="MySql.Data.MySqlClient" connectionString="server=localhost;port=3306;database=wod_auth;uid=web;password=web;Convert Zero Datetime=True;Allow Zero Datetime=True" />
+  <add name="DBCharactersContext" providerName="MySql.Data.MySqlClient" connectionString="server=localhost;port=3306;database=wod_characters;uid=web;password=web;Convert Zero Datetime=True;Allow Zero Datetime=True" />
+  <add name="DBWorldContext" providerName="MySql.Data.MySqlClient" connectionString="server=localhost;port=3306;database=wod_world;uid=web;password=web;Convert Zero Datetime=True;Allow Zero Datetime=True" />
+  <add name="DBFreedomContext" providerName="MySql.Data.MySqlClient" connectionString="server=localhost;port=3306;database=freedom;uid=web;password=web;Convert Zero Datetime=True;Allow Zero Datetime=True" />
+</connectionStrings>

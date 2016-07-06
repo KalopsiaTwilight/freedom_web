@@ -1,0 +1,91 @@
+﻿@model FreedomWeb.ViewModels.Server.SearchCustomItemsViewModel
+@{
+    ViewBag.Title = "Search custom items";
+}
+
+@using (Ajax.BeginForm("SearchCustomItems", "Server", new { @id = "FormSearchCustomItems" }, new AjaxOptions()
+{
+    HttpMethod = "Post",
+    AllowCache = false,
+    LoadingElementDuration = 500,
+    LoadingElementId = "SearchResultLoadingIcon",
+    UpdateTargetId = "SearchResultPanel"
+}))
+{
+    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <!--INPUT FIELDS-->
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.SearchId)
+                @Html.TextBoxFor(m => m.SearchId, new { @class = "form-control input-full", @type = "number" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.SearchType)
+                <div>                    
+                    @Html.DropDownListFor(m => m.SearchType, Model.SearchTypeList, new { @class = "selectpicker" })
+                </div>
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+        </div>
+        <!--HELP TEXT-->
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="fa fa-info-circle"></i>
+                    <span>Custom item search help</span>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            Tip: You can also use <a href="http://www.wowhead.com/">Wowhead</a> website to search for creature display ids.
+                            To do that you need to open wowhead creature/npc page's source (Ctrl+U) and search for Display ID number value after first occurance of "displayid" string. 
+                            After finding out creature's/npc's display id - return to this page and use it in the search box and set search type to 
+                            <b>@FreedomLogic.Resources.ServerRes.ListItemEnumSearchTypeCreatureDisplayId</b>. This method will only list armor items equipped by the creature/npc.
+                        </li>
+                        <li>
+                            Search type <b>@FreedomLogic.Resources.ServerRes.ListItemEnumSearchTypeCreatureEntryId</b>:
+                            Search with creature entry/spawn id. Successful result will list armor <u>and weapons</u> equipped by the creatures/npcs used in WoW Freedom's server. 
+                            The server does not have every creature defined, so if the search query can't find the creature/npc, then see the above point.
+                        </li>
+                        <li>
+                            Search type <b>@FreedomLogic.Resources.ServerRes.ListItemEnumSearchTypeCreatureDisplayId</b>:
+                            Search with creature display id. Successful result will list only armor items equipped by the said creature/npc model.
+                        </li>
+                        <li>
+                            Search type <b>@FreedomLogic.Resources.ServerRes.ListItemEnumSearchTypeItemDisplayId</b>:
+                            Search with item display id. Successful result will list items what use the same display id (same model and texture). 
+                            This is useful for searching same weapon with different sheath animations/states.
+                        </li>
+                        <li>
+                            Search type <b>@FreedomLogic.Resources.ServerRes.ListItemEnumSearchTypeItemEntryId</b>:
+                            Search with item entry id. Mini-manager will search through Wowhead database for the display id and
+                            successful result will list custom items with such display id. 
+                            If id is that of a custom item (id >= 200 000) then search will be performed through local database instead.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="fa fa-spinner fa-spin" style="display:none;" id="SearchResultLoadingIcon"></i>
+                    <span>Search result</span>
+                </div>
+                <div class="panel-body" id="SearchResultPanel">
+                    <p>Nothing was searched yet...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+    </script>
+}

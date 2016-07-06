@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomWeb", "FreedomWeb\FreedomWeb.csproj", "{D19053EA-A5A3-4F7C-A76F-23A80072C518}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BA0FE656-055F-4F67-9B61-A295FCE08B0E} = {BA0FE656-055F-4F67-9B61-A295FCE08B0E}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomLogic", "FreedomLogic\FreedomLogic.csproj", "{BA0FE656-055F-4F67-9B61-A295FCE08B0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreedomUtils", "FreedomUtils\FreedomUtils.csproj", "{EC024AB6-DA0E-4C1D-8727-03794657A284}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D19053EA-A5A3-4F7C-A76F-23A80072C518}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D19053EA-A5A3-4F7C-A76F-23A80072C518}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D19053EA-A5A3-4F7C-A76F-23A80072C518}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D19053EA-A5A3-4F7C-A76F-23A80072C518}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA0FE656-055F-4F67-9B61-A295FCE08B0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA0FE656-055F-4F67-9B61-A295FCE08B0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA0FE656-055F-4F67-9B61-A295FCE08B0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA0FE656-055F-4F67-9B61-A295FCE08B0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC024AB6-DA0E-4C1D-8727-03794657A284}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC024AB6-DA0E-4C1D-8727-03794657A284}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC024AB6-DA0E-4C1D-8727-03794657A284}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC024AB6-DA0E-4C1D-8727-03794657A284}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

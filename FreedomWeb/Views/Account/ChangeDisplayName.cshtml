@@ -1,0 +1,37 @@
+﻿@model FreedomWeb.ViewModels.Accounts.ChangeDisplayNameViewModel
+@{
+    ViewBag.Title = "Change display name";
+}
+@using (Html.BeginForm("ChangeDisplayName", "Account", FormMethod.Post, new { @id = "FormChangeDisplayName" }))
+{
+    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="fa fa-info-circle"></i>
+                    <span>Change display name help</span>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            <b>Display name</b> will be used as your identity on the website for the public instead of your username.
+                            Only the adminstration team will be able to see your username on the website.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.CurrentDisplayName)
+                @Html.TextBoxFor(m => m.CurrentDisplayName, new { @class = "form-control input-full", @disabled = "true" })
+                @Html.HiddenFor(m => m.CurrentDisplayName)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.DisplayName)
+                @Html.TextBoxFor(m => m.DisplayName, new { @class = "form-control input-full" })
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+    </div>
+}

@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - WoW Freedom Mini-manager</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    @Html.Partial("~/Views/Shared/_TopNav.cshtml")
+
+    <div class="container-fluid body-content">
+        <div class="row">
+            <div class="col-md-3">
+                @Html.Partial("~/Views/Shared/_SideBarNav.cshtml")
+            </div>
+            <div class="col-md-9">
+                @Html.Partial("~/Views/Shared/_Alerts.cshtml")
+                <div class="main panel panel-default">
+                    <div class="panel-heading">
+                        <h3>@ViewBag.Title</h3>
+                    </div>
+                    <div class="panel-body">
+                        @RenderBody()
+                    </div>
+                </div>  
+            </div>
+        </div>                            
+    </div>
+
+    <footer id="mainFooter">
+        @Html.Partial("~/Views/Shared/_Footer.cshtml")
+    </footer>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryajax")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/dataTables")
+    @Scripts.Render("~/bundles/bootstrapSelect")
+    @Scripts.Render("~/bundles/freedom_common")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,135 @@
+﻿@model FreedomWeb.ViewModels.Home.StatusViewModel
+@{
+    ViewBag.Title = "Status";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <i class="fa fa-users"></i>
+        <span>Online list</span>
+    </div>
+    <div class="panel-body">
+        <div class="panel panel-primary" style="background-color: #1c1e22;">
+            <div class="btn btn-block panel-heading" data-toggle="collapse" data-target="#TableOnlineListSearchFilterCollapse">
+                <i class="glyphicon glyphicon-search"></i>
+                Search filters
+            </div>
+            <div class="panel-collapse collapse" id="TableOnlineListSearchFilterCollapse">
+                <div class="panel-body" id="TableOnlineListSearchFilter">
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped table-bordered" id="TableOnlineList">
+            <thead>
+                <tr style="vertical-align:middle">
+                    <th class="nosort nosearch"></th>
+                    <th>Name</th>
+                    <th>Owner</th>
+                    <th>Race</th>
+                    <th>Class</th>
+                    <th>Map</th>
+                    <th>Zone</th>
+                    <th class="nosort nosearch"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var charInfo in Model.Characters)
+                {
+                    <tr>
+                        <td style="vertical-align:middle"></td>
+                        <td style="vertical-align:middle">
+                            <img alt="Faction icon" src="@charInfo.FactionIconPath" style="height:32px; width:32px;" /> 
+                            @charInfo.Name 
+                        </td>
+                        <td style="vertical-align:middle">
+                            @if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
+                            {
+                                <b>Display name: </b>
+                            }
+                            @charInfo.Owner
+                            @if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
+                            {            
+                                <br />    
+                                <b>Username: </b> @charInfo.OwnerUsername
+                            }
+                        </td>
+                        <td style="vertical-align:middle">
+                            <img alt="@charInfo.Race" src="@charInfo.RaceIconPath" style="height:32px; width:32px;" /> 
+                            @charInfo.Race
+                        </td>
+                        <td style="vertical-align:middle">
+                            <img alt="@charInfo.Class" src="@charInfo.ClassIconPath" style="height:32px; width:32px;" /> 
+                            @charInfo.Class
+                        </td>
+                        <td style="vertical-align:middle">
+                            @charInfo.MapName
+                        </td>
+                        <td style="vertical-align:middle">
+                            @charInfo.ZoneName
+                        </td>
+                        <td style="vertical-align:middle">
+                            <a href="@Url.Action("ShowProfile", "Account", new { id = charInfo.UserId })">Show profile &raquo;</a>
+                            @if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
+                            {
+                                <br />
+                                <a href="@Url.Action("SetGameAccess", "Admin", new { id = charInfo.UserId })">Change GMLevel &raquo;</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts
+{
+<script type="text/javascript">
+    $('#TableOnlineList').DataTable({
+        "initComplete": function () {
+            this.api().columns().every(function () {
+                var column = this;
+                var header = $(column.header());
+                if (header.hasClass('nosearch'))
+                    return;
+
+                var input = $('<input/>', {
+                    'class': 'form-control',
+                    'type': 'search',
+                    'placeholder': "Search: " + column.title()
+                });
+                input.appendTo($('#TableOnlineListSearchFilter'));
+                input.on('keyup change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex(
+                        $(this).val()
+                    );
+
+                    column
+                        .search(val ? '^.*' + val + '.*$' : '', true, false)
+                        .draw();
+                });
+            });
+        },
+        "order": [[ 1, "asc" ]],
+        "dom": '<"top">rt<"row" <"col-md-4"l><"col-md-4"i><"col-md-4"p>><"clear">',
+        "drawCallback": function (settings) {
+            // Index column
+            if (settings.bSorted || settings.bFiltered) { // Need to redo the counters if filtered or sorted
+                for (var i = 0; i < settings.aiDisplay.length ; i++) {
+                    $('td:eq(0)', settings.aoData[settings.aiDisplay[i]].nTr).html((i + 1) + "#");
+                }
+            }
+        },
+        "columnDefs": [
+            {   // index column
+                "sortable": false,
+                "targets": 'nosort'
+            },
+            {
+                "searchable": false,
+                "targets": 'nosearch'
+            }
+        ],
+    });
+</script>
+}

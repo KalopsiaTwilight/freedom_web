@@ -1,0 +1,21 @@
+﻿@using FreedomUtils.MvcUtils
+@model FreedomWeb.ViewModels.Errors.ErrorViewModel
+@{ 
+    ViewBag.Title = "Error";
+}
+<p class="alert alert-danger">@Model.Error.DisplayName()</p>
+@*<div class="alert alert-danger">
+    
+</div>*@
+@if (Model.ErrInfo != null && HttpContext.Current.IsDebuggingEnabled)
+{
+    <div class="well well-sm">
+        <h3>DEBUG INFORMATION:</h3>
+        <p>
+            <b>Exception:</b> @Model.ErrInfo.Exception.Message<br />
+            <b>Controller:</b> @Model.ErrInfo.ControllerName<br />
+            <b>Action:</b> @Model.ErrInfo.ActionName
+        </p>
+        <pre style="overflow-x:scroll;word-wrap:normal;">@Model.ErrInfo.Exception.StackTrace</pre>
+    </div>
+}

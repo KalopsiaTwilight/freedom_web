@@ -1,0 +1,24 @@
+﻿@{
+    Layout = null;
+}
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            @Html.ActionLink("WoW Freedom", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                <li><a href="http://w11.zetaboards.com/WoW_Freedom/index/">Forums</a></li>
+                <li><a href="http://wiki.wowfreedom-rp.com/wiki/Main_Page">Wiki</a></li>
+                <li>@Html.ActionLink("Status", "Status", "Home")</li>
+                <li><a href="http://w11.zetaboards.com/WoW_Freedom/topic/11180604/1/">Connecting</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

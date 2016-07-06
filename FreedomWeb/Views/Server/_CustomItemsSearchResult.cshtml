@@ -1,0 +1,57 @@
+﻿@model FreedomWeb.ViewModels.Server.CustomItemsSearchResultViewModel
+@{ 
+    Layout = null;
+}
+@if (Model.ResultList.Count != 0)
+{
+    <table class="table table-striped table-bordered" id="ResultListTable">
+        <thead>
+            <tr>
+                <th>Entry ID</th>
+                <th>Display ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Class</th>
+                <th>Sub-class</th>
+                <th>Inventory type</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ResultList)
+            {
+                <tr>
+                    <td>@item.EntryId</td>
+                    <td>@item.DisplayId</td>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>[@item.Class] @item.ClassName</td>
+                    <td>[@item.SubClass] @item.SubClassName</td>
+                    <td>[@item.InventoryType] @item.InventoryTypeName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        $('#ResultListTable').DataTable({
+            "order": [[0, "asc"]],
+            "dom": '<"top">rt<"clear">',
+            "paging": false,
+            "searching": false
+        });
+    </script>
+}
+else
+{
+    <p>No custom item entries were found using that search query. This could be possible due to following reasons:</p>
+    <ul>
+        <li>If searching by default item entry ids then WoWhead could not find an item with such id.</li>
+        <li>If searching by item display ids, creature display ids or custom item entry ids then such id simply does not exist.</li>
+        <li>
+            If searching by creature entry ids, then WoW Freedom server database could not find such a creature,
+            however, Wowhead database may hold such a creature instead (try to search for it using this link: <a href="http://www.wowhead.com/npc=@Model.SearchId">http://www.wowhead.com/npc=@Model.SearchId</a>).
+            Remember that if you search by creatures with Wowhead, then you need to open wowhead creature/npc page's source (Ctrl+U) and search for Display ID number value
+            after first occurance of "displayid" string. After finding out creature's/npc's display id - return to this page and use it in search box and set search type to 
+            <b>@FreedomLogic.Resources.ServerRes.ListItemEnumSearchTypeCreatureDisplayId</b>.
+        </li>
+    </ul>
+}

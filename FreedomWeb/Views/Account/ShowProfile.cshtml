@@ -1,0 +1,45 @@
+﻿@model FreedomWeb.ViewModels.Accounts.ProfileViewModel
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = Model.DisplayName + "'s profile";
+    bool viewSensittive = (User.Identity.GetUserId<int>() == Model.UserId) || User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin);
+}
+@if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
+{
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <i class="glyphicon glyphicon-flag"></i>
+        <span>Admin panel</span>
+    </div>
+    <div class="panel-body">
+        <ul>
+            <li>
+                <a href="@Url.Action("SetGameAccess", "Admin", new { id = Model.UserId })">Change GMLevel &raquo;</a>
+            </li>
+        </ul>
+    </div>
+</div>
+}
+<table class="table">
+    <tbody>
+        @if (viewSensittive)
+        {
+            <tr>
+                <td><b>[HIDDEN]</b> @Html.DisplayNameFor(m => m.Username)</td>
+                <td>@Html.DisplayFor(m => m.Username)</td>
+            </tr>
+            <tr>
+                <td><b>[HIDDEN]</b> @Html.DisplayNameFor(m => m.RegEmail)</td>
+                <td>@Html.DisplayFor(m => m.RegEmail)</td>
+            </tr>
+        }
+        <tr>
+            <td>@Html.DisplayNameFor(m => m.DisplayName)</td>
+            <td>@Html.DisplayFor(m => m.DisplayName)</td>
+        </tr>
+        <tr>
+            <td>@Html.DisplayNameFor(m => m.CreationDateTime) (yyyy-MM-dd)</td>
+            <td>@Html.DisplayFor(m => m.CreationDateTime)</td>
+        </tr>
+    </tbody>
+</table>

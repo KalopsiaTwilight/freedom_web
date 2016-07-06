@@ -1,0 +1,117 @@
+﻿/* Global style settings
+-----------------------------------------------------------*/
+
+/* Get rid of rounded corners */
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html,
+body {
+    height: 100%;
+    /* The html and body elements cannot have any padding or margin. */
+}
+
+#mainFooter {
+    width: 100%;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    height: 150px;
+    color: #99979c;
+    background-color: #202020;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    min-height: 100%;
+    height: auto;
+    padding-top: 60px;
+    padding-left: 15px;
+    padding-right: 15px;    
+    padding-bottom: 150px;
+    margin-bottom: -150px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Sidebar style
+-----------------------------------------------------------*/
+.sidebar .nav-header > .panel-heading {
+    width: 100%;
+    text-align: left;
+}
+
+.sidebar .nav-header > .panel-body {
+    padding: 0px 0px 0px 0px;
+    background-color: #1c1e22;
+}
+
+.sidebar i {
+    padding-right: 10px;
+}
+
+.sidebar .panel-body ul > li > a > i
+{
+    padding-left: 15px;
+}
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error, .input-validation-error button.selectpicker, .input-validation-error + * button.multiselect
+{
+    border: 1px solid #ff0000;
+    background-color: #ffaaaa;
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+    color: #ff0000;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+.input-default 
+{
+    max-width: 280px;
+}
+
+.input-wide 
+{
+    max-width: 560px;
+}
+
+.input-full 
+{
+    max-width: 100%;
+}
+
+/* Custom panel class settings */
+.panel-info > .panel-heading 
+{
+    background-color: darkcyan;
+}
+/* Custom alert class settings */
+.alert-info 
+{
+    background-color: darkcyan;
+}
+
+.alert-danger
+{
+    background-color: brown;
+    border-color: crimson;
+}

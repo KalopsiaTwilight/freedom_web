@@ -1,0 +1,105 @@
+﻿@model FreedomWeb.ViewModels.Admin.UserListViewModel
+@{
+    ViewBag.Title = "User list";
+}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <i class="fa fa-users fa-2"></i>
+        <span>User list</span>
+    </div>
+    <div class="panel-body">
+        <div class="panel panel-primary" style="background-color: #1c1e22;">
+            <div class="btn btn-block panel-heading" data-toggle="collapse" data-target="#TableUserListSearchFilterCollapse">
+                <i class="glyphicon glyphicon-search"></i>
+                Search filters
+            </div>
+            <div class="panel-collapse collapse" id="TableUserListSearchFilterCollapse">
+                <div class="panel-body" id="TableUserListSearchFilter">
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped table-bordered" id="TableUserList">
+            <thead>
+                <tr style="vertical-align:middle">
+                    <th class="nosort nosearch"></th>
+                    <th>Username</th>
+                    <th>Display name</th>
+                    <th>Email</th>
+                    <th>Security roles</th>
+                    <th>GM Level</th>
+                    <th class="nosort nosearch"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.UserList)
+                {
+                    <tr>
+                        <td style="vertical-align:middle"></td>
+                        <td style="vertical-align:middle">@user.Username</td>
+                        <td style="vertical-align:middle">@user.DisplayName</td>
+                        <td style="vertical-align:middle">@user.Email</td>
+                        <td style="vertical-align:middle">@user.Roles</td>
+                        <td style="vertical-align:middle">@user.GameAccess</td>
+                        <td style="vertical-align:middle">
+                            <a href="@Url.Action("ShowProfile", "Account", new { id = user.UserId })">Show profile &raquo;</a>
+                            <br/>
+                            <a href="@Url.Action("SetGameAccess", "Admin", new { id = user.UserId })">Change GMLevel &raquo;</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts
+{
+<script type="text/javascript">
+    $('#TableUserList').DataTable({
+        "initComplete": function () {
+            this.api().columns().every(function () {
+                var column = this;
+                var header = $(column.header());
+                if (header.hasClass('nosearch'))
+                    return;
+
+                var input = $('<input/>', {
+                    'class': 'form-control',
+                    'type': 'search',
+                    'placeholder': "Search: " + column.title()
+                });
+                input.appendTo($('#TableUserListSearchFilter'));
+                input.on( 'keyup change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex(
+                        $(this).val()
+                    );
+ 
+                    column
+                        .search( val ? '^.*'+val+'.*$' : '', true, false )
+                        .draw();
+                });
+            });
+        },
+        "order": [[ 1, "asc" ]],
+        "dom": '<"top">rt<"row" <"col-md-4"l><"col-md-4"i><"col-md-4"p>><"clear">',
+        "drawCallback": function (settings) {
+            // Index column
+            if (settings.bSorted || settings.bFiltered) { // Need to redo the counters if filtered or sorted
+                for (var i = 0; i < settings.aiDisplay.length ; i++) {
+                    $('td:eq(0)', settings.aoData[settings.aiDisplay[i]].nTr).html((i + 1) + "#");
+                }
+            }
+        },
+        "columnDefs": [
+            {
+                "sortable": false,
+                "targets": 'nosort'
+            },
+            {
+                "searchable": false,
+                "targets": 'nosearch'
+            }
+        ],
+    });
+</script>
+}

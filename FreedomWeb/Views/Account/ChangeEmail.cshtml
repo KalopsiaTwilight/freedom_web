@@ -1,0 +1,31 @@
+﻿@model FreedomWeb.ViewModels.Accounts.ChangeEmailViewModel
+@{
+    ViewBag.Title = "Change email";
+}
+@using (Html.BeginForm("ChangeEmail", "Account", FormMethod.Post, new { @id = "FormChangeEmail" }))
+{
+    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="fa fa-info-circle"></i>
+                    <span>Change email help</span>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            <b>Remember!</b> Your email address is used for password recovery, so it should be a valid email address.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control input-full" })
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+    </div>
+}

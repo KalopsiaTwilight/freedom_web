@@ -1,0 +1,51 @@
+﻿@model FreedomWeb.ViewModels.Characters.CharacterTransferViewModel
+@{
+    ViewBag.Title = "Character transfer";
+}
+@using (Html.BeginForm("CharacterTransfer", "Character", FormMethod.Post, new { @id = "FormCharacterTransfer" }))
+{
+    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="fa fa-info-circle"></i>
+                    <span>Character transfer help</span>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            To transfer a character:
+                            <ol>
+                                <li>Fill in details of the target account to which the character will be transferred.</li>
+                                <li>Select one of your characters from drop-down list for the transfer.</li>
+                                <li>Submit the form.</li>
+                                <li>If you are currently on the character, then it is recommended to fully relog into the other account, 
+                                which now holds your transferred character.</li>
+                            </ol>
+                        </li>
+                        <li>
+                            Character transfer is only possible <u>if target account has enough character slots available</u> (11 is the max).
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.TargetUsername)
+                @Html.TextBoxFor(m => m.TargetUsername, new { @class = "form-control input-wide" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.TargetUserPassword)
+                @Html.PasswordFor(m => m.TargetUserPassword, new { @class = "form-control input-wide" })
+            </div>            
+            <div class="form-group">
+                @Html.LabelFor(m => m.CharacterId)
+                <div>
+                    @Html.DropDownListFor(m => m.CharacterId, Model.CharacterSelectList, new { @class = "selectpicker" })
+                </div>                
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+    </div>
+}
