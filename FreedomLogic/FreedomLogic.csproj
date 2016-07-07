@@ -97,7 +97,6 @@
     <Compile Include="DAL\DbFreedom.cs" />
     <Compile Include="DAL\DbAuth.cs" />
     <Compile Include="DAL\DbWorld.cs" />
-    <Compile Include="DTFilters\CommandListFilter.cs" />
     <Compile Include="Entities\Character.cs" />
     <Compile Include="Entities\CharData.cs" />
     <Compile Include="Entities\ClassInfo.cs" />

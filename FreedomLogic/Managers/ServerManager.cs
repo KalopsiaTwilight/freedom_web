@@ -1,5 +1,4 @@
 ﻿using FreedomLogic.DAL;
-using FreedomLogic.DTFilters;
 using FreedomLogic.Entities;
 using FreedomLogic.Resources;
 using FreedomUtils.DataTables;

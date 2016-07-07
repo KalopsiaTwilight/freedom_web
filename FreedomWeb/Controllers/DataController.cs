@@ -1,5 +1,4 @@
-﻿using FreedomLogic.DTFilters;
-using FreedomLogic.Managers;
+﻿using FreedomLogic.Managers;
 using FreedomUtils.DataTables;
 using FreedomWeb.Infrastructure;
 using FreedomWeb.ViewModels.Server;
@@ -21,7 +20,7 @@ namespace FreedomWeb.Controllers
         /// <param name="filter">DT sent custom filter parameters</param>
         /// <returns></returns>        
         [HttpPost]
-        public JsonResult CommandListData(DTParameterModel parameters, CommandListFilter filter)
+        public JsonResult CommandListData(DTParameterModel parameters)
         {
             var user = GetCurrentUser();
 
