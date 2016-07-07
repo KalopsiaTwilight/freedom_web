@@ -115,3 +115,9 @@ body {
     background-color: brown;
     border-color: crimson;
 }
+
+/* z-index for processing div */
+div.dataTables_processing
+{
+    z-index: 1000;
+}

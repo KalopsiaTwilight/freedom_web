@@ -54,6 +54,10 @@
     // Must specify "dataUrl" key with local URL to the data
     $.fn.FreedomServerDataTable = function (options) {
         var defaultOptions = {
+            "oLanguage": {
+                "sProcessing": "<i class='fa fa-spinner fa-spin fa-5x'></i>"
+            },
+            "processing": true,
             "serverSide": true,
             "initComplete": function () {
                 var table = this;
