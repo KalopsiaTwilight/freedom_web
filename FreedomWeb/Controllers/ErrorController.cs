@@ -14,9 +14,8 @@ namespace FreedomWeb.Controllers
     {
         public const string TempDataErrorCodeConst = "ErrorCode";
 
-        [HttpGet]
         [AllowAnonymous]
-        public ActionResult Oops(ErrorCode code = ErrorCode.ErrDefault)
+        public ActionResult Oops(ErrorCode code = ErrorCode.ErrDefault, HandleErrorInfo errInfo = null)
         {
             // TempData storage of error code will override given error code through URL parameter
             if (TempData[TempDataErrorCodeConst] != null)
@@ -24,26 +23,7 @@ namespace FreedomWeb.Controllers
 
             var model = new ErrorViewModel();
             model.Error = code;
-                        
-            // set response status code in case error was one of the standard web errors
-            switch(code)
-            {
-                case ErrorCode.Unauthorized:
-                    SetAlertMsg(ErrorRes.ErrUnauthorized, AlertMsgType.AlertDanger);
-                    return RedirectToAction("Index", "Home");
-                case ErrorCode.BadRequest:
-                    SetAlertMsg(ErrorRes.ErrBadRequest, AlertMsgType.AlertDanger);
-                    return RedirectToAction("Index", "Home");
-                case ErrorCode.NotFound:
-                    SetAlertMsg(ErrorRes.ErrNotFound, AlertMsgType.AlertDanger);
-                    return RedirectToAction("Index", "Home");
-                case ErrorCode.InternalServerError:
-                    Response.StatusCode = (int)code;
-                    break;
-                default:
-                    Response.StatusCode = (int)ErrorCode.ErrDefault;
-                    break;
-            }
+            model.ErrInfo = errInfo;                      
 
             return View("Error", model);
         }

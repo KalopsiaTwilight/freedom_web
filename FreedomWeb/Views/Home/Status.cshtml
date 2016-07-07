@@ -8,14 +8,14 @@
         <i class="fa fa-users"></i>
         <span>Online list</span>
     </div>
-    <div class="panel-body">
+    <div class="panel-body filtered-table">
         <div class="panel panel-primary" style="background-color: #1c1e22;">
             <div class="btn btn-block panel-heading" data-toggle="collapse" data-target="#TableOnlineListSearchFilterCollapse">
                 <i class="glyphicon glyphicon-search"></i>
                 Search filters
             </div>
             <div class="panel-collapse collapse" id="TableOnlineListSearchFilterCollapse">
-                <div class="panel-body" id="TableOnlineListSearchFilter">
+                <div class="panel-body filter-list">
                 </div>
             </div>
         </div>
@@ -85,33 +85,8 @@
 @section scripts
 {
 <script type="text/javascript">
-    $('#TableOnlineList').DataTable({
-        "initComplete": function () {
-            this.api().columns().every(function () {
-                var column = this;
-                var header = $(column.header());
-                if (header.hasClass('nosearch'))
-                    return;
-
-                var input = $('<input/>', {
-                    'class': 'form-control',
-                    'type': 'search',
-                    'placeholder': "Search: " + column.title()
-                });
-                input.appendTo($('#TableOnlineListSearchFilter'));
-                input.on('keyup change', function () {
-                    var val = $.fn.dataTable.util.escapeRegex(
-                        $(this).val()
-                    );
-
-                    column
-                        .search(val ? '^.*' + val + '.*$' : '', true, false)
-                        .draw();
-                });
-            });
-        },
+    $('#TableOnlineList').FreedomSimpleDataTable({
         "order": [[ 1, "asc" ]],
-        "dom": '<"top">rt<"row" <"col-md-4"l><"col-md-4"i><"col-md-4"p>><"clear">',
         "drawCallback": function (settings) {
             // Index column
             if (settings.bSorted || settings.bFiltered) { // Need to redo the counters if filtered or sorted
@@ -120,16 +95,6 @@
                 }
             }
         },
-        "columnDefs": [
-            {   // index column
-                "sortable": false,
-                "targets": 'nosort'
-            },
-            {
-                "searchable": false,
-                "targets": 'nosearch'
-            }
-        ],
     });
 </script>
 }

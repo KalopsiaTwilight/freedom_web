@@ -178,7 +178,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infrastructure\CustomHandleErrorAttribute.cs" />
     <Compile Include="Infrastructure\FreedomAuthorizeAttribute.cs" />
     <Compile Include="Infrastructure\FreedomController.cs" />
     <Compile Include="Models\AdminListItem.cs" />

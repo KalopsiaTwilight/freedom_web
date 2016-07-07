@@ -16,8 +16,8 @@ namespace FreedomWeb
 
             routes.MapRoute(
                 name: "ErrorRoute",
-                url: "Error/Oops/{code}",
-                defaults: new { controller = "Error", action = "Oops", code = ErrorCode.ErrDefault }
+                url: "Error/Oops/{code}/{errInfo}",
+                defaults: new { controller = "Error", action = "Oops", code = ErrorCode.ErrDefault, errInfo = (HandleErrorInfo)null }
             );
 
             routes.MapRoute(

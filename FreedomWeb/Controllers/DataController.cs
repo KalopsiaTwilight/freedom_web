@@ -10,7 +10,8 @@ using System.Web;
 using System.Web.Mvc;
 
 namespace FreedomWeb.Controllers
-{
+
+    [FreedomAuthorize]
     public class DataController : FreedomController
     {
         /// <summary>
@@ -18,8 +19,7 @@ namespace FreedomWeb.Controllers
         /// </summary>
         /// <param name="parameters">DT sent parameters</param>
         /// <param name="filter">DT sent custom filter parameters</param>
-        /// <returns></returns>
-        [FreedomAuthorize]
+        /// <returns></returns>        
         [HttpPost]
         public JsonResult CommandListData(DTParameterModel parameters, CommandListFilter filter)
         {

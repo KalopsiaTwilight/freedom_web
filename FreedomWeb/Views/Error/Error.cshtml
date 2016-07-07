@@ -12,7 +12,7 @@
     <div class="well well-sm">
         <h3>DEBUG INFORMATION:</h3>
         <p>
-            <b>Exception:</b> @Model.ErrInfo.Exception.Message<br />
+            <b>Exception:</b> [@Model.ErrInfo.Exception.GetType().FullName] @Model.ErrInfo.Exception.Message<br />
             <b>Controller:</b> @Model.ErrInfo.ControllerName<br />
             <b>Action:</b> @Model.ErrInfo.ActionName
         </p>
