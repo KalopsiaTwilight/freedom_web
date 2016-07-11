@@ -34,16 +34,33 @@
             "order": [[ 0, "asc" ]],
             "columnDefs": [
                 {
-                    "width": "10%",
-                    "targets": 0
+                    "width": "15%",
+                    "targets": 0,
+                    "render": function (row, type, val, meta)
+                    {                       ;
+                        return '<pre style="white-space: pre-wrap; word-break:normal;"><code>' + val.Command + '</code></pre>';
+                    }
                 },
                 {
                     "width": "30%",
-                    "targets": 1
+                    "targets": 1,
+                    "render": function (row, type, val, meta) {
+                        return '<pre style="white-space: pre-wrap; word-break:normal;"><code>' + val.Syntax + '</code></pre>';
+                    }
                 },
                 {
-                    "width": "50%",
-                    "targets": 2
+                    "width": "45%",
+                    "targets": 2,
+                    "render": function (row, type, val, meta) {
+                        if (val.Description)
+                        {
+                            return '<pre style="white-space: pre-wrap; word-break:normal;"><code>' + val.Description + '</code></pre>';
+                        }
+                        else
+                        {
+                            return "";
+                        }                        
+                    }
                 },
                 {
                     "width": "10%",
