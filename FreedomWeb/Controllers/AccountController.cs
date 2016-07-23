@@ -98,7 +98,6 @@ namespace FreedomWeb.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        [CaptchaValidator]
         public async Task<ActionResult> Login(LoginViewModel model)
         {
             if (User.Identity.IsAuthenticated)

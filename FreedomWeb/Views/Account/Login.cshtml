@@ -29,10 +29,6 @@
                     @Html.DisplayNameFor(m => m.RememberMe)
                 </label>  
             </div>
-            <div class="form-group">
-                @Html.Recaptcha(theme: CaptchaTheme.Dark)
-                @Html.ValidationMessage("ReCaptcha")
-            </div>
             <button type="submit" class="btn btn-default">Submit</button>
         </div>
         <!--HELP TEXT-->  
