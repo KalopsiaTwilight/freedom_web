@@ -55,10 +55,11 @@ namespace FreedomWeb.Controllers
         /// <param name="filter">DT sent custom filter parameters</param>
         /// <returns></returns>        
         [HttpPost]
+        [AllowAnonymous]
         public JsonResult OnlineListData(DTParameterModel parameters)
         {
-            var user = GetCurrentUser();
-            bool allowUsernameViewing = user.FreedomRoles.Where(r => r.Name == FreedomRole.RoleAdmin).Any();
+            var user = GetCurrentUser();       
+            bool allowUsernameViewing = (user == null ? false : user.FreedomRoles.Where(r => r.Name == FreedomRole.RoleAdmin).Any());
 
             int total = 0;
             int filtered = 0;
@@ -104,6 +105,7 @@ namespace FreedomWeb.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public ActionResult StatusLinePartial()
         {
             var model = new StatusViewModel();
