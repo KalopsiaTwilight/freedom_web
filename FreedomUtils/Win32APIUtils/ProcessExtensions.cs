@@ -211,6 +211,82 @@ namespace FreedomUtils.Win32APIUtils
             return bResult;
         }
 
+        // Gets the user token from the currently active session
+        private static bool GetSessionUserTokenBySessionId(UInt32 sessionId, ref IntPtr phUserToken)
+        {
+            var bResult = false;
+            var hImpersonationToken = IntPtr.Zero;
+            var pSessionInfo = IntPtr.Zero;
+
+            if (WTSQueryUserToken(sessionId, ref hImpersonationToken) != 0)
+            {
+                // Convert the impersonation token to a primary token
+                bResult = DuplicateTokenEx(hImpersonationToken, 0, IntPtr.Zero,
+                    (int)SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, (int)TOKEN_TYPE.TokenPrimary,
+                    ref phUserToken);
+
+                CloseHandle(hImpersonationToken);
+            }
+
+            return bResult;
+        }
+
+        public static bool StartProcessForSessionId(int sessionId, string appPath, string cmdLine = null, string workDir = null, bool visible = true)
+        {
+            var hUserToken = IntPtr.Zero;
+            var startInfo = new STARTUPINFO();
+            var procInfo = new PROCESS_INFORMATION();
+            var pEnv = IntPtr.Zero;
+            int iResultOfCreateProcessAsUser;
+            startInfo.cb = Marshal.SizeOf(typeof(STARTUPINFO));
+
+            try
+            {
+                if (!GetSessionUserTokenBySessionId((UInt32)sessionId, ref hUserToken))
+                {
+                    throw new Exception("StartProcessAsCurrentUser: GetSessionUserTokenBySessionId failed.");
+                }
+
+                uint dwCreationFlags = CREATE_UNICODE_ENVIRONMENT | (uint)(visible ? CREATE_NEW_CONSOLE : CREATE_NO_WINDOW);
+                startInfo.wShowWindow = (short)(visible ? SW.SW_SHOW : SW.SW_HIDE);
+                startInfo.lpDesktop = "winsta0\\default";
+
+                if (!CreateEnvironmentBlock(ref pEnv, hUserToken, false))
+                {
+                    throw new Exception("StartProcessAsCurrentUser: CreateEnvironmentBlock failed.");
+                }
+
+                if (!CreateProcessAsUser(hUserToken,
+                    appPath, // Application Name
+                    cmdLine, // Command Line
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    false,
+                    dwCreationFlags,
+                    pEnv,
+                    workDir, // Working directory
+                    ref startInfo,
+                    out procInfo))
+                {
+                    throw new Exception("StartProcessAsCurrentUser: CreateProcessAsUser failed.\n");
+                }
+
+                iResultOfCreateProcessAsUser = Marshal.GetLastWin32Error();
+            }
+            finally
+            {
+                CloseHandle(hUserToken);
+                if (pEnv != IntPtr.Zero)
+                {
+                    DestroyEnvironmentBlock(pEnv);
+                }
+                CloseHandle(procInfo.hThread);
+                CloseHandle(procInfo.hProcess);
+            }
+
+            return true;
+        }
+
         public static bool StartProcessAsCurrentUser(string appPath, string cmdLine = null, string workDir = null, bool visible = true)
         {
             var hUserToken = IntPtr.Zero;
@@ -218,7 +294,6 @@ namespace FreedomUtils.Win32APIUtils
             var procInfo = new PROCESS_INFORMATION();
             var pEnv = IntPtr.Zero;
             int iResultOfCreateProcessAsUser;
-
             startInfo.cb = Marshal.SizeOf(typeof(STARTUPINFO));
 
             try

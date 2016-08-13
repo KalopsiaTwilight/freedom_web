@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0"?>
 <appSettings>
+  <add key="processStartSessionId" value="1" />
   <add key="forumUrl" value="#"/>
   <add key="wikiUrl" value="#"/>
   <add key="connectionGuideUrl" value="#"/>

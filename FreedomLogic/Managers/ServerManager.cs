@@ -181,7 +181,8 @@ namespace FreedomLogic.Managers
                 {
                     string exePath = SettingsManager.GetBnetServerPath();
                     string workingDir = SettingsManager.GetServerDir();
-                    ProcessExtensions.StartProcessAsCurrentUser(null, exePath, workingDir, true);
+                    int sessionId = SettingsManager.GetProcessStartSessionId();
+                    ProcessExtensions.StartProcessForSessionId(sessionId, null, exePath, workingDir, true);
                 }
                 catch (Exception e)
                 {
@@ -252,7 +253,8 @@ namespace FreedomLogic.Managers
 
                     string exePath = SettingsManager.GetWorldServerPath();
                     string workingDir = SettingsManager.GetServerDir();
-                    ProcessExtensions.StartProcessAsCurrentUser(null, exePath, workingDir, true);
+                    int sessionId = SettingsManager.GetProcessStartSessionId();
+                    ProcessExtensions.StartProcessForSessionId(sessionId, null, exePath, workingDir, true);
                 }
                 catch (Exception e)
                 {

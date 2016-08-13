@@ -10,6 +10,11 @@ namespace FreedomLogic.Managers
 {
     public static class SettingsManager
     {
+        public static int GetProcessStartSessionId()
+        {
+            return int.Parse(ConfigurationManager.AppSettings["processStartSessionId"]);
+        }
+
         public static string GetServerDir()
         {
             return ConfigurationManager.AppSettings["serverDir"];
