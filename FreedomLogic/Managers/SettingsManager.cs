@@ -44,7 +44,22 @@ namespace FreedomLogic.Managers
         {
             return "bnetserver.exe";
         }
-       
+
+        public static string GetForumUrl()
+        {
+            return ConfigurationManager.AppSettings["forumUrl"];
+        }
+
+        public static string GetWikiUrl()
+        {
+            return ConfigurationManager.AppSettings["wikiUrl"];
+        }
+
+        public static string GetConnectionGuideUrl()
+        {
+            return ConfigurationManager.AppSettings["connectionGuideUrl"];
+        }
+
         public static int GetRealmId()
         {
             return int.Parse(ConfigurationManager.AppSettings["realmId"]);

@@ -1,4 +1,5 @@
-﻿@{
+﻿@using FreedomLogic.Managers;
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -16,16 +17,16 @@
         <p>
             We an active community forum, where event plans, applications and discussions can be posted.
         </p>
-        <p><a class="btn btn-default" href="http://w11.zetaboards.com/WoW_Freedom/index/">Forum link &raquo;</a></p>
+        <p><a class="btn btn-default" href="@SettingsManager.GetForumUrl()">Forum link &raquo;</a></p>
     </div>
     <div class="col-md-4">
         <h2>Freedom Wiki</h2>
         <p>WoW Freedom also hosts MediaWiki software to allow users to post wiki-articles about their characters or other roleplay items.</p>
-        <p><a class="btn btn-default" href="http://wiki.wowfreedom-rp.com/wiki/Main_Page">Wiki link &raquo;</a></p>
+        <p><a class="btn btn-default" href="@SettingsManager.GetWikiUrl()">Wiki link &raquo;</a></p>
     </div>
     <div class="col-md-4">
         <h2>Connecting</h2>
         <p>In order to play on WoW Freedom server, you will need to download and configure our specific game client.</p>
-        <p><a class="btn btn-default" href="#">Connection guide link &raquo;</a></p>
+        <p><a class="btn btn-default" href="@SettingsManager.GetConnectionGuideUrl()">Connection guide link &raquo;</a></p>
     </div>
 </div>

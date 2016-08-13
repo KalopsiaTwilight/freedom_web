@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0"?>
 <appSettings>
+  <add key="forumUrl" value="#"/>
+  <add key="wikiUrl" value="#"/>
+  <add key="connectionGuideUrl" value="#"/>
   <add key="realmId" value="1" />
   <add key="worldserverPidFilename" value="world.pid" />
   <add key="bnetserverPidFilename" value="bnetserver.pid" />
