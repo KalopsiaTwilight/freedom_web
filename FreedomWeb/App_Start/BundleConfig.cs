@@ -16,7 +16,10 @@ namespace FreedomWeb
                         "~/Scripts/jquery.validate*"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryajax").Include(
-            "~/Scripts/jquery.unobtrusive-ajax*"));
+                        "~/Scripts/jquery.unobtrusive-ajax*"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jqueryDateFormat").Include(
+                        "~/Scripts/jquery.dateFormat.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));

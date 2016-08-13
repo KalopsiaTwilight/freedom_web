@@ -84,6 +84,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -111,6 +112,7 @@
     <Compile Include="Entities\ItemClassInfo.cs" />
     <Compile Include="Entities\ItemInventoryTypeInfo.cs" />
     <Compile Include="Entities\ItemSubclassInfo.cs" />
+    <Compile Include="Entities\Realmlist.cs" />
     <Compile Include="Entities\ZoneInfo.cs" />
     <Compile Include="Entities\MapInfo.cs" />
     <Compile Include="Entities\RaceInfo.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="Identity\FreedomRole.cs" />
     <Compile Include="Identity\FreedomShaHasher.cs" />
     <Compile Include="Identity\User.cs" />
+    <Compile Include="Managers\SettingsManager.cs" />
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Identity\UserStore.cs" />
     <Compile Include="Infrastructure\EntityBase.cs" />

@@ -195,6 +195,7 @@
     <Compile Include="ViewModels\Accounts\RegisterViewModel.cs" />
     <Compile Include="ViewModels\Accounts\LoginViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminCPViewModel.cs" />
+    <Compile Include="ViewModels\Admin\ServerControlViewModel.cs" />
     <Compile Include="ViewModels\Admin\SetGameAccessViewModel.cs" />
     <Compile Include="ViewModels\Admin\UserListViewModel.cs" />
     <Compile Include="ViewModels\Characters\CharacterTransferViewModel.cs" />
@@ -287,6 +288,7 @@
     <Content Include="Scripts\jquery-2.2.0.js" />
     <Content Include="Scripts\jquery-2.2.0.min.js" />
     <Content Include="Scripts\jquery-2.2.0.min.map" />
+    <Content Include="Scripts\jquery.dateFormat.min.js" />
     <Content Include="Scripts\jquery.dataTables.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
@@ -338,6 +340,9 @@
     <Content Include="Views\Server\CommandList.cshtml" />
     <Content Include="Smtp.config" />
     <None Include="Smtp.config.template" />
+    <Content Include="Views\Admin\ServerControl.cshtml" />
+    <Content Include="Views\Admin\_ServerControlData.cshtml" />
+    <Content Include="Views\Data\_StatusLinePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

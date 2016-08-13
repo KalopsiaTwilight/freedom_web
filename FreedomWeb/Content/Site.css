@@ -121,3 +121,200 @@ div.dataTables_processing
 {
     z-index: 1000;
 }
+
+/* Styles for Status page
+-----------------------------------------------------------*/
+div.status-line .status-bad
+{
+    color: red;
+    background-color: darkred;
+}
+
+div.status-line .status-loading
+{
+    color: orange;
+    background-color: darkorange;
+}
+
+div.status-line .status-good
+{
+    color: green;
+    background-color: darkgreen;
+}
+
+div.status-line .form-control
+{
+    border: none;
+    background-image: -webkit-repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.4) 20px,
+        rgba(0,0,0,.2) 20px,
+        rgba(0,0,0,.2) 40px);
+    background-image: -o-repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.4) 20px,
+        rgba(0,0,0,.2) 20px,
+        rgba(0,0,0,.2) 40px);
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.4) 20px,
+        rgba(0,0,0,.2) 20px,
+        rgba(0,0,0,.2) 40px
+    );
+    font-size: 24px;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+div.status-line .input-group-addon, div.status-line .form-control
+{
+    border-radius: 0px;
+}
+
+div.status-line .input-group
+{
+    border-radius: 0px;
+    border: 1px solid black;
+}
+
+/* Styles for server-control-*
+-----------------------------------------------------------*/
+div.server-control-data .input-group-addon
+{
+    min-width: 200px;
+    text-align: left;
+    border: none;
+    border-radius: 0px;
+}
+
+div.server-control-data .form-group
+{
+    margin-bottom: 0px;
+    border: 1px solid black;
+}
+
+div.server-control-data .panel-body, div.server-control-actions .panel-body
+{
+    padding: 0px 0px 0px 0px;
+    background-color: #1c1e22;
+}
+
+div.server-control-data .form-control
+{
+    background-color: #1c1e22;
+    color: #ffffff;
+    border: 0px;
+    border-radius: 0px;
+}
+
+div.server-control-data .online
+{
+    background-color: darkgreen;
+}
+
+div.server-control-data .offline
+{
+    background-color: darkred;
+}
+
+div.server-control-data .loading
+{
+    background-color: darkorange;
+}
+
+div.server-control-actions .btn
+{
+    border-radius: 0px;
+}
+
+div.server-control-actions .btn-group
+{
+    border: 1px solid black;
+}
+
+.server-control-logger .panel-body
+{
+    height: 500px;
+    min-width: 500px;
+    overflow-y: scroll;
+    background-color: black;
+    color: #ffffff;
+}
+
+.server-control-actions .panel-body .btn-group
+{
+    width: 100%;
+}
+
+.server-control-actions .panel-body .btn-group .btn
+{
+    width: 50%;
+}
+
+/* Styles for font-awesome icons
+-----------------------------------------------------------*/
+.fa-1-5x {
+  font-size: 1.5em;
+}
+
+.fa-title-icon
+{
+    padding-right: 15px
+}
+
+/* Custom panel styles
+-----------------------------------------------------------*/
+.panel-default-striped > .panel-heading {
+    color: #c8c8c8;
+    background-color: #3e444c;
+    border-color: rgba(0, 0, 0, 0.6);
+    background-image: -webkit-repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.4) 20px,
+        rgba(0,0,0,.2) 20px,
+        rgba(0,0,0,.2) 40px);
+    background-image: -o-repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.4) 20px,
+        rgba(0,0,0,.2) 20px,
+        rgba(0,0,0,.2) 40px);
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.4) 20px,
+        rgba(0,0,0,.2) 20px,
+        rgba(0,0,0,.2) 40px
+    );
+    border: 1px solid black;
+}
+
+.panel-warning-striped > .panel-heading {
+    color: #ffffff;
+    background-color: #f89406;
+    border-color: rgba(0, 0, 0, 0.6);
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    background-image: -webkit-repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.4) 20px,
+        rgba(0,0,0,.2) 20px,
+        rgba(0,0,0,.2) 40px);
+    background-image: -o-repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.4) 20px,
+        rgba(0,0,0,.2) 20px,
+        rgba(0,0,0,.2) 40px);
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0,0,0,.4),
+        rgba(0,0,0,.4) 20px,
+        rgba(0,0,0,.2) 20px,
+        rgba(0,0,0,.2) 40px
+    );
+    border: 1px solid black;
+}

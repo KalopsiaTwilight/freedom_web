@@ -13,6 +13,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.IO;
+using System.Diagnostics;
+using FreedomUtils.Win32APIUtils;
 
 namespace FreedomLogic.Managers
 {
@@ -33,6 +36,235 @@ namespace FreedomLogic.Managers
 
     public static class ServerManager
     {
+        public static class Control
+        {
+            private const byte ServerOfflineFlag = 0x2;
+
+            public static int GetWorldServerPid()
+            {
+                string pidPath = Path.Combine(SettingsManager.GetServerDir(), SettingsManager.GetWorldServerPidFilename());
+                int pid = 0;
+
+                if (!File.Exists(pidPath))
+                    return 0;
+
+                try
+                {
+                    string input = File.ReadAllText(pidPath);
+                    int.TryParse(input, out pid);
+                }   
+                catch (IOException e) // TODO: Log exception
+                {
+                    return 0;
+                }   
+                      
+                return pid;
+            }
+
+            public static int GetBnetServerPid()
+            {
+                string pidPath = Path.Combine(SettingsManager.GetServerDir(), SettingsManager.GetBnetServerPidFilename());
+                int pid = 0;
+
+                if (!File.Exists(pidPath))
+                    return 0;
+
+                try
+                {
+                    string input = File.ReadAllText(pidPath);
+                    int.TryParse(input, out pid);
+                }
+                catch (IOException e) // TODO: Log exception
+                {
+                    return 0;
+                }
+
+                return pid;
+            }
+
+            public static bool IsWorldServerRunning()
+            {
+                int pid = GetWorldServerPid();
+                var process = Process.GetProcesses().Where(p => p.Id == pid).FirstOrDefault();          
+
+                if (process == null)
+                {
+                    return false;
+                }
+
+                if (process.ProcessName != "worldserver")
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public static bool IsBnetServerRunning()
+            {
+                int pid = GetBnetServerPid();
+                var process = Process.GetProcesses().Where(p => p.Id == pid).FirstOrDefault();
+
+                if (process == null)
+                {
+                    return false;
+                }
+
+                if (process.ProcessName != "bnetserver")
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public static bool IsWorldServerOnline()
+            {
+                if (!IsWorldServerRunning())
+                    return false;
+
+                int realmId = SettingsManager.GetRealmId();
+
+                using (var db = new DbAuth())
+                {
+                    var realm = db.Realmlists.Where(r => r.Id == realmId).FirstOrDefault();
+
+                    if (realm == null)
+                        return false;
+
+                    if ((realm.Flags & ServerOfflineFlag) != 0)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            public static bool StopBnetServer(out string error)
+            {
+                if (IsBnetServerRunning())
+                {
+                    try
+                    {
+                        // shut down the bnet server
+                        int pid = GetBnetServerPid();
+                        var process = Process.GetProcesses().Where(p => p.Id == pid).FirstOrDefault();
+
+                        if (process != null)
+                        {
+                            process.Kill();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        error = string.Format("[{0} @ {1}]: {2}", e.GetType().FullName, e.TargetSite.ReflectedType.Name + "." + e.TargetSite.Name, e.Message);
+                        return false;
+                    }
+                }
+
+                error = "";
+                return true;
+            }
+
+            public static bool StartBnetServer(out string error)
+            {
+                if (IsBnetServerRunning())
+                {
+                    error = "BnetServer is already running";
+                    return false;
+                }
+
+                try
+                {
+                    string exePath = SettingsManager.GetBnetServerPath();
+                    string workingDir = SettingsManager.GetServerDir();
+                    ProcessExtensions.StartProcessAsCurrentUser(null, exePath, workingDir, true);
+                }
+                catch (Exception e)
+                {
+                    error = string.Format("[{0} @ {1}]: {2}", e.GetType().FullName, e.TargetSite.ReflectedType.Name + "." + e.TargetSite.Name, e.Message);
+                    return false;
+                }
+
+                error = "";
+                return true;
+            }
+
+            public static bool StopWorldServer(out string error)
+            {
+                if (IsWorldServerRunning())
+                {
+                    try
+                    {
+                        // shut down the world server
+                        int pid = GetWorldServerPid();
+                        var process = Process.GetProcesses().Where(p => p.Id == pid).FirstOrDefault();
+
+                        if (process != null)
+                        {
+                            process.Kill();
+                        }
+
+                        int realmId = SettingsManager.GetRealmId();
+
+                        using (var db = new DbAuth())
+                        {
+                            var realm = db.Realmlists.Find(realmId);
+                            realm.Flags = (byte)(realm.Flags | ServerOfflineFlag);
+                            db.Entry(realm).State = System.Data.Entity.EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        error = string.Format("[{0} @ {1}]: {2}", e.GetType().FullName, e.TargetSite.ReflectedType.Name + "." + e.TargetSite.Name, e.Message);
+                        return false;
+                    }
+
+                }
+
+                error = "";
+                return true;
+            }
+
+            public static bool StartWorldServer(out string error)
+            {
+                if (IsWorldServerRunning())
+                {
+                    error = "WorldServer is already running";
+                    return false;
+                }
+
+                try
+                {
+                    int realmId = SettingsManager.GetRealmId();
+
+                    using (var db = new DbAuth())
+                    {
+                        var realm = db.Realmlists.Find(realmId);
+                        realm.Flags = (byte)(realm.Flags | ServerOfflineFlag);
+                        db.Entry(realm).State = System.Data.Entity.EntityState.Modified;
+                        db.SaveChanges();
+                    }
+
+                    string exePath = SettingsManager.GetWorldServerPath();
+                    string workingDir = SettingsManager.GetServerDir();
+                    ProcessExtensions.StartProcessAsCurrentUser(null, exePath, workingDir, true);
+                }
+                catch (Exception e)
+                {
+                    error = string.Format("[{0} @ {1}]: {2}", e.GetType().FullName, e.TargetSite.ReflectedType.Name + "." + e.TargetSite.Name, e.Message);
+                    return false;
+                }
+
+                error = "";
+                return true;
+            }
+        }
+
         #region CUSTOM_ITEM_SEARCH        
         private const string WowheadUrlItemConst = "http://www.wowhead.com/item={0}&xml";
         private const int CustomItemIdStartConst = 200000;

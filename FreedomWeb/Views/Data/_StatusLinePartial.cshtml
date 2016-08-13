@@ -1,0 +1,16 @@
+﻿@using FreedomUtils.MvcUtils
+@using FreedomWeb.ViewModels.Home
+@model StatusViewModel
+<label class="input-group-addon" for="statusText">STATUS INFO</label>
+@if (Model.Status == EnumFreedomGameserverStatus.Online)
+{
+    <input id="statusText" class="form-control status-good" value="@Model.Status.DisplayName()" readonly />
+}
+else if (Model.Status == EnumFreedomGameserverStatus.WorldLoading)
+{
+    <input id="statusText" class="form-control status-loading" value="@Model.Status.DisplayName()" readonly />
+}
+else
+{
+    <input id="statusText" class="form-control status-bad" value="@Model.Status.DisplayName()" readonly />
+}

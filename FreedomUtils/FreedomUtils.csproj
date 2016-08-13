@@ -84,6 +84,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CommonRes.resx</DependentUpon>
     </Compile>
+    <Compile Include="Win32APIUtils\ProcessExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\CommonRes.resx">

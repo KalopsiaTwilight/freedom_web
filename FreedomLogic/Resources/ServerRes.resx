@@ -117,11 +117,47 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="FieldBnetServerPath" xml:space="preserve">
+    <value>Bnetserver path</value>
+  </data>
+  <data name="FieldBnetServerPid" xml:space="preserve">
+    <value>Bnetserver process id</value>
+  </data>
+  <data name="FieldBnetServerStatus" xml:space="preserve">
+    <value>Bnetserver status</value>
+  </data>
   <data name="FieldEnumSearchType" xml:space="preserve">
     <value>Search type</value>
   </data>
   <data name="FieldSearchId" xml:space="preserve">
     <value>Search by id</value>
+  </data>
+  <data name="FieldServerDirectoryPath" xml:space="preserve">
+    <value>Server directory path</value>
+  </data>
+  <data name="FieldServerStatusLoginDown" xml:space="preserve">
+    <value>Login server down (world server is up, however)</value>
+  </data>
+  <data name="FieldServerStatusOffline" xml:space="preserve">
+    <value>Offline (login and world servers are down)</value>
+  </data>
+  <data name="FieldServerStatusOnline" xml:space="preserve">
+    <value>Online (login and world servers are up)</value>
+  </data>
+  <data name="FieldServerStatusWorldDown" xml:space="preserve">
+    <value>World server down (login server is up, however)</value>
+  </data>
+  <data name="FieldServerStatusWorldLoading" xml:space="preserve">
+    <value>World server is currently loading/starting up</value>
+  </data>
+  <data name="FieldWorldServerPath" xml:space="preserve">
+    <value>Worldserver path</value>
+  </data>
+  <data name="FieldWorldServerPid" xml:space="preserve">
+    <value>Worldserver process id</value>
+  </data>
+  <data name="FieldWorldServerStatus" xml:space="preserve">
+    <value>Worldserver status</value>
   </data>
   <data name="ListItemEnumSearchTypeCreatureDisplayId" xml:space="preserve">
     <value>Creature display id</value>

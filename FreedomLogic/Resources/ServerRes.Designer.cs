@@ -61,6 +61,33 @@ namespace FreedomLogic.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bnetserver path.
+        /// </summary>
+        public static string FieldBnetServerPath {
+            get {
+                return ResourceManager.GetString("FieldBnetServerPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bnetserver process id.
+        /// </summary>
+        public static string FieldBnetServerPid {
+            get {
+                return ResourceManager.GetString("FieldBnetServerPid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bnetserver status.
+        /// </summary>
+        public static string FieldBnetServerStatus {
+            get {
+                return ResourceManager.GetString("FieldBnetServerStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search type.
         /// </summary>
         public static string FieldEnumSearchType {
@@ -75,6 +102,87 @@ namespace FreedomLogic.Resources {
         public static string FieldSearchId {
             get {
                 return ResourceManager.GetString("FieldSearchId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server directory path.
+        /// </summary>
+        public static string FieldServerDirectoryPath {
+            get {
+                return ResourceManager.GetString("FieldServerDirectoryPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Login server down (world server is up, however).
+        /// </summary>
+        public static string FieldServerStatusLoginDown {
+            get {
+                return ResourceManager.GetString("FieldServerStatusLoginDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Offline (login and world servers are down).
+        /// </summary>
+        public static string FieldServerStatusOffline {
+            get {
+                return ResourceManager.GetString("FieldServerStatusOffline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Online (login and world servers are up).
+        /// </summary>
+        public static string FieldServerStatusOnline {
+            get {
+                return ResourceManager.GetString("FieldServerStatusOnline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to World server down (login server is up, however).
+        /// </summary>
+        public static string FieldServerStatusWorldDown {
+            get {
+                return ResourceManager.GetString("FieldServerStatusWorldDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to World server is currently loading/starting up.
+        /// </summary>
+        public static string FieldServerStatusWorldLoading {
+            get {
+                return ResourceManager.GetString("FieldServerStatusWorldLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Worldserver path.
+        /// </summary>
+        public static string FieldWorldServerPath {
+            get {
+                return ResourceManager.GetString("FieldWorldServerPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Worldserver process id.
+        /// </summary>
+        public static string FieldWorldServerPid {
+            get {
+                return ResourceManager.GetString("FieldWorldServerPid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Worldserver status.
+        /// </summary>
+        public static string FieldWorldServerStatus {
+            get {
+                return ResourceManager.GetString("FieldWorldServerStatus", resourceCulture);
             }
         }
         

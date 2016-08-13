@@ -17,6 +17,7 @@ namespace FreedomLogic.DAL
         {
         }
 
+        public DbSet<Realmlist> Realmlists { get; set; }
         public DbSet<BnetAccount> BnetAccounts { get; set; }
         public DbSet<GameAccount> GameAccounts { get; set; }
         public DbSet<GameAccountAccess> GameAccountAccesses { get; set; }

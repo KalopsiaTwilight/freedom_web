@@ -1,0 +1,63 @@
+﻿@using FreedomWeb.ViewModels.Admin;
+@model ServerControlViewModel
+@{
+    Layout = null;
+    string bnetStatusClass = Model.BnetServerStatus == EnumServerAppStatus.Online ? "online" : "offline";
+    string worldserverStatusClass = "offline";
+
+    switch (Model.WorldServerStatus)
+    {
+        case EnumServerAppStatus.Online:
+            worldserverStatusClass = "online";
+            break;
+        case EnumServerAppStatus.Loading:
+            worldserverStatusClass = "loading";
+            break;
+        case EnumServerAppStatus.Offline:
+        default:
+            worldserverStatusClass = "offline";
+            break;
+    }
+}
+<div class="form-group">
+    <div class="input-group">
+        @Html.LabelFor(m => m.BnetServerStatus, new { @class = "input-group-addon" })
+        @Html.TextBoxFor(m => m.BnetServerStatus, new { @class = "form-control " + bnetStatusClass, @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        @Html.LabelFor(m => m.WorldServerStatus, new { @class = "input-group-addon" })
+        @Html.TextBoxFor(m => m.WorldServerStatus, new { @class = "form-control " + worldserverStatusClass, @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        @Html.LabelFor(m => m.ServerDirectoryPath, new { @class = "input-group-addon" })
+        @Html.TextBoxFor(m => m.ServerDirectoryPath, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        @Html.LabelFor(m => m.WorldServerPath, new { @class = "input-group-addon" })
+        @Html.TextBoxFor(m => m.WorldServerPath, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        @Html.LabelFor(m => m.WorldServerPid, new { @class = "input-group-addon" })
+        @Html.TextBoxFor(m => m.WorldServerPid, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        @Html.LabelFor(m => m.BnetServerPath, new { @class = "input-group-addon" })
+        @Html.TextBoxFor(m => m.BnetServerPath, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        @Html.LabelFor(m => m.BnetServerPid, new { @class = "input-group-addon" })
+        @Html.TextBoxFor(m => m.BnetServerPid, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>

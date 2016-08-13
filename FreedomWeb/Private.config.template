@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0"?>
 <appSettings>
+  <add key="realmId" value="1" />
+  <add key="worldserverPidFilename" value="world.pid" />
+  <add key="bnetserverPidFilename" value="bnetserver.pid" />
+  <add key="serverDir" value="C:\serverDirHere" />
   <add key="reCaptchaPublicKey" value="publicKeyHere" />
   <add key="reCaptchaPrivateKey" value="privateKeyHere" />
 </appSettings>

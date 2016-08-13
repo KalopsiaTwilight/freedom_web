@@ -2,6 +2,7 @@
     // Simple wrapped DataTable helper (for small-scale, non-serverside data)
     $.fn.FreedomSimpleDataTable = function (options) {        
         var defaultOptions = {
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
             "initComplete": function () {
                 var table = this;
 
@@ -57,6 +58,7 @@
             "oLanguage": {
                 "sProcessing": "<i class='fa fa-spinner fa-spin fa-5x'></i>"
             },
+            "lengthMenu": [[25, 50, 100], [25, 50, 100]],
             "processing": true,
             "serverSide": true,
             "initComplete": function () {
@@ -98,6 +100,10 @@
                 {
                     "searchable": false,
                     "targets": 'nosearch'
+                },
+                {
+                    "orderable": false,
+                    "targets": 'noorder'
                 },
             ],
             "ajax": {
