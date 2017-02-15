@@ -56,6 +56,8 @@ namespace FreedomLogic.Entities
             else
                 ZoneName = zoneInfo.Name;
 
+            ExtraFlags = DbManager.GetByKey<Character, DbCharacters>(character.ExtraFlags);
+
             return true;
         }
 
@@ -76,5 +78,7 @@ namespace FreedomLogic.Entities
         public GameAccount GameAccount { get; set; }
 
         public GameAccountAccess GameAccountAccess { get; set; }
+
+        public Character ExtraFlags { get; private set; }
     }
 }

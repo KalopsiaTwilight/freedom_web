@@ -101,6 +101,20 @@ namespace FreedomLogic.Managers
             }
         }
 
+        public static bool IsGMOn(int charId)
+        {
+            using (var db = new DbCharacters())
+            {
+                var character = db.Characters.Find(charId);
+                short extraFlags = character.ExtraFlags;
+                int GMStatus = extraFlags & 1;
+                if (GMStatus == 1)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
         public static List<Character> DTGetFilteredOnlineCharacters(
             ref int recordsTotal,
             ref int recordsFiltered,

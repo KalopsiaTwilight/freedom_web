@@ -41,6 +41,9 @@ namespace FreedomLogic.Entities
         [Column("online")]
         public bool IsOnline { get; set; }
 
+        [Column("extra_flags")]
+        public short ExtraFlags { get; set; }
+
         [Column("deleteDate")]
         public DateTime? DeleteDate { get; set; }
 
