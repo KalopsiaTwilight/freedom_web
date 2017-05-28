@@ -70,6 +70,9 @@ namespace FreedomUtils.Win32APIUtils
             ref IntPtr ppSessionInfo,
             ref int pCount);
 
+        [DllImport("wtsapi32.dll", SetLastError = false)]
+        public static extern void WTSFreeMemory(IntPtr memory);
+
         #endregion
 
         #region Win32 Structs
@@ -190,6 +193,8 @@ namespace FreedomUtils.Win32APIUtils
                         activeSessionId = si.SessionID;
                     }
                 }
+
+                WTSFreeMemory(pSessionInfo);
             }
 
             // If enumerating did not work, fall back to the old method
@@ -244,7 +249,7 @@ namespace FreedomUtils.Win32APIUtils
             {
                 if (!GetSessionUserTokenBySessionId((UInt32)sessionId, ref hUserToken))
                 {
-                    throw new Exception("StartProcessAsCurrentUser: GetSessionUserTokenBySessionId failed.");
+                    throw new Exception("StartProcessAsCurrentUser: GetSessionUserTokenBySessionId failed. (SessionID: " +sessionId+ ")");
                 }
 
                 uint dwCreationFlags = CREATE_UNICODE_ENVIRONMENT | (uint)(visible ? CREATE_NEW_CONSOLE : CREATE_NO_WINDOW);
