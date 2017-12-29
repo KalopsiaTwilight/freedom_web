@@ -72,7 +72,7 @@ namespace FreedomLogic.Managers
             bnetAcc.ShaPassHash = bnetAccSha256Pass;
         }
 
-        public static GameAccount CreateGameAccount(int bnetAccId, string regEmail, string gameAccSha1Pass)
+        public static GameAccount CreateGameAccount(int bnetAccId, string regEmail, string gameAccSha1Pass, string username)
         {
             if (bnetAccId == 0)
             {
@@ -81,7 +81,7 @@ namespace FreedomLogic.Managers
 
             GameAccount gameAcc = new GameAccount()
             {
-                Username = string.Format("{0}#{1}", bnetAccId.ToString(), "1"),
+                Username = string.Format("{0}#{1}", username.ToUpper(), "1"),
                 ShaPassHash = gameAccSha1Pass,
                 Email = regEmail,
                 RegEmail = regEmail,
