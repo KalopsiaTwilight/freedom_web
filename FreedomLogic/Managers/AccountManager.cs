@@ -34,7 +34,9 @@ namespace FreedomLogic.Managers
         WotLK = 2,
         Cataclysm = 3,
         MoP = 4,
-        WoD = 5
+        WoD = 5,
+        Legion = 6,
+        BfA = 7
     }
 
     public class AccountManager
