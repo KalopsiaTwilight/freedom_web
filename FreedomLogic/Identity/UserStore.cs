@@ -40,7 +40,7 @@ namespace FreedomLogic.Identity
             _authDb.BnetAccounts.Add(bnetAcc);
             _authDb.SaveChanges();
 
-            GameAccount gameAcc = AccountManager.CreateGameAccount(bnetAcc.Id, user.RegEmail, user.GameAccPassHash, user.UserName);
+            GameAccount gameAcc = AccountManager.CreateGameAccount(bnetAcc.Id, user.RegEmail, user.GameAccPassHash);
             _authDb.GameAccounts.Add(gameAcc);
             _authDb.SaveChanges();
 
