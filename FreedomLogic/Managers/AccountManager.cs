@@ -88,7 +88,7 @@ namespace FreedomLogic.Managers
                 Email = regEmail,
                 RegEmail = regEmail,
                 Joined = DateTime.Now,
-                Expansion = GameExpansion.WoD,
+                Expansion = GameExpansion.BfA,
                 BnetAccountId = bnetAccId,
                 BnetAccountIndex = 1
             };

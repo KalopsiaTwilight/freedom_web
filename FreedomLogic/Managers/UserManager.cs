@@ -60,7 +60,7 @@ namespace FreedomLogic.Managers
             manager.UserValidator = new UserValidator<User, int>(manager)
             {
                 AllowOnlyAlphanumericUserNames = true,
-                RequireUniqueEmail = false
+                RequireUniqueEmail = true
             };
 
             // Configure password hashing
