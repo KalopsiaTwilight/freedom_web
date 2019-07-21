@@ -32,7 +32,8 @@ namespace FreedomLogic.Managers
         Mage = 8,
         Warlock = 9,
         Monk = 10,
-        Druid = 11
+        Druid = 11,
+        DemonHunter = 12
     }
 
     public enum CharRace
@@ -52,7 +53,11 @@ namespace FreedomLogic.Managers
         Worgen = 22,
         PandarenNeutral = 24,
         PandarenAlliance = 25,
-        PandarenHorde = 26
+        PandarenHorde = 26,
+        Nightborne = 27,
+        HighmountainTauren = 28,
+        VoidElf = 29,
+        LightforgedDraenei = 30
     }
 
     public class CharacterManager
