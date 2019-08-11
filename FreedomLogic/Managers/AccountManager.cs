@@ -187,5 +187,13 @@ namespace FreedomLogic.Managers
                 "Regards, <br /> WoW Freedom administration", 
                 username, callbackUrl, callbackUrl);
         }
+
+        public static List<GameAccount> GetGameAccountsList(int bnetAccId)
+        {
+            using (var db = new DbAuth())
+            {
+                return db.GameAccounts.Where(a => a.BnetAccountId == bnetAccId).ToList();
+            }
+        }
     }
 }

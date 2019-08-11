@@ -37,6 +37,7 @@ namespace FreedomLogic.Entities
 
             GameAccountAccess = AccountManager.GetGameAccAccess(GameAccount.Id);
             GameAccountCharacters = CharacterManager.GetAccountCharacters(GameAccount.Id);
+            //BNetAccountCharacters = CharacterManager.GetBNetAccountCharacters(BnetAccount.Id);
 
             return true;
         }
@@ -44,6 +45,8 @@ namespace FreedomLogic.Entities
         public User WebUser { get; set; }
 
         public List<Character> GameAccountCharacters { get; set; }
+
+        //public List<Character> BNetAccountCharacters { get; set; }
 
         public BnetAccount BnetAccount { get; set; }
 

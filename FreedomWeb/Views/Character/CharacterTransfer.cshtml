@@ -32,13 +32,11 @@
                 </div>
             </div>
             <div class="form-group">
-                @Html.LabelFor(m => m.TargetUsername)
-                @Html.TextBoxFor(m => m.TargetUsername, new { @class = "form-control input-wide" })
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.TargetUserPassword)
-                @Html.PasswordFor(m => m.TargetUserPassword, new { @class = "form-control input-wide" })
-            </div>            
+                @Html.LabelFor(m => m.AccountId)
+                <div>
+                    @Html.DropDownListFor(m => m.AccountId, Model.AccountSelectList, new { @class = "selectpicker" })
+                </div>
+            </div>    
             <div class="form-group">
                 @Html.LabelFor(m => m.CharacterId)
                 <div>

@@ -71,7 +71,18 @@ namespace FreedomLogic.Managers
                 return db.Characters.Where(c => c.GameAccountId == gameAccId).ToList();
             }
         }
+        /*
+        public static List<GameAccount> GetBNetAccountCharacters(int bNetAccId)
+        {
+            using (var db = new DbAuth())
+            {
+                //SELECT * FROM `7x_characters`.`characters` WHERE `7x_characters`.`characters`.`account` IN (SELECT `7x_auth`.`account`.`id` FROM `7x_auth`.`account` WHERE `7x_auth`.`account`.`battlenet_account`='gameAccId')
+                //return db.Characters.Where(c => c.CharData.BnetAccount.Id == bNetAccId).ToList();
 
+                return db.GameAccounts.Where(c => c.BnetAccountId == bNetAccId).ToList();
+            }
+        }
+        */
         public static List<Character> GetOnlineCharacters()
         {
             using (var db = new DbCharacters())

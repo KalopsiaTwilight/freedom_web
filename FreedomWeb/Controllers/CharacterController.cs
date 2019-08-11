@@ -37,6 +37,21 @@ namespace FreedomWeb.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
+            model.AccountSelectList = new List<SelectListItem>(
+                AccountManager.GetGameAccountsList(user.UserData.BnetAccount.Id)
+                .Select(c => new SelectListItem()
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Username,
+                    Selected = (c.Id == model.AccountId)
+                }));
+
+            if (model.AccountSelectList.Count == 0)
+            {
+                SetAlertMsg(ErrorRes.ModelErrCharacterTransferAccountNotFound, AlertMsgType.AlertDanger);
+                return RedirectToAction("Index", "Home");
+            }
+
             return View(model);
         }
 
@@ -54,6 +69,15 @@ namespace FreedomWeb.Controllers
                     Selected = (c.Id == model.CharacterId)
                 }));
 
+            model.AccountSelectList = new List<SelectListItem>(
+               AccountManager.GetGameAccountsList(currentUser.UserData.BnetAccount.Id)
+               .Select(c => new SelectListItem()
+               {
+                   Value = c.Id.ToString(),
+                   Text = c.Username,
+                   Selected = (c.Id == model.AccountId)
+               }));
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -66,12 +90,11 @@ namespace FreedomWeb.Controllers
                 ModelState.AddModelError("CharacterId", ErrorRes.ModelErrCharacterTransferInvalidOwner);
                 return View(model);
             }
-
-            var targetUser = UserManager.GetByUsername(model.TargetUsername.Trim());
-            CharacterManager.TransferCharacter(model.CharacterId, targetUser.UserData.GameAccount.Id);
+            
+            CharacterManager.TransferCharacter(model.CharacterId, model.AccountId);
             var movedCharacter = DbManager.GetByKey<Character, DbCharacters>(model.CharacterId);
 
-            SetAlertMsg(string.Format(AlertRes.AlertCharacterTransfer, movedCharacter.Name, movedCharacter.CharData.WebUser.UserName), AlertMsgType.AlertSuccess);
+            SetAlertMsg(string.Format(AlertRes.AlertCharacterTransfer, movedCharacter.Name, movedCharacter.CharData.GameAccount.Username), AlertMsgType.AlertSuccess);
             return RedirectToAction("Index", "Home");
         }
     }

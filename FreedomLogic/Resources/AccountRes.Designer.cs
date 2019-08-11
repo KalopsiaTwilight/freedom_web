@@ -205,6 +205,15 @@ namespace FreedomLogic.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Target Account.
+        /// </summary>
+        public static string FieldTargetAccount {
+            get {
+                return ResourceManager.GetString("FieldTargetAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Target account password.
         /// </summary>
         public static string FieldTargetAccountPassword {

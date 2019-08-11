@@ -17,34 +17,23 @@ namespace FreedomWeb.ViewModels.Characters
         public CharacterTransferViewModel()
         {
             CharacterSelectList = new List<SelectListItem>();
+            AccountSelectList = new List<SelectListItem>();
             CharacterId = 0;
+            AccountId = 0;
         }
 
-        [Required]
-        [Display(Name = "FieldUsername", ResourceType = typeof(AccountRes))]
-        public string TargetUsername { get; set; }
-
-        [Required]
-        [Display(Name = "FieldTargetAccountPassword", ResourceType = typeof(AccountRes))]
-        public string TargetUserPassword { get; set; }
+        [Display(Name = "FieldTargetAccount", ResourceType = typeof(AccountRes))]
+        public int AccountId { get; set; }
 
         [Display(Name = "FieldCharacterToTransfer", ResourceType = typeof(CharacterRes))]
         public int CharacterId { get; set; }
 
+        public List<SelectListItem> AccountSelectList { get; set; }
         public List<SelectListItem> CharacterSelectList { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var user = UserManager.GetByUsername(TargetUsername.Trim());
-            if (user == null)
-            {
-                yield return new ValidationResult(ErrorRes.ModelErrCharacterTransferAccountNotFound, new[] { "TargetUsername" });
-            }       
-            else if (user.BnetAccPassHash.ToUpper() != AccountManager.BnetAccountCalculateShaHash(user.UserName, TargetUserPassword))
-            {
-                yield return new ValidationResult(ErrorRes.ModelErrCharacterTransferInvalidPassword, new[] { "TargetUserPassword" });
-            }
-            else if (CharacterManager.IsGameAccFull(user.UserData.GameAccount.Id))
+            if (CharacterManager.IsGameAccFull(AccountId))
             {
                 yield return new ValidationResult(ErrorRes.ModelErrCharacterTransferAccountFull, new[] { "TargetUsername" });
             }
@@ -52,6 +41,11 @@ namespace FreedomWeb.ViewModels.Characters
             if (DbManager.GetByKey<Character, DbCharacters>(CharacterId) == null)
             {
                 yield return new ValidationResult(ErrorRes.ModelErrCharacterTransferCharDoesNotExist, new[] { "CharacterId" });
+            }
+
+            if (DbManager.GetByKey<GameAccount, DbAuth>(AccountId) == null)
+            {
+                yield return new ValidationResult(ErrorRes.ModelErrCharacterTransferAccountNotFound, new[] { "AccountId" });
             }
         }
     }

@@ -174,4 +174,7 @@
   <data name="FieldUsername" xml:space="preserve">
     <value>Username</value>
   </data>
+  <data name="FieldTargetAccount" xml:space="preserve">
+    <value>Target Account</value>
+  </data>
 </root>
