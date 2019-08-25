@@ -49,4 +49,9 @@ namespace FreedomLogic.Entities
 
         public GameAccountAccess AccountAccess { get; set; }
     }
+
+    public class GameAccountIDs
+    {
+        public int ID { get; set; }
+    }
 }

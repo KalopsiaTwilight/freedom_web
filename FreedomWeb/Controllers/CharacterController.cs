@@ -60,6 +60,31 @@ namespace FreedomWeb.Controllers
         public ActionResult CharacterTransfer(CharacterTransferViewModel model)
         {
             var currentUser = GetCurrentUser();
+            /*model.CharacterSelectList = new List<SelectListItem>(
+                CharacterManager.GetAccountCharacters(currentUser.UserData.GameAccount.Id)
+                .Select(c => new SelectListItem()
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name,
+                    Selected = (c.Id == model.CharacterId)
+                }));*/
+
+
+            ///////////////////////////////////////// WORK
+
+
+            
+
+            int[] accountIds = AccountManager.GetGameAccountIDs(currentUser.UserData.BnetAccount.Id);
+
+            foreach (int accountId in accountIds)
+            { }
+            // Move all to AccountManager?
+
+
+            /////////////////////////////////////////
+
+
             model.CharacterSelectList = new List<SelectListItem>(
                 CharacterManager.GetAccountCharacters(currentUser.UserData.GameAccount.Id)
                 .Select(c => new SelectListItem()

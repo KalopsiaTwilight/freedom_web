@@ -195,5 +195,16 @@ namespace FreedomLogic.Managers
                 return db.GameAccounts.Where(a => a.BnetAccountId == bnetAccId).ToList();
             }
         }
+        
+        public static int[] GetGameAccountIDs(int bnetAccId)
+        {
+            using (var db = new DbAuth())
+            {
+                return db.GameAccounts
+                    .Where(a => a.BnetAccountId == bnetAccId)
+                    .Select(a => a.Id)
+                    .ToArray();
+            }
+        }
     }
 }
