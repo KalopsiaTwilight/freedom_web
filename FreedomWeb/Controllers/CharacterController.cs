@@ -74,11 +74,12 @@ namespace FreedomWeb.Controllers
 
 
             
-
+            /*
             int[] accountIds = AccountManager.GetGameAccountIDs(currentUser.UserData.BnetAccount.Id);
 
             foreach (int accountId in accountIds)
             { }
+            */
             // Move all to AccountManager?
 
 

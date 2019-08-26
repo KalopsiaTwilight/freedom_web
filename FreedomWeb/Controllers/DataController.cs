@@ -91,7 +91,8 @@ namespace FreedomWeb.Controllers
                     ClassIconPath = character.CharData.ClassData.IconPath,
                     Gender = Enum.GetName(character.Gender.GetType(), character.Gender),
                     MapName = !CharacterManager.IsGMOn(character.Id) ? character.CharData.MapName : (allowUsernameViewing ? "(" + character.CharData.MapName + ")" : "(Hidden)"), //Kret
-                    ZoneName = !CharacterManager.IsGMOn(character.Id) ? character.CharData.ZoneName : (allowUsernameViewing ? "(" + character.CharData.ZoneName + ")" : "(Hidden)") //Kret
+                    ZoneName = !CharacterManager.IsGMOn(character.Id) ? character.CharData.ZoneName : (allowUsernameViewing ? "(" + character.CharData.ZoneName + ")" : "(Hidden)"), //Kret
+                    Latency = character.Latency
                 });
             }
 

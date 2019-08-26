@@ -30,5 +30,7 @@ namespace FreedomWeb.Models
         public string MapName { get; set; }
 
         public string ZoneName { get; set; }
+
+        public int Latency { get; set; }
     }
 }

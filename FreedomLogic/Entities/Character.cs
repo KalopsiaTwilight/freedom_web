@@ -47,6 +47,9 @@ namespace FreedomLogic.Entities
         [Column("deleteDate")]
         public DateTime? DeleteDate { get; set; }
 
+        [Column("latency")]
+        public int Latency { get; set; }
+
         [NotMapped]
         public CharData CharData
         {
