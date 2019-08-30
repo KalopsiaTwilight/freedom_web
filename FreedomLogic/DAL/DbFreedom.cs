@@ -30,6 +30,7 @@ namespace FreedomLogic.DAL
         public DbSet<ItemClassInfo> ItemClassInfos { get; set; }
         public DbSet<ItemSubclassInfo> ItemSubclassInfos { get; set; }
         public DbSet<FreedomCommand> FreedomCommands { get; set; }
+        public DbSet<GameobjectTypeInfo> GameobjectTypeInfos { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

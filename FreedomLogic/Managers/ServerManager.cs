@@ -34,6 +34,15 @@ namespace FreedomLogic.Managers
         ItemDisplayId
     }
 
+    public enum EnumGameobjectSearchType
+    {
+        [Display(Name = "ListItemEnumSearchTypeGameobjectEntryId", ResourceType = typeof(ServerRes))]
+        GameobjectEntryId,
+
+        [Display(Name = "ListItemEnumSearchTypeGameobjectDisplayId", ResourceType = typeof(ServerRes))]
+        GameobjectDisplayId
+    }
+
     public static class ServerManager
     {
         public static class Control
@@ -43,7 +52,7 @@ namespace FreedomLogic.Managers
             public static int GetWorldServerPid()
             {
                 string pidPath = Path.Combine(SettingsManager.GetServerDir(), SettingsManager.GetWorldServerPidFilename());
-                int pid = 0;
+                int pid;
 
                 if (!File.Exists(pidPath))
                     return 0;
@@ -53,7 +62,9 @@ namespace FreedomLogic.Managers
                     string input = File.ReadAllText(pidPath);
                     int.TryParse(input, out pid);
                 }   
+                #pragma warning disable CS0168 // Variable is declared but never used
                 catch (IOException e) // TODO: Log exception
+                #pragma warning restore CS0168 // Variable is declared but never used
                 {
                     return 0;
                 }   
@@ -74,7 +85,9 @@ namespace FreedomLogic.Managers
                     string input = File.ReadAllText(pidPath);
                     int.TryParse(input, out pid);
                 }
+                #pragma warning disable CS0168 // Variable is declared but never used
                 catch (IOException e) // TODO: Log exception
+                #pragma warning restore CS0168 // Variable is declared but never used
                 {
                     return 0;
                 }
@@ -507,6 +520,50 @@ namespace FreedomLogic.Managers
 
             return list;
         }
+
+        private static List<GameobjectTemplate> GameobjectSearchByEntryId(int id)
+        {
+            using (var db = new DbWorld())
+            {
+                return db.GameobjectTemplates.Where(i => i.Id == id).ToList();
+            }
+        }
+
+        private static List<GameobjectTemplate> GameobjectSearchByDisplayId(int id)
+        {
+            using (var db = new DbWorld())
+            {
+                return db.GameobjectTemplates.Where(i => i.DisplayId == id).ToList();
+            }
+        }
+
+        private static List<GameobjectTemplate> GameobjectSearchByName(string name)
+        {
+            using (var db = new DbWorld())
+            {
+                return db.GameobjectTemplates.Where(i => i.Name == name).ToList();
+            }
+        }
+
+        public static List<GameobjectTemplate> GameobjectSearch(int id, EnumGameobjectSearchType searchType)
+        {
+            var list = new List<GameobjectTemplate>();
+
+            if (id != 0)
+            {
+                switch (searchType)
+                {
+                    case EnumGameobjectSearchType.GameobjectEntryId:
+                        list = GameobjectSearchByEntryId(id);
+                        break;
+                    case EnumGameobjectSearchType.GameobjectDisplayId:
+                        list = GameobjectSearchByDisplayId(id);
+                        break;
+                }
+            }
+
+            return list;
+        }
         #endregion
 
         #region CommandList
@@ -624,6 +681,18 @@ namespace FreedomLogic.Managers
                 var itemInventoryType = db.ItemInventoryTypeInfos.Where(i => i.Id == itemInventoryTypeId).FirstOrDefault();
                 if (itemInventoryType != null)
                     return itemInventoryType.Name;
+                else
+                    return "Unknown";
+            }
+        }
+
+        public static string GetGameobjectTypeName(int gameobjectTypeId)
+        {
+            using (var db = new DbFreedom())
+            {
+                var gameobjectType = db.GameobjectTypeInfos.Where(i => i.Id == gameobjectTypeId).FirstOrDefault();
+                if (gameobjectType != null)
+                    return gameobjectType.Name;
                 else
                     return "Unknown";
             }

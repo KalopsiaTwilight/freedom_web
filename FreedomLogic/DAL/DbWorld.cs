@@ -19,6 +19,7 @@ namespace FreedomLogic.DAL
 
         public DbSet<CreatureTemplate> CreatureTemplates { get; set; }
         public DbSet<CreatureEquipTemplate> CreatureEquipTemplates { get; set; }
+        public DbSet<GameobjectTemplate> GameobjectTemplates { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

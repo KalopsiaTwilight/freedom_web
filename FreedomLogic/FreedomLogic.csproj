@@ -103,6 +103,7 @@
     <Compile Include="Entities\ClassInfo.cs" />
     <Compile Include="Entities\CreatureDisplayInfo.cs" />
     <Compile Include="Entities\CreatureEquipTemplate.cs" />
+    <Compile Include="Entities\GameobjectTemplate.cs" />
     <Compile Include="Entities\CreatureTemplate.cs" />
     <Compile Include="Entities\CustomItemInfo.cs" />
     <Compile Include="Entities\FreedomCommand.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Entities\GameAccountAccess.cs" />
     <Compile Include="Entities\BnetAccount.cs" />
     <Compile Include="Entities\ItemClassInfo.cs" />
+    <Compile Include="Entities\GameobjectTypeInfo.cs" />
     <Compile Include="Entities\ItemInventoryTypeInfo.cs" />
     <Compile Include="Entities\ItemSubclassInfo.cs" />
     <Compile Include="Entities\Realmlist.cs" />
@@ -188,6 +190,7 @@
     <EmbeddedResource Include="Resources\ServerRes.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ServerRes.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

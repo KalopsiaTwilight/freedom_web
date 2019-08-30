@@ -19,7 +19,7 @@ namespace FreedomLogic.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class ServerRes {
@@ -201,6 +201,33 @@ namespace FreedomLogic.Resources {
         public static string ListItemEnumSearchTypeCreatureEntryId {
             get {
                 return ResourceManager.GetString("ListItemEnumSearchTypeCreatureEntryId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gameobject display id.
+        /// </summary>
+        public static string ListItemEnumSearchTypeGameobjectDisplayId {
+            get {
+                return ResourceManager.GetString("ListItemEnumSearchTypeGameobjectDisplayId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gameobject entry id.
+        /// </summary>
+        public static string ListItemEnumSearchTypeGameobjectEntryId {
+            get {
+                return ResourceManager.GetString("ListItemEnumSearchTypeGameobjectEntryId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gameobject name.
+        /// </summary>
+        public static string ListItemEnumSearchTypeGameobjectName {
+            get {
+                return ResourceManager.GetString("ListItemEnumSearchTypeGameobjectName", resourceCulture);
             }
         }
         

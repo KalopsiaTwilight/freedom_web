@@ -171,4 +171,13 @@
   <data name="ListItemEnumSearchTypeItemEntryId" xml:space="preserve">
     <value>Item entry id</value>
   </data>
+  <data name="ListItemEnumSearchTypeGameobjectEntryId" xml:space="preserve">
+    <value>Gameobject entry id</value>
+  </data>
+  <data name="ListItemEnumSearchTypeGameobjectDisplayId" xml:space="preserve">
+    <value>Gameobject display id</value>
+  </data>
+  <data name="ListItemEnumSearchTypeGameobjectName" xml:space="preserve">
+    <value>Gameobject name</value>
+  </data>
 </root>

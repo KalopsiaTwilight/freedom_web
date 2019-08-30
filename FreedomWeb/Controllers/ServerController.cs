@@ -26,8 +26,10 @@ namespace FreedomWeb.Controllers
         [HttpPost]
         public async Task<ActionResult> SearchCustomItems(SearchCustomItemsViewModel model)
         {
-            var resultModel = new CustomItemsSearchResultViewModel();
-            resultModel.SearchId = model.SearchId ?? 0;
+            var resultModel = new CustomItemsSearchResultViewModel
+            {
+                SearchId = model.SearchId ?? 0
+            };
             var itemInfoList = await ServerManager.CustomItemSearch(resultModel.SearchId, model.SearchType);
             foreach (var item in itemInfoList)
             {
@@ -46,6 +48,35 @@ namespace FreedomWeb.Controllers
                 });
             }
             return PartialView("_CustomItemsSearchResult", resultModel);
+        }
+
+        public ActionResult SearchGameobjects()
+        {
+            var model = new SearchGameobjectsViewModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult SearchGameobjects(SearchGameobjectsViewModel model)
+        {
+            var resultModel = new GameobjectsSearchResultViewModel
+            {
+                SearchId = model.SearchId ?? 0
+            };
+            var gameobjectInfoList = ServerManager.GameobjectSearch(resultModel.SearchId, model.SearchType);
+            foreach (var gob in gameobjectInfoList)
+            {
+                resultModel.ResultList.Add(new GameobjectResultListItem()
+                {
+                    EntryId = gob.Id,
+                    Type = gob.Type,
+                    TypeName = ServerManager.GetGameobjectTypeName(gob.Type),
+                    DisplayId = gob.DisplayId,
+                    Name = gob.Name,
+                    Size = gob.Size
+                });
+            }
+            return PartialView("_GameobjectsSearchResult", resultModel);
         }
 
         [HttpGet]

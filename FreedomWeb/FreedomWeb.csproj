@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -181,6 +182,7 @@
     <Compile Include="Infrastructure\FreedomAuthorizeAttribute.cs" />
     <Compile Include="Infrastructure\FreedomController.cs" />
     <Compile Include="Models\AdminListItem.cs" />
+    <Compile Include="Models\GameobjectResultListItem.cs" />
     <Compile Include="Models\CustomItemResultListItem.cs" />
     <Compile Include="Models\StatusCharListItem.cs" />
     <Compile Include="Models\UserListItem.cs" />
@@ -202,7 +204,9 @@
     <Compile Include="ViewModels\Errors\ErrorViewModel.cs" />
     <Compile Include="ViewModels\Home\StatusViewModel.cs" />
     <Compile Include="ViewModels\Server\CommandListViewModel.cs" />
+    <Compile Include="ViewModels\Server\GameobjectsSearchResultViewModel.cs" />
     <Compile Include="ViewModels\Server\CustomItemsSearchResultViewModel.cs" />
+    <Compile Include="ViewModels\Server\SearchGameobjectsViewModel.cs" />
     <Compile Include="ViewModels\Server\SearchCustomItemsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -343,6 +347,8 @@
     <Content Include="Views\Admin\ServerControl.cshtml" />
     <Content Include="Views\Admin\_ServerControlData.cshtml" />
     <Content Include="Views\Data\_StatusLinePartial.cshtml" />
+    <Content Include="Views\Server\_GameobjectsSearchResult.cshtml" />
+    <Content Include="Views\Server\SearchGameobjects.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,81 @@
+﻿@model FreedomWeb.ViewModels.Server.SearchGameobjectsViewModel
+@{
+    ViewBag.Title = "Search Gameobjects";
+}
+
+@using (Ajax.BeginForm("SearchGameobjects", "Server", new { @id = "FormSearchGameobjects" }, new AjaxOptions()
+{
+    HttpMethod = "Post",
+    AllowCache = false,
+    LoadingElementDuration = 500,
+    LoadingElementId = "SearchResultLoadingIcon",
+    UpdateTargetId = "SearchResultPanel"
+}))
+{
+    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <!--INPUT FIELDS-->
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.SearchId)
+                @Html.TextBoxFor(m => m.SearchId, new { @class = "form-control input-full", @type = "number" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.SearchType)
+                <div>                    
+                    @Html.DropDownListFor(m => m.SearchType, Model.SearchTypeList, new { @class = "selectpicker" })
+                </div>
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+        </div>
+        <!--HELP TEXT-->
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="fa fa-info-circle"></i>
+                    <span>Gameobject search help</span>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>
+                            Tip: You can also use <a href="http://www.wowhead.com/">Wowhead</a> website to search for gameobject display ids.
+                            To do that you need to open wowhead gameobject page's source (Ctrl+U) and search for Display ID number value after first occurance of "displayid" string. 
+                            After finding out gameobject's display id - return to this page and use it in the search box and set search type to 
+                            <b>@FreedomLogic.Resources.ServerRes.ListItemEnumSearchTypeGameobjectDisplayId</b>. This method will only list armor items equipped by the creature/npc.
+                        </li>
+                        <li>
+                            Search type <b>@FreedomLogic.Resources.ServerRes.ListItemEnumSearchTypeGameobjectEntryId</b>:
+                            Search with gameobject entry/spawn id. Successful result will list info used in WoW Freedom's server. 
+                            The server does not have every gameobject defined, so if the search query can't find the object, then see the above point.
+                        </li>
+                        <li>
+                            Search type <b>@FreedomLogic.Resources.ServerRes.ListItemEnumSearchTypeGameobjectDisplayId</b>:
+                            Search with gameobject display id. Successful result will list objects that use the same display id (same model and texture). 
+                            This is useful for searching for gameobjects with different types.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <i class="fa fa-spinner fa-spin" style="display:none;" id="SearchResultLoadingIcon"></i>
+                    <span>Search result</span>
+                </div>
+                <div class="panel-body" id="SearchResultPanel">
+                    <p>Nothing was searched yet...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts
+{
+    <script type="text/javascript">
+    </script>
+}
