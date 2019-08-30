@@ -52,7 +52,7 @@ namespace FreedomLogic.Managers
             public static int GetWorldServerPid()
             {
                 string pidPath = Path.Combine(SettingsManager.GetServerDir(), SettingsManager.GetWorldServerPidFilename());
-                int pid;
+                int pid = 0;
 
                 if (!File.Exists(pidPath))
                     return 0;

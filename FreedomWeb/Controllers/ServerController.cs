@@ -26,10 +26,8 @@ namespace FreedomWeb.Controllers
         [HttpPost]
         public async Task<ActionResult> SearchCustomItems(SearchCustomItemsViewModel model)
         {
-            var resultModel = new CustomItemsSearchResultViewModel
-            {
-                SearchId = model.SearchId ?? 0
-            };
+            var resultModel = new CustomItemsSearchResultViewModel();
+            resultModel.SearchId = model.SearchId ?? 0;
             var itemInfoList = await ServerManager.CustomItemSearch(resultModel.SearchId, model.SearchType);
             foreach (var item in itemInfoList)
             {
@@ -59,10 +57,8 @@ namespace FreedomWeb.Controllers
         [HttpPost]
         public ActionResult SearchGameobjects(SearchGameobjectsViewModel model)
         {
-            var resultModel = new GameobjectsSearchResultViewModel
-            {
-                SearchId = model.SearchId ?? 0
-            };
+            var resultModel = new GameobjectsSearchResultViewModel();
+            resultModel.SearchId = model.SearchId ?? 0;
             var gameobjectInfoList = ServerManager.GameobjectSearch(resultModel.SearchId, model.SearchType);
             foreach (var gob in gameobjectInfoList)
             {
