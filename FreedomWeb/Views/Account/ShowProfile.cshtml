@@ -1,8 +1,8 @@
-﻿@model FreedomWeb.ViewModels.Accounts.ProfileViewModel
-@using Microsoft.AspNet.Identity;
+@using System.Security.Claims;
+@model FreedomWeb.ViewModels.Accounts.ProfileViewModel
 @{
     ViewBag.Title = Model.DisplayName + "'s profile";
-    bool viewSensittive = (User.Identity.GetUserId<int>() == Model.UserId) || User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin);
+    bool viewSensittive = (User.FindFirstValue(ClaimTypes.NameIdentifier) == Model.UserId.ToString()) || User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin);
 }
 @if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
 {

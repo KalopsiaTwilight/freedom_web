@@ -5,25 +5,44 @@ using FreedomLogic.Managers;
 using FreedomLogic.Resources;
 using FreedomWeb.Infrastructure;
 using FreedomWeb.ViewModels.Characters;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using System.Threading.Tasks;
 
 namespace FreedomWeb.Controllers
 {
-    [FreedomAuthorize]
+    [Authorize]
     public class CharacterController : FreedomController
     {
+        private readonly UserManager<User> _userManager;
+        private readonly DbCharacters _charactersDb;
+        private readonly DbAuth _authDb;
+        private readonly CharacterManager _characterManager;
+        private readonly AccountManager _accountManager;
+
+        public CharacterController(UserManager<User> userManager, DbCharacters charactersDb, CharacterManager characterManager, AccountManager accountManager, DbAuth authDb)
+        {
+            _userManager = userManager;
+            _charactersDb = charactersDb;
+            _characterManager = characterManager;   
+            _accountManager = accountManager;
+            _authDb = authDb;
+        }
+
         // GET: Character
         [HttpGet]
-        public ActionResult CharacterTransfer()
+        public async Task<ActionResult> CharacterTransfer()
         {
             var model = new CharacterTransferViewModel();
-            var user = GetCurrentUser();
+            var user = await _userManager.FindByIdAsync(CurrentUserId);
             model.CharacterSelectList = new List<SelectListItem>(
-                CharacterManager.GetAccountCharacters(user.UserData.GameAccount.Id)
+                _characterManager.GetAccountCharacters(user.UserData.GameAccount.Id)
                 .Select(c => new SelectListItem()
                 {
                     Value = c.Id.ToString(),
@@ -38,7 +57,7 @@ namespace FreedomWeb.Controllers
             }
 
             model.AccountSelectList = new List<SelectListItem>(
-                AccountManager.GetGameAccountsList(user.UserData.BnetAccount.Id)
+                _accountManager.GetGameAccountsList(user.UserData.BnetAccount.Id)
                 .Select(c => new SelectListItem()
                 {
                     Value = c.Id.ToString(),
@@ -57,46 +76,31 @@ namespace FreedomWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CharacterTransfer(CharacterTransferViewModel model)
+        public async Task<ActionResult> CharacterTransfer(CharacterTransferViewModel model)
         {
-            var currentUser = GetCurrentUser();
-            /*model.CharacterSelectList = new List<SelectListItem>(
-                CharacterManager.GetAccountCharacters(currentUser.UserData.GameAccount.Id)
-                .Select(c => new SelectListItem()
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name,
-                    Selected = (c.Id == model.CharacterId)
-                }));*/
-
-
-            ///////////////////////////////////////// WORK
-
-
-            
-            /*
-            int[] accountIds = AccountManager.GetGameAccountIDs(currentUser.UserData.BnetAccount.Id);
-
-            foreach (int accountId in accountIds)
-            { }
-            */
-            // Move all to AccountManager?
-
-
-            /////////////////////////////////////////
-
-
+            if (_characterManager.IsGameAccFull(model.AccountId))
+            {
+                ModelState.AddModelError("TargetUsername", ErrorRes.ModelErrCharacterTransferAccountFull);
+            }
+            if (_charactersDb.Characters.Find(model.CharacterId) == null)
+            {
+                ModelState.AddModelError("CharacterId", ErrorRes.ModelErrCharacterTransferCharDoesNotExist);
+            }
+            if (_authDb.GameAccounts.Find(model.AccountId) == null)
+            {
+                ModelState.AddModelError("AccountId", ErrorRes.ModelErrCharacterTransferAccountNotFound);
+            }
+            var currentUser = await _userManager.FindByIdAsync(CurrentUserId);
             model.CharacterSelectList = new List<SelectListItem>(
-                CharacterManager.GetAccountCharacters(currentUser.UserData.GameAccount.Id)
+                _characterManager.GetAccountCharacters(currentUser.UserData.GameAccount.Id)
                 .Select(c => new SelectListItem()
                 {
                     Value = c.Id.ToString(),
                     Text = c.Name,
                     Selected = (c.Id == model.CharacterId)
                 }));
-
             model.AccountSelectList = new List<SelectListItem>(
-               AccountManager.GetGameAccountsList(currentUser.UserData.BnetAccount.Id)
+               _accountManager.GetGameAccountsList(currentUser.UserData.BnetAccount.Id)
                .Select(c => new SelectListItem()
                {
                    Value = c.Id.ToString(),
@@ -117,8 +121,8 @@ namespace FreedomWeb.Controllers
                 return View(model);
             }
             
-            CharacterManager.TransferCharacter(model.CharacterId, model.AccountId);
-            var movedCharacter = DbManager.GetByKey<Character, DbCharacters>(model.CharacterId);
+            _characterManager.TransferCharacter(model.CharacterId, model.AccountId);
+            var movedCharacter = _charactersDb.Characters.Find(model.CharacterId);
 
             SetAlertMsg(string.Format(AlertRes.AlertCharacterTransfer, movedCharacter.Name, movedCharacter.CharData.GameAccount.Username), AlertMsgType.AlertSuccess);
             return RedirectToAction("Index", "Home");

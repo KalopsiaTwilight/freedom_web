@@ -1,10 +1,5 @@
 ﻿using FreedomLogic.Resources;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 
 namespace FreedomWeb.ViewModels.Errors
 {
@@ -29,7 +24,5 @@ namespace FreedomWeb.ViewModels.Errors
     public class ErrorViewModel
     {
         public ErrorCode Error { get; set; }
-
-        public HandleErrorInfo ErrInfo { get; set; }
     }
 }

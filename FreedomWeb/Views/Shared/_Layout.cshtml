@@ -4,19 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - WoW Freedom Mini-manager</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="~/css/bundle.css" />
+    <script src="~/js/modernizr" ></script>
 </head>
 <body>
-    @Html.Partial("~/Views/Shared/_TopNav.cshtml")
-
+    <partial name="_TopNav"></partial>
     <div class="container-fluid body-content">
         <div class="row">
             <div class="col-md-3">
-                @Html.Partial("~/Views/Shared/_SideBarNav.cshtml")
+                <partial name="_SideBarNav"></partial>
             </div>
             <div class="col-md-9">
-                @Html.Partial("~/Views/Shared/_Alerts.cshtml")
+                <partial name="_Alerts"></partial>
                 <div class="main panel panel-default">
                     <div class="panel-heading">
                         <h3>@ViewBag.Title</h3>
@@ -30,16 +29,16 @@
     </div>
 
     <footer id="mainFooter">
-        @Html.Partial("~/Views/Shared/_Footer.cshtml")
+        <partial name="_Footer"></partial>
     </footer>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/jqueryajax")
-    @Scripts.Render("~/bundles/jqueryDateFormat")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/dataTables")
-    @Scripts.Render("~/bundles/bootstrapSelect")
-    @Scripts.Render("~/bundles/freedom_common")
+    <script src="~/js/jquery"></script>
+        @Html.RenderUnobtrusiveAjaxScript()
+    <script src="~/js/jqueryDateFormat"></script>
+    <script src="~/js/bootstrap"></script>
+    <script src="~/js/dataTables"></script>
+    <script src="~/js/bootstrapSelect"></script>
+    <script src="~/js/freedom"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

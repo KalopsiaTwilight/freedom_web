@@ -1,13 +1,6 @@
 ﻿using FreedomLogic.Identity;
-using FreedomLogic.Managers;
-using FreedomWeb.Controllers;
-using FreedomWeb.ViewModels.Errors;
-using Microsoft.AspNet.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FreedomWeb.Infrastructure
 {
@@ -51,15 +44,7 @@ namespace FreedomWeb.Infrastructure
             return RedirectToAction("Index", "Home");
         }
 
-        protected ActionResult RedirectToError(ErrorCode code)
-        {
-            TempData[ErrorController.TempDataErrorCodeConst] = code;
-            return RedirectToAction("Oops", "Error");
-        }
-
-        protected User GetCurrentUser()
-        {
-            return UserManager.GetByKey(User.Identity.GetUserId<int>());
-        }
+        protected string CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
+        protected string GetCurrentUserName => User.FindFirstValue(ClaimTypes.Name);
     }
 }

@@ -3,16 +3,15 @@
     ViewBag.Title = "Search Gameobjects";
 }
 
-@using (Ajax.BeginForm("SearchGameobjects", "Server", new { @id = "FormSearchGameobjects" }, new AjaxOptions()
+@using (Html.AjaxBeginForm("SearchGameobjects", "Server", new { @id = "FormSearchGameobjects" }, new AjaxOptions()
 {
     HttpMethod = "Post",
-    AllowCache = false,
     LoadingElementDuration = 500,
     LoadingElementId = "SearchResultLoadingIcon",
     UpdateTargetId = "SearchResultPanel"
 }))
 {
-    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
     @Html.AntiForgeryToken()
     <div class="row">
         <!--INPUT FIELDS-->

@@ -4,7 +4,7 @@
 }
 @using (Html.BeginForm("ChangeEmail", "Account", FormMethod.Post, new { @id = "FormChangeEmail" }))
 {
-    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
     @Html.AntiForgeryToken()
     <div class="row">
         <div class="col-md-12">

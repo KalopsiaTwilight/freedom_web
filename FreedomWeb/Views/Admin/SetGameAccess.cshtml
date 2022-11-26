@@ -4,7 +4,7 @@
 }
 @using (Html.BeginForm("SetGameAccess", "Admin", FormMethod.Post, new { @id = "FormSetGameAccess" }))
 {
-    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.GameAccId)
     <div class="row">

@@ -1,15 +1,58 @@
 ﻿using FreedomLogic.Infrastructure;
-using FreedomLogic.Managers;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FreedomLogic.Entities
 {
+
+    public enum CharGender
+    {
+        Male = 0,
+        Female = 1
+    }
+
+    public enum CharClass
+    {
+        None = 0,
+        Warrior = 1,
+        Paladin = 2,
+        Hunter = 3,
+        Rogue = 4,
+        Priest = 5,
+        DeathKnight = 6,
+        Shaman = 7,
+        Mage = 8,
+        Warlock = 9,
+        Monk = 10,
+        Druid = 11,
+        DemonHunter = 12
+    }
+
+    public enum CharRace
+    {
+        None = 0,
+        Human = 1,
+        Orc = 2,
+        Dwarf = 3,
+        NightElf = 4,
+        Forsaken = 5,
+        Tauren = 6,
+        Gnome = 7,
+        Troll = 8,
+        Goblin = 9,
+        BloodElf = 10,
+        Draenei = 11,
+        Worgen = 22,
+        PandarenNeutral = 24,
+        PandarenAlliance = 25,
+        PandarenHorde = 26,
+        Nightborne = 27,
+        HighmountainTauren = 28,
+        VoidElf = 29,
+        LightforgedDraenei = 30
+    }
+
     [Table("characters")]
     public class Character : EntityBase
     {
@@ -51,17 +94,6 @@ namespace FreedomLogic.Entities
         public int Latency { get; set; }
 
         [NotMapped]
-        public CharData CharData
-        {
-            get
-            {
-                var charData = new CharData();
-
-                if (charData.Load(this.Id))
-                    return charData;
-                else
-                    return null;
-            }
-        }
+        public CharData CharData { get; set; }
     }
 }

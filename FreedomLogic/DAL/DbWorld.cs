@@ -1,31 +1,23 @@
 ﻿using FreedomLogic.Entities;
-using MySql.Data.Entity;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreedomLogic.DAL
 {
-    [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class DbWorld : DbContext
     {
-        public DbWorld()
-            : base("DBWorldContext")
+        public DbWorld(DbContextOptions<DbWorld> options)
+            : base(options)
         {
         }
-
         public DbSet<CreatureTemplate> CreatureTemplates { get; set; }
         public DbSet<CreatureEquipTemplate> CreatureEquipTemplates { get; set; }
         public DbSet<GameobjectTemplate> GameobjectTemplates { get; set; }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CreatureTemplate>()
                 .HasMany(e1 => e1.CreatureEquipTemplates)
-                .WithRequired(e2 => e2.CreatureTemplate);
+                .WithOne(e2 => e2.CreatureTemplate);
         }
     }
 }

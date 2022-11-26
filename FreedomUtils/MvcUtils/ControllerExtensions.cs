@@ -4,7 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FreedomUtils.MvcUtils
 {
@@ -18,16 +22,15 @@ namespace FreedomUtils.MvcUtils
         /// <param name="model">Model containing data to render.</param>
         /// <param name="prefix">The prefix for the model, default value is null.</param>
         /// <returns>Rendered (partial) view as string.</returns>
-        public static string RenderPartialViewToString(this Controller controller, string viewName, object model, string prefix = null)
+        public static Task<string> RenderPartialViewToStringAsync(this Controller controller, string viewName, object model, string prefix = null)
         {
             if (controller == null)
                 throw new System.ArgumentNullException("controller");
             if (string.IsNullOrEmpty(viewName))
-                viewName = controller.ControllerContext.RouteData.GetRequiredString("action");
+                viewName = (string) controller.ControllerContext.RouteData.Values["action"];
             if (!string.IsNullOrWhiteSpace(prefix))
-                controller.ViewData = new ViewDataDictionary { TemplateInfo = new TemplateInfo { HtmlFieldPrefix = prefix } };
-
-            return RenderRazorViewToString(controller, viewName, model, true);
+                controller.ViewData.TemplateInfo.HtmlFieldPrefix = prefix; 
+            return RenderRazorViewToStringAsync(controller, viewName, model, true);
         }
 
         /// <summary>
@@ -37,9 +40,9 @@ namespace FreedomUtils.MvcUtils
         /// <param name="viewName">The name of a view to render.</param>
         /// <param name="model">Model containing data to render.</param>
         /// <returns>Rendered view as string.</returns>
-        public static string RenderViewToString(this Controller controller, string viewName, object model)
+        public static Task<string> RenderViewToStringAsync(this Controller controller, string viewName, object model)
         {
-            return RenderRazorViewToString(controller, viewName, model, false);
+            return RenderRazorViewToStringAsync(controller, viewName, model, false);
         }
 
         /// <summary>
@@ -50,21 +53,23 @@ namespace FreedomUtils.MvcUtils
         /// <param name="model">The model.</param>
         /// <param name="renderPartialView">If set to <c>true</c> [render partial view].</param>
         /// <returns>String containing rendered view. </returns>
-        private static string RenderRazorViewToString(Controller controller, string viewName, object model, bool renderPartialView)
+        private static async Task<string> RenderRazorViewToStringAsync(Controller controller, string viewName, object model, bool renderPartialView)
         {
             if (model != null)
                 controller.ViewData.Model = model;
 
             using (var sw = new StringWriter())
             {
+                var viewEngine = controller.HttpContext.RequestServices.GetService<IRazorViewEngine>();
                 var viewResult = renderPartialView
-                    ? ViewEngines.Engines.FindPartialView(controller.ControllerContext, viewName)
-                    : ViewEngines.Engines.FindView(controller.ControllerContext, viewName, null);
-                var viewContext = new ViewContext(controller.ControllerContext, viewResult.View, controller.ViewData, controller.TempData, sw);
-                viewResult.View.Render(viewContext, sw);
-                viewResult.ViewEngine.ReleaseView(controller.ControllerContext, viewResult.View);
+                    ? viewEngine.FindView(controller.ControllerContext, viewName, false)
+                    : viewEngine.FindView(controller.ControllerContext, viewName, true);
 
-                return sw.GetStringBuilder().ToString();
+                viewResult.EnsureSuccessful(null);
+                var viewContext = new ViewContext(controller.ControllerContext, viewResult.View, controller.ViewData, controller.TempData, sw, new HtmlHelperOptions());
+                await viewResult.View.RenderAsync(viewContext);
+
+                return sw.ToString();
             }
         }
     }

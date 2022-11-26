@@ -1,17 +1,12 @@
 ﻿using FreedomLogic.DAL;
 using FreedomLogic.Entities;
 using FreedomLogic.Identity;
-using FreedomLogic.Infrastructure;
 using FreedomLogic.Resources;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FreedomLogic.Managers
 {
@@ -41,21 +36,28 @@ namespace FreedomLogic.Managers
 
     public class AccountManager
     {
+        private readonly DbAuth _authDb;
+
+        public AccountManager(DbAuth authDb)
+        {
+            _authDb = authDb;
+        }
+
         public const string FreedomBnetEmailConst = "@FREEDOM.COM";
 
-        public static string BnetAccountCalculateShaHash(string username, string password)
+        public string BnetAccountCalculateShaHash(string username, string password)
         {
             string userEmail = (username + FreedomBnetEmailConst).ToUpper();
             string usernameEmailHash = FreedomShaHasher.Sha256HashHexdecimal(userEmail);
             return FreedomShaHasher.Sha256HashHexdecimal(usernameEmailHash + ":" + password.ToUpper(), true);
         }
 
-        public static string GameAccountCalculateShaHash(string username, string password)
+        public string GameAccountCalculateShaHash(string username, string password)
         {
             return FreedomShaHasher.Sha1HashHexdecimal(username.ToUpper() + ":" + password.ToUpper());
         }
 
-        public static BnetAccount CreateBnetAccount(string username, string bnetAccSha256Pass)
+        public BnetAccount CreateBnetAccount(string username, string bnetAccSha256Pass)
         {
             BnetAccount bnetAcc = new BnetAccount()
             {
@@ -68,13 +70,13 @@ namespace FreedomLogic.Managers
             return bnetAcc;
         }
 
-        public static void UpdateBnetAccount(BnetAccount bnetAcc, string username, string bnetAccSha256Pass)
+        public void UpdateBnetAccount(BnetAccount bnetAcc, string username, string bnetAccSha256Pass)
         {
             bnetAcc.UsernameEmail = username.ToUpper() + FreedomBnetEmailConst;
             bnetAcc.ShaPassHash = bnetAccSha256Pass;
         }
 
-        public static GameAccount CreateGameAccount(int bnetAccId, string regEmail, string gameAccSha1Pass)
+        public GameAccount CreateGameAccount(int bnetAccId, string regEmail, string gameAccSha1Pass)
         {
             if (bnetAccId == 0)
             {
@@ -96,87 +98,75 @@ namespace FreedomLogic.Managers
             return gameAcc;
         }
 
-        public static void UpdateGameAccount(GameAccount gameAcc, string regEmail, string gameAccSha1Pass)
+        public void UpdateGameAccount(GameAccount gameAcc, string regEmail, string gameAccSha1Pass)
         {
             gameAcc.ShaPassHash = gameAccSha1Pass;
             gameAcc.Email = regEmail;
             gameAcc.RegEmail = regEmail;
         }
 
-        public static void SetGameAccAccessLevel(int gameAccId, GMLevel gmlevel)
+        public void SetGameAccAccessLevel(int gameAccId, GMLevel gmlevel)
         {
-            using (var db = new DbAuth())
+            GameAccountAccess gameAccAccess = _authDb.GameAccountAccesses.Find(gameAccId);
+
+            if (gameAccAccess != null)
             {
-                GameAccountAccess gameAccAccess = db.GameAccountAccesses.Find(gameAccId);
-
-                if (gameAccAccess != null)
+                gameAccAccess.GMLevel = gmlevel;
+                _authDb.Entry(gameAccAccess).State = EntityState.Modified;
+            }
+            else
+            {
+                gameAccAccess = new GameAccountAccess()
                 {
-                    gameAccAccess.GMLevel = gmlevel;
-                    db.Entry(gameAccAccess).State = System.Data.Entity.EntityState.Modified;
-                }
-                else
+                    Id = gameAccId,
+                    GMLevel = gmlevel
+                };
+
+                _authDb.GameAccountAccesses.Add(gameAccAccess);
+            }
+
+            _authDb.SaveChanges();
+        }
+
+        public GameAccountAccess GetGameAccAccess(int gameAccId)
+        {
+            GameAccountAccess gameAccAccess = _authDb.GameAccountAccesses.Find(gameAccId);
+
+            if (gameAccAccess != null)
+            {
+                return gameAccAccess;
+            }
+            else
+            {
+                gameAccAccess = new GameAccountAccess()
                 {
-                    gameAccAccess = new GameAccountAccess()
-                    {
-                        Id = gameAccId,
-                        GMLevel = gmlevel
-                    };
+                    Id = gameAccId,
+                    GMLevel = GMLevel.Player
+                };
 
-                    db.GameAccountAccesses.Add(gameAccAccess);
-                }
-
-                db.SaveChanges();
+                _authDb.GameAccountAccesses.Add(gameAccAccess);
+                _authDb.SaveChanges();
+                return gameAccAccess;
             }
         }
 
-        public static GameAccountAccess GetGameAccAccess(int gameAccId)
-        {            
-            using (var db = new DbAuth())
-            {
-                GameAccountAccess gameAccAccess = db.GameAccountAccesses.Find(gameAccId);
-
-                if (gameAccAccess != null)
-                {
-                    return gameAccAccess;
-                }
-                else
-                {
-                    gameAccAccess = new GameAccountAccess()
-                    {
-                        Id = gameAccId,
-                        GMLevel = GMLevel.Player
-                    };
-
-                    db.GameAccountAccesses.Add(gameAccAccess);
-                    db.SaveChanges();
-                    return gameAccAccess;
-                }
-            }            
-        }
-
-        public static BnetAccount BnetAccGetByUsername(string username)
+        public BnetAccount BnetAccGetByUsername(string username)
         {
-            using (var db = new DbAuth())
-            {
-                return db.BnetAccounts
-                    .AsNoTracking()
-                    .Where(a => a.UsernameEmail == (username.ToUpper() + FreedomBnetEmailConst))
-                    .FirstOrDefault();
-            }
+            return _authDb.BnetAccounts
+                .AsNoTracking()
+                .Where(a => a.UsernameEmail == (username.ToUpper() + FreedomBnetEmailConst))
+                .FirstOrDefault();
         }
 
-        public static GameAccount GameAccGetByBnetKey(int bnetAccId)
+        public GameAccount GameAccGetByBnetKey(int bnetAccId)
         {
-            using (var db = new DbAuth())
-            {
-                return db.GameAccounts
-                    .AsNoTracking()
-                    .Where(a => a.BnetAccountId == bnetAccId && a.BnetAccountIndex == 1)
-                    .FirstOrDefault();
-            }
+            return _authDb.GameAccounts
+                .AsNoTracking()
+                .Where(a => a.BnetAccountId == bnetAccId && a.BnetAccountIndex == 1)
+                .FirstOrDefault();
         }
 
-        public static string GeneratePasswordResetEmailBody(string username, string callbackUrl)
+        public string GeneratePasswordResetEmailBody(string username, string callbackUrl)
         {
             return string.Format(
                 "Hello {0},<br /> <br />" +
@@ -184,27 +174,21 @@ namespace FreedomLogic.Managers
                 "Simply follow the link to reset your password: <a href=\"{1}\">reset password</a> <br /> <br />" +
                 "If the above URL does not work, please copy and paste the link below to your web browser: <br />" +
                 "{2} <br /> <br />" +
-                "Regards, <br /> WoW Freedom administration", 
+                "Regards, <br /> WoW Freedom administration",
                 username, callbackUrl, callbackUrl);
         }
 
-        public static List<GameAccount> GetGameAccountsList(int bnetAccId)
+        public List<GameAccount> GetGameAccountsList(int bnetAccId)
         {
-            using (var db = new DbAuth())
-            {
-                return db.GameAccounts.Where(a => a.BnetAccountId == bnetAccId).ToList();
-            }
+            return _authDb.GameAccounts.Where(a => a.BnetAccountId == bnetAccId).ToList();
         }
-        
-        public static int[] GetGameAccountIDs(int bnetAccId)
+
+        public int[] GetGameAccountIDs(int bnetAccId)
         {
-            using (var db = new DbAuth())
-            {
-                return db.GameAccounts
-                    .Where(a => a.BnetAccountId == bnetAccId)
-                    .Select(a => a.Id)
-                    .ToArray();
-            }
+            return _authDb.GameAccounts
+                .Where(a => a.BnetAccountId == bnetAccId)
+                .Select(a => a.Id)
+                .ToArray();
         }
     }
 }

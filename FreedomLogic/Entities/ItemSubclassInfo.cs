@@ -12,11 +12,9 @@ namespace FreedomLogic.Entities
     [Table("item_subclass_info")]
     public class ItemSubclassInfo : EntityBase
     {
-        [Key]
         [Column("id_class", Order = 1)]
         public override int Id { get; set; }
 
-        [Key]
         [Column("id_subclass", Order = 2)]
         public int SubclassId { get; set; }
 

@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web;
 
 namespace FreedomWeb.ViewModels.Accounts
 {
@@ -43,16 +42,13 @@ namespace FreedomWeb.ViewModels.Accounts
         public string RepeatPassword { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (UserManager.GetByUsername(Username.Trim()) != null)
-            {
-                yield return new ValidationResult(string.Format(ErrorRes.ModelErrUsernameTaken, Username), new[] { "Username" });
-            }
-            
+        {            
             if (Password != RepeatPassword)
             {
                 yield return new ValidationResult(ErrorRes.ModelErrPasswordsDoNotMatch, new[] { "RepeatPassword" });
             }       
+            // TODO:
+            // Create validation for user account name already exists
         }
     }
 }

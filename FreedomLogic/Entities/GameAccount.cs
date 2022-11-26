@@ -1,14 +1,8 @@
 ﻿using FreedomLogic.Infrastructure;
 using FreedomLogic.Managers;
-using FreedomLogic.Resources;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static FreedomLogic.Managers.AccountManager;
 
 namespace FreedomLogic.Entities
 {

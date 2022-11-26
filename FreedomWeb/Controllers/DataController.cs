@@ -1,4 +1,5 @@
-﻿using FreedomLogic.Identity;
+﻿using FreedomLogic.Entities;
+using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using FreedomUtils.DataTables;
 using FreedomWeb.Infrastructure;
@@ -6,17 +7,32 @@ using FreedomWeb.Models;
 using FreedomWeb.ViewModels.Admin;
 using FreedomWeb.ViewModels.Home;
 using FreedomWeb.ViewModels.Server;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using System.Threading.Tasks;
 
 namespace FreedomWeb.Controllers
 { 
-    [FreedomAuthorize]
+    [Authorize]
     public class DataController : FreedomController
     {
+        private readonly UserManager<User> _userManager;
+        private readonly ServerManager _serverManager;
+        private readonly CharacterManager _characterManager;
+        private readonly ServerControl _serverControl;
+
+        public DataController(UserManager<User> userManager, ServerManager serverManager, CharacterManager characterManager, ServerControl serverControl)
+        {
+            _userManager = userManager;
+            _serverManager = serverManager;
+            _characterManager = characterManager;
+            _serverControl = serverControl;
+        }
+
         /// <summary>
         /// Command List data source
         /// </summary>
@@ -24,13 +40,13 @@ namespace FreedomWeb.Controllers
         /// <param name="filter">DT sent custom filter parameters</param>
         /// <returns></returns>        
         [HttpPost]
-        public JsonResult CommandListData(DTParameterModel parameters)
+        public async Task<JsonResult> CommandListData(DTParameterModel parameters)
         {
-            var user = GetCurrentUser();
+            var user = await _userManager.FindByIdAsync(CurrentUserId);
 
             int total = 0;
             int filtered = 0;
-            var list = ServerManager.DTGetFilteredAvailableFreedomCommands(
+            var list = _serverManager.DTGetFilteredAvailableFreedomCommands(
                     ref total,
                     ref filtered,
                     parameters.Start,
@@ -56,14 +72,14 @@ namespace FreedomWeb.Controllers
         /// <returns></returns>        
         [HttpPost]
         [AllowAnonymous]
-        public JsonResult OnlineListData(DTParameterModel parameters)
+        public async Task<JsonResult> OnlineListData(DTParameterModel parameters)
         {
-            var user = GetCurrentUser();       
+            var user = await _userManager.FindByIdAsync(CurrentUserId);       
             bool allowUsernameViewing = (user == null ? false : user.FreedomRoles.Where(r => r.Name == FreedomRole.RoleAdmin).Any());
 
             int total = 0;
             int filtered = 0;
-            var charList = CharacterManager.DTGetFilteredOnlineCharacters(
+            var charList = _characterManager.DTGetFilteredOnlineCharacters(
                     ref total,
                     ref filtered,
                     parameters.Start,
@@ -90,8 +106,8 @@ namespace FreedomWeb.Controllers
                     Class = character.CharData.ClassData.Name,
                     ClassIconPath = character.CharData.ClassData.IconPath,
                     Gender = Enum.GetName(character.Gender.GetType(), character.Gender),
-                    MapName = !CharacterManager.IsGMOn(character.Id) ? character.CharData.MapName : (allowUsernameViewing ? "(" + character.CharData.MapName + ")" : "(Hidden)"), //Kret
-                    ZoneName = !CharacterManager.IsGMOn(character.Id) ? character.CharData.ZoneName : (allowUsernameViewing ? "(" + character.CharData.ZoneName + ")" : "(Hidden)"), //Kret
+                    MapName = !_characterManager.IsGMOn(character.Id) ? character.CharData.MapName : (allowUsernameViewing ? "(" + character.CharData.MapName + ")" : "(Hidden)"), //Kret
+                    ZoneName = !_characterManager.IsGMOn(character.Id) ? character.CharData.ZoneName : (allowUsernameViewing ? "(" + character.CharData.ZoneName + ")" : "(Hidden)"), //Kret
                     Latency = character.Latency
                 });
             }
@@ -110,6 +126,30 @@ namespace FreedomWeb.Controllers
         public ActionResult StatusLinePartial()
         {
             var model = new StatusViewModel();
+            bool bnetServerRunning = _serverControl.IsBnetServerRunning();
+            bool worldServerRunning = _serverControl.IsWorldServerRunning();
+            bool worldServerOnline = _serverControl.IsWorldServerOnline();
+
+            if (!bnetServerRunning && !worldServerRunning)
+            {
+                model.Status = EnumFreedomGameserverStatus.Offline;
+            }
+            else if (worldServerRunning && !worldServerOnline)
+            {
+                model.Status = EnumFreedomGameserverStatus.WorldLoading;
+            }
+            else if (!worldServerRunning && bnetServerRunning)
+            {
+                model.Status = EnumFreedomGameserverStatus.WorldDown;
+            }
+            else if (worldServerRunning && !bnetServerRunning)
+            {
+                model.Status = EnumFreedomGameserverStatus.LoginDown;
+            }
+            else
+            {
+                model.Status = EnumFreedomGameserverStatus.Online;
+            }
 
             return PartialView("_StatusLinePartial", model);
         } 

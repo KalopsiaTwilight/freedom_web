@@ -3,16 +3,15 @@ using FreedomLogic.Entities;
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using FreedomLogic.Resources;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 
 namespace FreedomWeb.ViewModels.Characters
 {
-    public class CharacterTransferViewModel : IValidatableObject
+    public class CharacterTransferViewModel
     {
         public CharacterTransferViewModel()
         {
@@ -30,23 +29,5 @@ namespace FreedomWeb.ViewModels.Characters
 
         public List<SelectListItem> AccountSelectList { get; set; }
         public List<SelectListItem> CharacterSelectList { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (CharacterManager.IsGameAccFull(AccountId))
-            {
-                yield return new ValidationResult(ErrorRes.ModelErrCharacterTransferAccountFull, new[] { "TargetUsername" });
-            }
-
-            if (DbManager.GetByKey<Character, DbCharacters>(CharacterId) == null)
-            {
-                yield return new ValidationResult(ErrorRes.ModelErrCharacterTransferCharDoesNotExist, new[] { "CharacterId" });
-            }
-
-            if (DbManager.GetByKey<GameAccount, DbAuth>(AccountId) == null)
-            {
-                yield return new ValidationResult(ErrorRes.ModelErrCharacterTransferAccountNotFound, new[] { "AccountId" });
-            }
-        }
     }
 }

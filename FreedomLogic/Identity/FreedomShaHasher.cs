@@ -1,5 +1,5 @@
 ﻿using FreedomLogic.Managers;
-using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace FreedomLogic.Identity
 {
-    public class FreedomShaHasher : IPasswordHasher
+    public class FreedomShaHasher : IPasswordHasher<User>
     {
         public static string Sha1HashHexdecimal(string unhashed, bool reversed = false)
         {
-            using (SHA1 sha = new SHA1CryptoServiceProvider())
+            using (SHA1 sha = SHA1.Create())
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(unhashed);
                 byte[] hash = sha.ComputeHash(bytes);
@@ -42,7 +42,7 @@ namespace FreedomLogic.Identity
 
         public static string Sha256HashHexdecimal(string unhashed, bool reversed = false)
         {
-            using (SHA256 sha = new SHA256CryptoServiceProvider())
+            using (SHA256 sha = SHA256.Create())
             {
                 byte[] bytes = Encoding.UTF8.GetBytes(unhashed);
                 byte[] hash = sha.ComputeHash(bytes);
@@ -69,13 +69,13 @@ namespace FreedomLogic.Identity
             }
         }
 
-        public string HashPassword(string password)
+        public string HashPassword(User user, string password)
         {
             // we are handling hashing elsewhere
             return password;
         }
 
-        public PasswordVerificationResult VerifyHashedPassword(string hashedPassword, string providedPassword)
+        public PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword, string providedPassword)
         {            
             if (providedPassword.ToUpper() != hashedPassword.ToUpper())
             {

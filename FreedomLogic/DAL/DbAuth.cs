@@ -1,35 +1,27 @@
 ﻿using FreedomLogic.Entities;
-using MySql.Data.Entity;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreedomLogic.DAL
 {
-    [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public class DbAuth : DbContext
     {
-        public DbAuth()
-            : base("DBAuthContext")
+        public DbAuth(DbContextOptions<DbAuth> options)
+            : base(options)
         {
         }
-
         public DbSet<Realmlist> Realmlists { get; set; }
         public DbSet<BnetAccount> BnetAccounts { get; set; }
         public DbSet<GameAccount> GameAccounts { get; set; }
         public DbSet<GameAccountAccess> GameAccountAccesses { get; set; }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            modelBuilder.Entity<GameAccount>()
-                .HasOptional(a => a.AccountAccess)
-                .WithRequired(r => r.Account);
-            modelBuilder.Entity<GameAccount>()
-                .HasRequired(a => a.BnetAccount)
-                .WithMany(r => r.GameAccounts);
+            builder.Entity<GameAccount>()
+                .HasOne(a => a.AccountAccess)
+                .WithOne(r => r.Account);
+            builder.Entity<GameAccount>()
+                .HasOne(a => a.BnetAccount)
+                .WithMany(b => b.GameAccounts);
         }
     }
 }

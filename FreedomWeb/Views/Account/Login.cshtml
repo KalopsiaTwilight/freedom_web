@@ -1,12 +1,11 @@
-﻿@using reCAPTCHA.MVC
-@model FreedomWeb.ViewModels.Accounts.LoginViewModel
+﻿@model FreedomWeb.ViewModels.Accounts.LoginViewModel
 @{
     ViewBag.Title = "Login";
 }
 
 @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @id = "FormLogin" }))
 {
-    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.ReturnUrl)
     <div class="row">        

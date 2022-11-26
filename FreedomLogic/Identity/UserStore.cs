@@ -1,14 +1,14 @@
 ﻿using FreedomLogic.DAL;
 using FreedomLogic.Entities;
 using FreedomLogic.Managers;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FreedomLogic.Identity
@@ -16,44 +16,111 @@ namespace FreedomLogic.Identity
     /// <summary>
     /// Freedom User store
     /// </summary>
-    public class UserStore : IUserStore<User, int>,
-        IUserPasswordStore<User, int>,
-        IUserLockoutStore<User, int>,
-        IUserTwoFactorStore<User, int>,
-        IUserEmailStore<User, int>,
-        IUserSecurityStampStore<User, int>,
-        IUserRoleStore<User, int>
+    public class UserStore : IUserStore<User>,
+        IUserPasswordStore<User>,
+        IUserLockoutStore<User>,
+        IUserTwoFactorStore<User>,
+        IUserEmailStore<User>,
+        IUserSecurityStampStore<User>,
+        IUserRoleStore<User>
     {
-        private DbFreedom _freedomDb;
-        private DbAuth _authDb;
+        private readonly DbFreedom _freedomDb;
+        private readonly DbAuth _authDb;
+        private readonly AccountManager _accountManager;
 
-        public UserStore()
+        public UserStore(DbFreedom freedomDb, DbAuth authDb, AccountManager accountManager)
         {
-            _freedomDb = new DbFreedom();
-            _authDb = new DbAuth();
+            _freedomDb = freedomDb;
+            _authDb = authDb;
+            _accountManager = accountManager;
         }
 
         #region IUserStore
-        public Task CreateAsync(User user)
+        public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
         {
-            BnetAccount bnetAcc = AccountManager.CreateBnetAccount(user.UserName, user.BnetAccPassHash);
+            return Task.FromResult(user.Id.ToString());
+        }
+
+        public Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.UserName);
+        }
+
+        public Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
+        {
+            user.UserName = userName;
+            return Task.CompletedTask;
+        }
+
+        public Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.UserName);
+        }
+
+        public Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
+        {
+            user.NormalizedUserName = normalizedName;
+            return Task.CompletedTask;
+        }
+
+        async Task<IdentityResult> IUserStore<User>.CreateAsync(User user, CancellationToken cancellationToken)
+        {
+            BnetAccount bnetAcc = _accountManager.CreateBnetAccount(user.UserName, user.BnetAccPassHash);
             _authDb.BnetAccounts.Add(bnetAcc);
-            _authDb.SaveChanges();
+            await _authDb.SaveChangesAsync();
 
-            GameAccount gameAcc = AccountManager.CreateGameAccount(bnetAcc.Id, user.RegEmail, user.GameAccPassHash);
+            GameAccount gameAcc = _accountManager.CreateGameAccount(bnetAcc.Id, user.RegEmail, user.GameAccPassHash);
             _authDb.GameAccounts.Add(gameAcc);
-            _authDb.SaveChanges();
+            await _authDb.SaveChangesAsync();
 
-            AccountManager.SetGameAccAccessLevel(gameAcc.Id, GMLevel.Player);
+            _accountManager.SetGameAccAccessLevel(gameAcc.Id, GMLevel.Player);
 
             user.BnetAccountId = bnetAcc.Id;
             _freedomDb.Users.Add(user);
-            return _freedomDb.SaveChangesAsync();
+            await _freedomDb.SaveChangesAsync();
+            return IdentityResult.Success;
         }
 
-        public Task DeleteAsync(User user)
+        public async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
+        {
+            // Update game server data
+            BnetAccount bnetAcc = user.UserData.BnetAccount;
+            GameAccount gameAcc = user.UserData.GameAccount;
+            _accountManager.UpdateBnetAccount(bnetAcc, user.UserName, user.BnetAccPassHash);
+            _accountManager.UpdateGameAccount(gameAcc, user.RegEmail, user.GameAccPassHash);
+            _authDb.Entry(bnetAcc).State = EntityState.Modified;
+            _authDb.Entry(gameAcc).State = EntityState.Modified;
+            await _authDb.SaveChangesAsync();
+
+            // Update web application data
+            _freedomDb.Entry(user).State = EntityState.Modified;
+            await _freedomDb.SaveChangesAsync();
+
+            return IdentityResult.Success;
+        }
+
+        Task<IdentityResult> IUserStore<User>.DeleteAsync(User user, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
+        }
+
+        public Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        {
+            int id = int.Parse(userId);
+            var user = _freedomDb.Users
+                .Include(u => u.FreedomRoles)
+                .Where(e => e.Id == id)
+                .FirstOrDefault();
+            return Task.FromResult(user);
+        }
+
+        public Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        {
+            var user = _freedomDb.Users
+                .Include(u => u.FreedomRoles)
+                .Where(e => e.UserName.ToUpper() == normalizedUserName.ToUpper())
+                .FirstOrDefault();
+            return Task.FromResult(user);
         }
 
         public void Dispose()
@@ -61,167 +128,142 @@ namespace FreedomLogic.Identity
             _freedomDb.Dispose();
             _authDb.Dispose();
         }
-
-        public Task<User> FindByIdAsync(int userId)
-        {
-            var user = _freedomDb.Users
-                .Include(u => u.FreedomRoles)
-                .Where(e => e.Id == userId)
-                .FirstOrDefault();
-            return Task.FromResult(user);
-        }
-
-        public Task<User> FindByNameAsync(string userName)
-        {
-            var user = _freedomDb.Users
-                .Include(u => u.FreedomRoles)
-                .Where(e => e.UserName.ToUpper() == userName.ToUpper())
-                .FirstOrDefault();
-            return Task.FromResult(user);
-        }
-
-        public Task UpdateAsync(User user)
-        {
-            // Update game server data
-            BnetAccount bnetAcc = user.UserData.BnetAccount;
-            GameAccount gameAcc = user.UserData.GameAccount;
-            AccountManager.UpdateBnetAccount(bnetAcc, user.UserName, user.BnetAccPassHash);
-            AccountManager.UpdateGameAccount(gameAcc, user.RegEmail, user.GameAccPassHash);
-            _authDb.Entry(bnetAcc).State = EntityState.Modified;
-            _authDb.Entry(gameAcc).State = EntityState.Modified;
-            _authDb.SaveChanges();
-
-            // Update web application data
-            _freedomDb.Entry(user).State = EntityState.Modified;
-            return _freedomDb.SaveChangesAsync();
-        }
         #endregion
 
         #region IUserPasswordStore
-        public Task<string> GetPasswordHashAsync(User user)
+        public Task SetPasswordHashAsync(User user, string plainPassword)
+        {
+            user.BnetAccPassHash = _accountManager.BnetAccountCalculateShaHash(user.UserName, plainPassword);
+            user.GameAccPassHash = _accountManager.GameAccountCalculateShaHash(user.UserName, plainPassword);
+            return Task.FromResult(0);
+        }
+
+
+        public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
+        {
+            // TODO: CHeck if this ever gets called
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.BnetAccPassHash);
         }
 
-        public Task<bool> HasPasswordAsync(User user)
+        public Task<bool> HasPasswordAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(true);
-        }
-
-        public Task SetPasswordHashAsync(User user, string plainPassword)
-        {
-            user.BnetAccPassHash = AccountManager.BnetAccountCalculateShaHash(user.UserName, plainPassword);
-            user.GameAccPassHash = AccountManager.GameAccountCalculateShaHash(user.UserName, plainPassword);
-            return Task.FromResult(0);
         }
         #endregion
 
         #region IUserLockoutStore(Disabled)
-        public Task<DateTimeOffset> GetLockoutEndDateAsync(User user)
+
+        public Task<DateTimeOffset?> GetLockoutEndDateAsync(User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult((DateTimeOffset?)null);
         }
 
-        public Task SetLockoutEndDateAsync(User user, DateTimeOffset lockoutEnd)
+        public Task SetLockoutEndDateAsync(User user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
-        public Task<int> IncrementAccessFailedCountAsync(User user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task ResetAccessFailedCountAsync(User user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> GetAccessFailedCountAsync(User user)
+        public Task<int> IncrementAccessFailedCountAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(0);
         }
 
-        public Task<bool> GetLockoutEnabledAsync(User user)
+        public Task ResetAccessFailedCountAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<int> GetAccessFailedCountAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(0);
+        }
+
+        public Task<bool> GetLockoutEnabledAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(false);
         }
 
-        public Task SetLockoutEnabledAsync(User user, bool enabled)
+        public Task SetLockoutEnabledAsync(User user, bool enabled, CancellationToken cancellationToken)
         {
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
         #endregion
 
         #region IUserTwoFactorStore(Disabled)
-        public Task SetTwoFactorEnabledAsync(User user, bool enabled)
+        public Task SetTwoFactorEnabledAsync(User user, bool enabled, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> GetTwoFactorEnabledAsync(User user)
+        public Task<bool> GetTwoFactorEnabledAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(false);
         }
         #endregion
 
         #region IUserEmailStore
-        public Task SetEmailAsync(User user, string email)
+        public Task SetEmailAsync(User user, string email, CancellationToken cancellationToken)
         {
             user.RegEmail = email;
             return Task.FromResult(0);
         }
 
-        public Task<string> GetEmailAsync(User user)
+        public Task<string> GetEmailAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.RegEmail);
         }
 
-        public Task<bool> GetEmailConfirmedAsync(User user)
+        public Task<bool> GetEmailConfirmedAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.EmailConfirmed);
         }
 
-        public Task SetEmailConfirmedAsync(User user, bool confirmed)
+        public Task SetEmailConfirmedAsync(User user, bool confirmed, CancellationToken cancellationToken)
         {
             user.EmailConfirmed = confirmed;
             return Task.FromResult(0);
         }
 
-        public Task<User> FindByEmailAsync(string email)
+        public Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             return _freedomDb.Users
-                .Where(u => u.RegEmail.ToUpper() == email.ToUpper())
+                .Where(u => u.RegEmail.ToUpper() == normalizedEmail.ToUpper())
                 .FirstOrDefaultAsync();
+        }
+
+        public Task<string> GetNormalizedEmailAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.NormalizedEmail);
+        }
+
+        public Task SetNormalizedEmailAsync(User user, string normalizedEmail, CancellationToken cancellationToken)
+        {
+            user.NormalizedEmail = normalizedEmail;
+            return Task.CompletedTask;
         }
         #endregion
 
         #region IUserSecurityStampStore
-        public Task SetSecurityStampAsync(User user, string stamp)
+        public Task SetSecurityStampAsync(User user, string stamp, CancellationToken cancellationToken)
         {
             user.SecurityStamp = stamp;
             return Task.FromResult(0);
         }
 
-        public Task<string> GetSecurityStampAsync(User user)
+        public Task<string> GetSecurityStampAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.SecurityStamp);
         }
         #endregion
 
         #region IUserRoleStore
-        public Task AddToRoleAsync(User user, string roleName)
+        public Task<IList<string>> GetRolesAsync(User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveFromRoleAsync(User user, string roleName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IList<string>> GetRolesAsync(User user)
-        {            
             return Task.FromResult<IList<string>>(
                 user
                 .FreedomRoles
@@ -229,10 +271,31 @@ namespace FreedomLogic.Identity
                 .ToList());
         }
 
-        public Task<bool> IsInRoleAsync(User user, string roleName)
+        public Task<bool> IsInRoleAsync(User user, string roleName, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.FreedomRoles.Any(r => r.Name == roleName));
         }
+
+        public async Task<IList<User>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+        {
+            var users = await _freedomDb.Users
+                .Include(u => u.FreedomRoles)
+                .Where(u => u.FreedomRoles.Any(x => x.Name == roleName))
+                .ToListAsync();
+            return users;
+        }
+
+        public Task AddToRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveFromRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
+
+
     }
 }

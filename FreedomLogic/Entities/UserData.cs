@@ -15,33 +15,6 @@ namespace FreedomLogic.Entities
         {
         }
 
-        public bool Load(int userId)
-        {
-            using (var dbFreedom = new DbFreedom())
-            {
-                WebUser = dbFreedom.Users.Find(userId);
-            }
-
-            if (WebUser == null)
-                return false;
-
-            BnetAccount = DbManager.GetByKey<BnetAccount, DbAuth>(WebUser.BnetAccountId);
-
-            if (BnetAccount == null)
-                return false;
-
-            GameAccount = AccountManager.GameAccGetByBnetKey(BnetAccount.Id);
-
-            if (GameAccount == null)
-                return false;
-
-            GameAccountAccess = AccountManager.GetGameAccAccess(GameAccount.Id);
-            GameAccountCharacters = CharacterManager.GetAccountCharacters(GameAccount.Id);
-            //BNetAccountCharacters = CharacterManager.GetBNetAccountCharacters(BnetAccount.Id);
-
-            return true;
-        }
-
         public User WebUser { get; set; }
 
         public List<Character> GameAccountCharacters { get; set; }

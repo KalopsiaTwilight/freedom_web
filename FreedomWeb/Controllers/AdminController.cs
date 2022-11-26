@@ -1,25 +1,61 @@
-﻿using FreedomLogic.Identity;
+﻿using FreedomLogic.DAL;
+using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using FreedomLogic.Resources;
 using FreedomWeb.Infrastructure;
+using FreedomWeb.Models;
 using FreedomWeb.ViewModels.Admin;
-using FreedomWeb.ViewModels.Errors;
-using System;
+using FreedomUtils.MvcUtils;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreedomWeb.Controllers
 {
-    [FreedomAuthorize(Roles = FreedomRole.RoleAdmin)]
+    [Authorize(Roles = FreedomRole.RoleAdmin)]
     public class AdminController : FreedomController
     {
+        private readonly UserManager<User> _userManager;
+        private readonly DbFreedom _freedomDb;
+        private readonly AccountManager _accountManager;
+        private readonly ServerControl _serverControl;
+
+        public AdminController(UserManager<User> userManager, DbFreedom freedomDb, AccountManager accountManager, ServerControl serverControl)
+        {
+            _userManager = userManager;
+            _freedomDb = freedomDb;
+            _accountManager = accountManager;
+            _serverControl = serverControl;
+        }
+
         [HttpGet]
         public ActionResult Index()
         {
-            var model = new AdminCPViewModel();
+            var model = new AdminCPViewModel
+            {
+                AdminList = new List<AdminListItem>()
+            };
+            var adminUsers = _freedomDb.Users
+                .Include(u => u.FreedomRoles)
+                .Where(u => u.FreedomRoles.Any(r => r.Name == FreedomRole.RoleAdmin))
+                .ToList();
+            foreach (var admin in adminUsers)
+            {
+                var gmLevel = admin.UserData.GameAccountAccess.GMLevel;
+                model.AdminList.Add(new AdminListItem()
+                {
+                    UserId = admin.Id,
+                    Username = admin.UserName,
+                    DisplayName = admin.DisplayName,
+                    Email = admin.RegEmail,
+                    Roles = string.Join(", ", admin.FreedomRoles.Select(r => r.Name)),
+                    GameAccess = gmLevel.DisplayName(),
+                });
+            }
             return View(model);
         }
 
@@ -27,16 +63,35 @@ namespace FreedomWeb.Controllers
         public ActionResult UserList()
         {
             var model = new UserListViewModel();
+            model.UserList = new List<UserListItem>();
+
+            var users = _freedomDb.Users
+               .Include(u => u.FreedomRoles)
+               .ToList();
+            foreach (var user in users)
+            {
+                var gmLevel = user.UserData.GameAccountAccess.GMLevel;
+                model.UserList.Add(new UserListItem()
+                {
+                    UserId = user.Id,
+                    Username = user.UserName,
+                    DisplayName = user.DisplayName,
+                    Email = user.RegEmail,
+                    Roles = string.Join(", ", user.FreedomRoles.Select(r => r.Name)),
+                    GameAccess = gmLevel.DisplayName(),
+                });
+            }
             return View(model);
         }
 
         [HttpGet]
-        public ActionResult SetGameAccess(int? id)
+        public async Task<ActionResult> SetGameAccess(int? id)
         {
-            var user = UserManager.GetByKey(id ?? 0);
+            var user = await _userManager.FindByIdAsync(id?.ToString());
             if (user == null)
             {
-                return RedirectToError(ErrorCode.BadRequest);
+                // TODO: Handle error
+                //return RedirectToError(ErrorCode.BadRequest);
             }
 
             var model = new SetGameAccessViewModel();
@@ -54,7 +109,7 @@ namespace FreedomWeb.Controllers
                 return View(model);
             }
 
-            AccountManager.SetGameAccAccessLevel(model.GameAccId, model.AccountAccess);
+            _accountManager.SetGameAccAccessLevel(model.GameAccId, model.AccountAccess);
             SetAlertMsg(AlertRes.AlertSuccessSetGameAccess, AlertMsgType.AlertSuccess);
             return RedirectToAction("Index", "Admin");
         }
@@ -79,15 +134,15 @@ namespace FreedomWeb.Controllers
 
         private void LoadServerControlDataViewModel(ServerControlViewModel model)
         {
-            bool worldServerRunning = ServerManager.Control.IsWorldServerRunning();
-            bool bnetServerRunning = ServerManager.Control.IsBnetServerRunning();
-            bool serverOnline = ServerManager.Control.IsWorldServerOnline();
+            bool worldServerRunning = _serverControl.IsWorldServerRunning();
+            bool bnetServerRunning = _serverControl.IsBnetServerRunning();
+            bool serverOnline = _serverControl.IsWorldServerOnline();
 
             model.ServerDirectoryPath = SettingsManager.GetServerDir();
             model.WorldServerPath = SettingsManager.GetWorldServerPath();
             model.BnetServerPath = SettingsManager.GetBnetServerPath();
-            model.WorldServerPid = worldServerRunning ? ServerManager.Control.GetWorldServerPid() : 0;
-            model.BnetServerPid = bnetServerRunning ? ServerManager.Control.GetBnetServerPid() : 0;
+            model.WorldServerPid = worldServerRunning ? _serverControl.GetWorldServerPid() : 0;
+            model.BnetServerPid = bnetServerRunning ? _serverControl.GetBnetServerPid() : 0;
             model.WorldServerStatus = worldServerRunning ? (serverOnline ? EnumServerAppStatus.Online : EnumServerAppStatus.Loading) : EnumServerAppStatus.Offline;
             model.BnetServerStatus = bnetServerRunning ? EnumServerAppStatus.Online : EnumServerAppStatus.Offline;
         }
@@ -95,17 +150,17 @@ namespace FreedomWeb.Controllers
         [HttpPost]
         public JsonResult ServerControlActions()
         {
-            bool worldServerRunning = ServerManager.Control.IsWorldServerRunning();
-            bool bnetServerRunning = ServerManager.Control.IsBnetServerRunning();
+            bool worldServerRunning = _serverControl.IsWorldServerRunning();
+            bool bnetServerRunning = _serverControl.IsBnetServerRunning();
 
-            return Json(new { worldServerRunning = worldServerRunning, bnetServerRunning = bnetServerRunning});
+            return Json(new { worldServerRunning, bnetServerRunning });
         }
 
         [HttpPost]
         public JsonResult ServerControlStopWorldServer()
         {
             string error;
-            bool stopSuccessful = ServerManager.Control.StopWorldServer(out error);
+            bool stopSuccessful = _serverControl.StopWorldServer(out error);
 
             return Json(new { status = stopSuccessful, error = error });
         }
@@ -114,7 +169,7 @@ namespace FreedomWeb.Controllers
         public JsonResult ServerControlStopBnetServer()
         {
             string error;
-            bool stopSuccessful = ServerManager.Control.StopBnetServer(out error);
+            bool stopSuccessful = _serverControl.StopBnetServer(out error);
 
             return Json(new { status = stopSuccessful, error = error });
         }
@@ -123,7 +178,7 @@ namespace FreedomWeb.Controllers
         public JsonResult ServerControlStartWorldServer()
         {
             string error;
-            bool startSuccessful = ServerManager.Control.StartWorldServer(out error);
+            bool startSuccessful = _serverControl.StartWorldServer(out error);
 
             return Json(new { status = startSuccessful, error = error });
         }
@@ -132,7 +187,7 @@ namespace FreedomWeb.Controllers
         public JsonResult ServerControlStartBnetServer()
         {
             string error;
-            bool startSuccessful = ServerManager.Control.StartBnetServer(out error);
+            bool startSuccessful = _serverControl.StartBnetServer(out error);
 
             return Json(new { status = startSuccessful, error = error });
         }

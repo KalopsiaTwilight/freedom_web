@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web;
 
 namespace FreedomWeb.ViewModels.Home
 {
@@ -31,30 +30,7 @@ namespace FreedomWeb.ViewModels.Home
     {
         public StatusViewModel()
         {
-            bool bnetServerRunning = ServerManager.Control.IsBnetServerRunning();
-            bool worldServerRunning = ServerManager.Control.IsWorldServerRunning();
-            bool worldServerOnline = ServerManager.Control.IsWorldServerOnline();
 
-            if (!bnetServerRunning && !worldServerRunning)
-            {
-                Status = EnumFreedomGameserverStatus.Offline;
-            }
-            else if (worldServerRunning && !worldServerOnline)
-            {
-                Status = EnumFreedomGameserverStatus.WorldLoading;
-            }
-            else if (!worldServerRunning && bnetServerRunning)
-            {
-                Status = EnumFreedomGameserverStatus.WorldDown;
-            }
-            else if (worldServerRunning && !bnetServerRunning)
-            {
-                Status = EnumFreedomGameserverStatus.LoginDown;
-            }
-            else
-            {
-                Status = EnumFreedomGameserverStatus.Online;
-            }
         }
 
         public EnumFreedomGameserverStatus Status { get; set; }

@@ -1,12 +1,11 @@
-﻿@using reCAPTCHA.MVC
-@model FreedomWeb.ViewModels.Accounts.RegisterViewModel
+﻿@model FreedomWeb.ViewModels.Accounts.RegisterViewModel
 @{
     ViewBag.Title = "Register";
 }
 
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @id = "FormRegister" }))
 {
-    @Html.Partial("~/Views/Shared/_CustomValidationSummary.cshtml", ViewData.ModelState)
+    <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
     @Html.AntiForgeryToken()
     <div class="row">
         <!--INPUT FIELDS-->
@@ -33,10 +32,6 @@
             <div class="form-group">               
                 @Html.LabelFor(m => m.RepeatPassword)
                 @Html.PasswordFor(m => m.RepeatPassword, new { @class = "form-control input-full" })
-            </div>
-            <div class="form-group">
-                @Html.Recaptcha(theme: CaptchaTheme.Dark)
-                @Html.ValidationMessage("ReCaptcha")
             </div>
             <button type="submit" class="btn btn-default">Register</button>
         </div>

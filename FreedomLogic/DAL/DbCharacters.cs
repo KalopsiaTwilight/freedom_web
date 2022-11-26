@@ -1,23 +1,18 @@
 ﻿using FreedomLogic.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreedomLogic.DAL
 {
     public class DbCharacters : DbContext
     {
-        public DbCharacters()
-            : base("DBCharactersContext")
+        public DbCharacters(DbContextOptions<DbCharacters> options)
+            : base(options)
         {
         }
 
         public DbSet<Character> Characters { get; set; }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
         }
     }

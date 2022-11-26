@@ -3,20 +3,26 @@ using FreedomWeb.ViewModels.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using FreedomUtils.MvcUtils;
 using FreedomLogic.Managers;
 using System.Threading.Tasks;
 using FreedomWeb.Models;
 using FreedomLogic.Entities;
 using FreedomLogic.DAL;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FreedomWeb.Controllers
 {
-    [FreedomAuthorize]
+    [Authorize]
     public class ServerController : FreedomController
     {
+        private readonly ServerManager _serverManager;
+        public ServerController(ServerManager serverManager)
+        {
+            _serverManager = serverManager;
+        }
+
         public ActionResult SearchCustomItems()
         {
             var model = new SearchCustomItemsViewModel();
@@ -28,7 +34,7 @@ namespace FreedomWeb.Controllers
         {
             var resultModel = new CustomItemsSearchResultViewModel();
             resultModel.SearchId = model.SearchId ?? 0;
-            var itemInfoList = await ServerManager.CustomItemSearch(resultModel.SearchId, model.SearchType);
+            var itemInfoList = await _serverManager.CustomItemSearch(resultModel.SearchId, model.SearchType);
             foreach (var item in itemInfoList)
             {
                 resultModel.ResultList.Add(new CustomItemResultListItem()
@@ -38,11 +44,11 @@ namespace FreedomWeb.Controllers
                     Name = item.Name,
                     Description = item.Description,
                     Class = item.Class,
-                    ClassName = ServerManager.GetItemClassName(item.Class),
+                    ClassName = _serverManager.GetItemClassName(item.Class),
                     SubClass = item.Subclass,
-                    SubClassName = ServerManager.GetItemSubclassName(item.Class, item.Subclass),
+                    SubClassName = _serverManager.GetItemSubclassName(item.Class, item.Subclass),
                     InventoryType = item.InventoryType,
-                    InventoryTypeName = ServerManager.GetItemInventoryTypeName(item.InventoryType)
+                    InventoryTypeName = _serverManager.GetItemInventoryTypeName(item.InventoryType)
                 });
             }
             return PartialView("_CustomItemsSearchResult", resultModel);
@@ -59,14 +65,14 @@ namespace FreedomWeb.Controllers
         {
             var resultModel = new GameobjectsSearchResultViewModel();
             resultModel.SearchId = model.SearchId ?? 0;
-            var gameobjectInfoList = ServerManager.GameobjectSearch(resultModel.SearchId, model.SearchType);
+            var gameobjectInfoList = _serverManager.GameobjectSearch(resultModel.SearchId, model.SearchType);
             foreach (var gob in gameobjectInfoList)
             {
                 resultModel.ResultList.Add(new GameobjectResultListItem()
                 {
                     EntryId = gob.Id,
                     Type = gob.Type,
-                    TypeName = ServerManager.GetGameobjectTypeName(gob.Type),
+                    TypeName = _serverManager.GetGameobjectTypeName(gob.Type),
                     DisplayId = gob.DisplayId,
                     Name = gob.Name,
                     Size = gob.Size
