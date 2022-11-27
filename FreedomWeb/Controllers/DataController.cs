@@ -42,19 +42,21 @@ namespace FreedomWeb.Controllers
         [HttpPost]
         public async Task<JsonResult> CommandListData(DTParameterModel parameters)
         {
-            var user = await _userManager.FindByIdAsync(CurrentUserId);
+            //var user = await _userManager.FindByIdAsync(CurrentUserId);
 
             int total = 0;
             int filtered = 0;
-            var list = _serverManager.DTGetFilteredAvailableFreedomCommands(
-                    ref total,
-                    ref filtered,
-                    parameters.Start,
-                    parameters.Length,
-                    parameters.Columns,
-                    parameters.Order,
-                    user.UserData.GameAccountAccess.GMLevel
-                );
+            // TODO: List available commands for user.
+            //var list = _serverManager.DTGetFilteredAvailableFreedomCommands(
+            //        ref total,
+            //        ref filtered,
+            //        parameters.Start,
+            //        parameters.Length,
+            //        parameters.Columns,
+            //        parameters.Order,
+            //        user.UserData.GameAccountAccess.GMLevel
+            //    );
+            var list = new List<string>();
 
             return Json(new DTResponseModel() {
                 draw = parameters.Draw,
@@ -72,7 +74,7 @@ namespace FreedomWeb.Controllers
         /// <returns></returns>        
         [HttpPost]
         [AllowAnonymous]
-        public async Task<JsonResult> OnlineListData(DTParameterModel parameters)
+        public async Task<JsonResult> OnlineListData([FromForm] DTParameterModel parameters)
         {
             var user = await _userManager.FindByIdAsync(CurrentUserId);       
             bool allowUsernameViewing = (user == null ? false : user.FreedomRoles.Where(r => r.Name == FreedomRole.RoleAdmin).Any());

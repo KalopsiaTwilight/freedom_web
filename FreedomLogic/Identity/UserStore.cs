@@ -59,7 +59,7 @@ namespace FreedomLogic.Identity
 
         public Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
         {
-            user.NormalizedUserName = normalizedName;
+            user.UserName = normalizedName;
             return Task.CompletedTask;
         }
 
@@ -74,10 +74,10 @@ namespace FreedomLogic.Identity
             await _authDb.SaveChangesAsync();
 
             _accountManager.SetGameAccAccessLevel(gameAcc.Id, GMLevel.Player);
-
             user.BnetAccountId = bnetAcc.Id;
             _freedomDb.Users.Add(user);
             await _freedomDb.SaveChangesAsync();
+
             return IdentityResult.Success;
         }
 
@@ -131,18 +131,13 @@ namespace FreedomLogic.Identity
         #endregion
 
         #region IUserPasswordStore
-        public Task SetPasswordHashAsync(User user, string plainPassword)
+
+
+        public Task SetPasswordHashAsync(User user, string plainPassword, CancellationToken cancellationToken)
         {
             user.BnetAccPassHash = _accountManager.BnetAccountCalculateShaHash(user.UserName, plainPassword);
-            user.GameAccPassHash = _accountManager.GameAccountCalculateShaHash(user.UserName, plainPassword);
-            return Task.FromResult(0);
-        }
-
-
-        public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
-        {
-            // TODO: CHeck if this ever gets called
-            throw new NotImplementedException();
+            user.GameAccPassHash = plainPassword;
+            return Task.CompletedTask;
         }
 
         public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
@@ -238,12 +233,12 @@ namespace FreedomLogic.Identity
 
         public Task<string> GetNormalizedEmailAsync(User user, CancellationToken cancellationToken)
         {
-            return Task.FromResult(user.NormalizedEmail);
+            return Task.FromResult(user.RegEmail);
         }
 
         public Task SetNormalizedEmailAsync(User user, string normalizedEmail, CancellationToken cancellationToken)
         {
-            user.NormalizedEmail = normalizedEmail;
+            user.RegEmail = normalizedEmail;
             return Task.CompletedTask;
         }
         #endregion

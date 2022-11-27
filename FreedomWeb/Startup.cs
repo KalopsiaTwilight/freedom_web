@@ -3,20 +3,16 @@
 // This file will need updated according to the specific scenario of the application being upgraded.
 // For more information on ASP.NET Core startup files, see https://docs.microsoft.com/aspnet/core/fundamentals/startup
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AspNetCore.Unobtrusive.Ajax;
 using FreedomLogic.DAL;
 using FreedomLogic.Identity;
+using FreedomLogic.Infrastructure;
 using FreedomLogic.Managers;
 using FreedomLogic.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +32,11 @@ namespace FreedomWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Register App Configuration
+            var appConfig = new AppConfiguration();
+            Configuration.Bind(appConfig);
+            services.AddSingleton(appConfig);
+
             // Configure EntityFramework contexts
             services.AddDbContext<DbFreedom>(options => options.UseMySQL(Configuration.GetConnectionString("FreedomDb")));
             services.AddDbContext<DbAuth>(options => options.UseMySQL(Configuration.GetConnectionString("AuthDb")));
@@ -44,6 +45,7 @@ namespace FreedomWeb
 
             // Configure .NET Identity
             services.AddScoped<IPasswordHasher<User>, FreedomShaHasher>();
+            services.AddScoped<IPasswordValidator<User>, FreedomPasswordValidator>();
             services.AddAuthorization();
             services.AddAuthentication(o =>
             {
@@ -52,10 +54,10 @@ namespace FreedomWeb
             }).AddIdentityCookies();
 
             services.AddIdentityCore<User>()
-                .AddDefaultTokenProviders()
                 .AddUserStore<UserStore>()
                 .AddSignInManager()
-                .AddUserManager<UserManager<User>>();
+                .AddUserManager<UserManager<User>>()
+                .AddDefaultTokenProviders();
 
             // MVC Configuration 
             services.AddControllersWithViews(ConfigureMvcOptions)
@@ -71,17 +73,17 @@ namespace FreedomWeb
             services.AddWebOptimizer(pipeline =>
             {
                 pipeline.AddCssBundle("/css/bundle.css",
-                    "Content/bootstrap.css", "Content/font-awesome.css", "Content/dataTables.bootstrap.min.css",
-                    "Content/bootstrap-select.min.css", "Content/site.css"
+                    "css/bootstrap.css", "css/font-awesome.css", "css/dataTables.bootstrap.min.css",
+                    "css/bootstrap-select.min.css", "css/site.css"
                 );
-                pipeline.AddJavaScriptBundle("/js/jquery", "Scripts/jquery-2.2.0.js");
-                pipeline.AddJavaScriptBundle("/js/jqueryval", "Scripts/jquery.validate.js");
-                pipeline.AddJavaScriptBundle("/js/jqueryDateFormat", "Scripts/jquery.dateFormat.min.js");
-                pipeline.AddJavaScriptBundle("/js/modernizr", "Scripts/modernizr-2.8.3.js");
-                pipeline.AddJavaScriptBundle("/js/dataTables", "Scripts/jquery.dataTables.min.js", "Scripts/dataTables.bootstrap.min.js");
-                pipeline.AddJavaScriptBundle("/js/bootstrapSelect", "Scripts/bootstrap-select.min.js");
-                pipeline.AddJavaScriptBundle("/js/bootstrap", "Scripts/bootstrap.js", "Scripts/respond.js");
-                pipeline.AddJavaScriptBundle("/js/freedom", "Scripts/Common/common.js", "Scripts/Common/common_datatables.js", "Scripts/Common/site.js");
+                pipeline.AddJavaScriptBundle("/js/jquery", "js/jquery-2.2.0.js");
+                pipeline.AddJavaScriptBundle("/js/jqueryval", "js/jquery.validate.js");
+                pipeline.AddJavaScriptBundle("/js/jqueryDateFormat", "js/jquery.dateFormat.min.js");
+                pipeline.AddJavaScriptBundle("/js/modernizr", "js/modernizr-2.8.3.js");
+                pipeline.AddJavaScriptBundle("/js/dataTables", "js/jquery.dataTables.min.js", "js/dataTables.bootstrap.min.js");
+                pipeline.AddJavaScriptBundle("/js/bootstrapSelect", "js/bootstrap-select.min.js");
+                pipeline.AddJavaScriptBundle("/js/bootstrap", "js/bootstrap.js", "js/respond.js");
+                pipeline.AddJavaScriptBundle("/js/freedom", "js/Common/common.js", "js/Common/common_datatables.js", "js/Common/site.js");
             });
 
             // Add our own services
@@ -103,6 +105,7 @@ namespace FreedomWeb
             app.UseWebOptimizer();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

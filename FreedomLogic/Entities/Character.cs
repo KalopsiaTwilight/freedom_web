@@ -50,7 +50,8 @@ namespace FreedomLogic.Entities
         Nightborne = 27,
         HighmountainTauren = 28,
         VoidElf = 29,
-        LightforgedDraenei = 30
+        LightforgedDraenei = 30,
+
     }
 
     [Table("characters")]

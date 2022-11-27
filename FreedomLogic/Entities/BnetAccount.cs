@@ -35,7 +35,7 @@ namespace FreedomLogic.Entities
         public DateTime Joined { get; set; }
 
         [Column("last_login")]
-        public DateTime LastLogin { get; set; }
+        public DateTime? LastLogin { get; set; }
 
         public List<GameAccount> GameAccounts { get; set; }
     }

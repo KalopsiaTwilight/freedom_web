@@ -2,11 +2,15 @@
 using FreedomLogic.Entities;
 using FreedomLogic.Identity;
 using FreedomLogic.Resources;
+using FreedomLogic.TrinityCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Numerics;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace FreedomLogic.Managers
 {
@@ -31,11 +35,14 @@ namespace FreedomLogic.Managers
         MoP = 4,
         WoD = 5,
         Legion = 6,
-        BfA = 7
+        BfA = 7,
+        Shadowlands = 8
     }
+
 
     public class AccountManager
     {
+
         private readonly DbAuth _authDb;
 
         public AccountManager(DbAuth authDb)
@@ -47,14 +54,7 @@ namespace FreedomLogic.Managers
 
         public string BnetAccountCalculateShaHash(string username, string password)
         {
-            string userEmail = (username + FreedomBnetEmailConst).ToUpper();
-            string usernameEmailHash = FreedomShaHasher.Sha256HashHexdecimal(userEmail);
-            return FreedomShaHasher.Sha256HashHexdecimal(usernameEmailHash + ":" + password.ToUpper(), true);
-        }
-
-        public string GameAccountCalculateShaHash(string username, string password)
-        {
-            return FreedomShaHasher.Sha1HashHexdecimal(username.ToUpper() + ":" + password.ToUpper());
+            return FreedomShaHasher.CalculateBnetHash(username, password);
         }
 
         public BnetAccount CreateBnetAccount(string username, string bnetAccSha256Pass)
@@ -63,7 +63,6 @@ namespace FreedomLogic.Managers
             {
                 UsernameEmail = username.ToUpper() + FreedomBnetEmailConst,
                 Joined = DateTime.Now,
-                LastLogin = DateTime.MinValue,
                 ShaPassHash = bnetAccSha256Pass
             };
 
@@ -76,21 +75,24 @@ namespace FreedomLogic.Managers
             bnetAcc.ShaPassHash = bnetAccSha256Pass;
         }
 
-        public GameAccount CreateGameAccount(int bnetAccId, string regEmail, string gameAccSha1Pass)
+        public GameAccount CreateGameAccount(int bnetAccId, string regEmail, string password)
         {
             if (bnetAccId == 0)
             {
                 throw new ArgumentException("BnetAccount ID must not be 0, when creating game account for it");
             }
 
+            var salt = RandomNumberGenerator.GetBytes(32);
+            var username = string.Format("{0}#{1}", bnetAccId.ToString(), "1");
             GameAccount gameAcc = new GameAccount()
             {
-                Username = string.Format("{0}#{1}", bnetAccId.ToString(), "1"),
-                ShaPassHash = gameAccSha1Pass,
+                Username = username,
+                Salt = salt,
+                Verifier = SRP6.GetVerifier(username, password, salt),
                 Email = regEmail,
                 RegEmail = regEmail,
                 Joined = DateTime.Now,
-                Expansion = GameExpansion.BfA,
+                Expansion = GameExpansion.Shadowlands,
                 BnetAccountId = bnetAccId,
                 BnetAccountIndex = 1
             };
@@ -98,9 +100,8 @@ namespace FreedomLogic.Managers
             return gameAcc;
         }
 
-        public void UpdateGameAccount(GameAccount gameAcc, string regEmail, string gameAccSha1Pass)
+        public void UpdateGameAccount(GameAccount gameAcc, string regEmail, string password)
         {
-            gameAcc.ShaPassHash = gameAccSha1Pass;
             gameAcc.Email = regEmail;
             gameAcc.RegEmail = regEmail;
         }

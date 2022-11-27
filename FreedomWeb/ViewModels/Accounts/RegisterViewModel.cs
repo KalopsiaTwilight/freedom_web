@@ -46,9 +46,7 @@ namespace FreedomWeb.ViewModels.Accounts
             if (Password != RepeatPassword)
             {
                 yield return new ValidationResult(ErrorRes.ModelErrPasswordsDoNotMatch, new[] { "RepeatPassword" });
-            }       
-            // TODO:
-            // Create validation for user account name already exists
+            }
         }
     }
 }

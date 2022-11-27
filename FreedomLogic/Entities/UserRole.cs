@@ -11,7 +11,7 @@ namespace FreedomLogic.Entities
     internal class UserRole
     {
         [Column("id_role")]
-        public int RoleId { get; set; }
+        public int FreedomRoleId { get; set; }
         [Column("id_user")]
         public int UserId { get; set; }
     }

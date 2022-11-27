@@ -28,7 +28,5 @@ namespace FreedomLogic.Entities
         public GameAccount GameAccount { get; set; }
 
         public GameAccountAccess GameAccountAccess { get; set; }
-
-        public Character ExtraFlags { get; set; }
     }
 }

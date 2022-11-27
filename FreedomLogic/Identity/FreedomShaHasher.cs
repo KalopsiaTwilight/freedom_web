@@ -11,7 +11,7 @@ namespace FreedomLogic.Identity
 {
     public class FreedomShaHasher : IPasswordHasher<User>
     {
-        public static string Sha1HashHexdecimal(string unhashed, bool reversed = false)
+        private static string Sha1HashHexdecimal(string unhashed, bool reversed = false)
         {
             using (SHA1 sha = SHA1.Create())
             {
@@ -40,7 +40,7 @@ namespace FreedomLogic.Identity
             }
         }
 
-        public static string Sha256HashHexdecimal(string unhashed, bool reversed = false)
+        private static string Sha256HashHexdecimal(string unhashed, bool reversed = false)
         {
             using (SHA256 sha = SHA256.Create())
             {
@@ -69,6 +69,13 @@ namespace FreedomLogic.Identity
             }
         }
 
+        public static string CalculateBnetHash(string username, string password)
+        {
+            string userEmail = (username + AccountManager.FreedomBnetEmailConst).ToUpper();
+            string usernameEmailHash = Sha256HashHexdecimal(userEmail);
+            return Sha256HashHexdecimal(usernameEmailHash + ":" + password.ToUpper(), true);
+        }
+
         public string HashPassword(User user, string password)
         {
             // we are handling hashing elsewhere
@@ -77,7 +84,7 @@ namespace FreedomLogic.Identity
 
         public PasswordVerificationResult VerifyHashedPassword(User user, string hashedPassword, string providedPassword)
         {            
-            if (providedPassword.ToUpper() != hashedPassword.ToUpper())
+            if (CalculateBnetHash(user.UserName, providedPassword) != hashedPassword)
             {
                 return PasswordVerificationResult.Failed;
             }

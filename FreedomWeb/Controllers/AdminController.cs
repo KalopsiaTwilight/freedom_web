@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using FreedomLogic.Infrastructure;
+using System.IO;
 
 namespace FreedomWeb.Controllers
 {
@@ -23,13 +25,16 @@ namespace FreedomWeb.Controllers
         private readonly DbFreedom _freedomDb;
         private readonly AccountManager _accountManager;
         private readonly ServerControl _serverControl;
+        private readonly AppConfiguration _appConfig;
 
-        public AdminController(UserManager<User> userManager, DbFreedom freedomDb, AccountManager accountManager, ServerControl serverControl)
+        public AdminController(UserManager<User> userManager, DbFreedom freedomDb, AccountManager accountManager,
+            ServerControl serverControl, AppConfiguration appConfig)
         {
             _userManager = userManager;
             _freedomDb = freedomDb;
             _accountManager = accountManager;
             _serverControl = serverControl;
+            _appConfig = appConfig;
         }
 
         [HttpGet]
@@ -138,9 +143,9 @@ namespace FreedomWeb.Controllers
             bool bnetServerRunning = _serverControl.IsBnetServerRunning();
             bool serverOnline = _serverControl.IsWorldServerOnline();
 
-            model.ServerDirectoryPath = SettingsManager.GetServerDir();
-            model.WorldServerPath = SettingsManager.GetWorldServerPath();
-            model.BnetServerPath = SettingsManager.GetBnetServerPath();
+            model.ServerDirectoryPath = _appConfig.TrinityCore.ServerDir;
+            model.WorldServerPath = Path.Combine(_appConfig.TrinityCore.ServerDir, "worldserver.exe");
+            model.BnetServerPath = Path.Combine(_appConfig.TrinityCore.ServerDir, "bnetserver.exe");
             model.WorldServerPid = worldServerRunning ? _serverControl.GetWorldServerPid() : 0;
             model.BnetServerPid = bnetServerRunning ? _serverControl.GetBnetServerPid() : 0;
             model.WorldServerStatus = worldServerRunning ? (serverOnline ? EnumServerAppStatus.Online : EnumServerAppStatus.Loading) : EnumServerAppStatus.Offline;

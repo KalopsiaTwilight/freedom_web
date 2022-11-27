@@ -1,5 +1,6 @@
 ﻿using FreedomLogic.DAL;
 using FreedomLogic.Entities;
+using FreedomLogic.Services;
 using FreedomUtils.DataTables;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,10 +14,12 @@ namespace FreedomLogic.Managers
         public const int MaxCharacterSlotsConst = 11;
 
         private readonly DbCharacters _charactersDb;
+        private readonly ExtraDataLoader _extraLoader;
 
-        public CharacterManager(DbCharacters charactersDb)
+        public CharacterManager(DbCharacters charactersDb, ExtraDataLoader extraLoader)
         {
             _charactersDb = charactersDb;
+            _extraLoader = extraLoader; 
         }
 
         public List<Character> GetAccountCharacters(int gameAccId)
@@ -81,18 +84,21 @@ namespace FreedomLogic.Managers
             var orderArray = orderList.ToArray();
 
             // Can't use array in LINQ directly, because: http://stackoverflow.com/a/8354049
-            var filterName = colArray[1].Search.Value;
-            var filterOwner = colArray[2].Search.Value;
-            var filterRace = colArray[3].Search.Value;
-            var filterClass = colArray[4].Search.Value;
-            var filterMap = colArray[5].Search.Value;
-            var filterZone = colArray[6].Search.Value;
+            var filterName = colArray[1].Search.Value ?? "";
+            var filterOwner = colArray[2].Search.Value ?? "";
+            var filterRace = colArray[3].Search.Value ?? "";
+            var filterClass = colArray[4].Search.Value ?? "";
+            var filterMap = colArray[5].Search.Value ?? "";
+            var filterZone = colArray[6].Search.Value ?? "";
 
             // Set up basic filter query parts
             list = _charactersDb.Characters
                 .Where(c => c.IsOnline)
                 .Where(c => c.Name.ToUpper().Contains(filterName.ToUpper()))
-                .ToList() // further c.CharData filtering is not supported by queries
+                .ToList();
+            // Load extra filtering.
+            list.ForEach(c => _extraLoader.LoadExtraCharData(c));
+            list = list
                 .Where(c => c.CharData.WebUser.DisplayName.ToUpper().Contains(filterOwner.ToUpper()) || (c.CharData.BnetAccount.UsernameEmail.ToUpper().Contains(filterOwner.ToUpper()) && allowUsernameFilter))
                 .Where(c => c.CharData.RaceData.Name.ToUpper().Contains(filterRace.ToUpper()))
                 .Where(c => c.CharData.ClassData.Name.ToUpper().Contains(filterClass.ToUpper()))

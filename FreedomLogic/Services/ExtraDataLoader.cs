@@ -61,7 +61,7 @@ namespace FreedomLogic.Services
             if (charData.GameAccount == null || character == null)
                 return false;
 
-            charData.BnetAccount = _authDb.BnetAccounts.Find(charData.GameAccount.Id);
+            charData.BnetAccount = _authDb.BnetAccounts.Find(charData.GameAccount.BnetAccountId);
             if (charData.BnetAccount == null)
                 return false;
 
@@ -93,8 +93,7 @@ namespace FreedomLogic.Services
             else
                 charData.ZoneName = zoneInfo.Name;
 
-            charData.ExtraFlags = _charactersDb.Characters.Find(character.ExtraFlags);
-
+            character.CharData = charData;
             return true;
         }
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Diagnostics;
 using FreedomUtils.Win32APIUtils;
 using Microsoft.EntityFrameworkCore;
+using FreedomLogic.Infrastructure;
 
 namespace FreedomLogic.Managers
 {
@@ -12,15 +13,17 @@ namespace FreedomLogic.Managers
     {
         private const byte ServerOfflineFlag = 0x2;
         private readonly DbAuth _authDb;
+        private readonly AppConfiguration _appConfig;
 
-        public ServerControl(DbAuth authDb)
+        public ServerControl(DbAuth authDb, AppConfiguration config)
         {
             _authDb = authDb;
+            _appConfig = config;
         }
 
         public int GetWorldServerPid()
         {
-            string pidPath = Path.Combine(SettingsManager.GetServerDir(), SettingsManager.GetWorldServerPidFilename());
+            string pidPath = Path.Combine(_appConfig.TrinityCore.ServerDir, _appConfig.TrinityCore.WorldServerPidFilename);
             int pid = 0;
 
             if (!File.Exists(pidPath))
@@ -41,7 +44,7 @@ namespace FreedomLogic.Managers
 
         public int GetBnetServerPid()
         {
-            string pidPath = Path.Combine(SettingsManager.GetServerDir(), SettingsManager.GetBnetServerPidFilename());
+            string pidPath = Path.Combine(_appConfig.TrinityCore.ServerDir, _appConfig.TrinityCore.BnetServerPidFilename);
             int pid = 0;
 
             if (!File.Exists(pidPath))
@@ -101,7 +104,7 @@ namespace FreedomLogic.Managers
             if (!IsWorldServerRunning())
                 return false;
 
-            int realmId = SettingsManager.GetRealmId();
+            int realmId = _appConfig.TrinityCore.RealmId;
 
             var realm = _authDb.Realmlists.Where(r => r.Id == realmId).FirstOrDefault();
 
@@ -154,9 +157,9 @@ namespace FreedomLogic.Managers
 
             try
             {
-                string exePath = SettingsManager.GetBnetServerPath();
-                string workingDir = SettingsManager.GetServerDir();
-                int sessionId = SettingsManager.GetProcessStartSessionId();
+                string exePath = Path.Combine(_appConfig.TrinityCore.ServerDir, "bnetserver.exe");
+                string workingDir = _appConfig.TrinityCore.ServerDir;
+                int sessionId = _appConfig.TrinityCore.ProcessStartSessionId;
                 ProcessExtensions.StartProcessForSessionId(sessionId, null, exePath, workingDir, true);
             }
             catch (Exception e)
@@ -184,7 +187,7 @@ namespace FreedomLogic.Managers
                         process.Kill();
                     }
 
-                    int realmId = SettingsManager.GetRealmId();
+                    int realmId = _appConfig.TrinityCore.RealmId;
 
                     var realm = _authDb.Realmlists.Find(realmId);
                     realm.Flags = (byte)(realm.Flags | ServerOfflineFlag);
@@ -213,16 +216,16 @@ namespace FreedomLogic.Managers
 
             try
             {
-                int realmId = SettingsManager.GetRealmId();
+                int realmId = _appConfig.TrinityCore.RealmId;
 
                 var realm = _authDb.Realmlists.Find(realmId);
                 realm.Flags = (byte)(realm.Flags | ServerOfflineFlag);
                 _authDb.Entry(realm).State = EntityState.Modified;
                 _authDb.SaveChanges();
 
-                string exePath = SettingsManager.GetWorldServerPath();
-                string workingDir = SettingsManager.GetServerDir();
-                int sessionId = SettingsManager.GetProcessStartSessionId();
+                string exePath = Path.Combine(_appConfig.TrinityCore.ServerDir, "bnetserver.exe");
+                string workingDir = _appConfig.TrinityCore.ServerDir;
+                int sessionId = _appConfig.TrinityCore.ProcessStartSessionId;
                 ProcessExtensions.StartProcessForSessionId(sessionId, null, exePath, workingDir, true);
             }
             catch (Exception e)

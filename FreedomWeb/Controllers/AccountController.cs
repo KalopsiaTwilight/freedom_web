@@ -31,7 +31,7 @@ namespace FreedomWeb.Controllers
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error.ToString());
+                ModelState.AddModelError(error.Code, error.Description);
             }
         }
 
@@ -73,7 +73,9 @@ namespace FreedomWeb.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var user = await _userManager.FindByNameAsync(model.Username);
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+            var result = user == null 
+                ? Microsoft.AspNetCore.Identity.SignInResult.Failed
+                : await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
             if (result.Succeeded)
             {
                 SetAlertMsg(AlertRes.AlertSuccessLogin, AlertMsgType.AlertSuccess);
@@ -118,6 +120,14 @@ namespace FreedomWeb.Controllers
             {
                 SetAlertMsg(ErrorRes.ErrAlreadyLoggedIn, AlertMsgType.AlertDanger);
                 return RedirectToLocal(null);
+            }
+
+            // TODO:
+            // Create validation for user account name already exists
+            var existingUser = await _userManager.FindByNameAsync(model.Username);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Username", "Please select a different username.");
             }
 
             if (ModelState.IsValid)

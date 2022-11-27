@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 namespace FreedomLogic.Entities
 {
     [Table("zone_info")]
-    public class ZoneInfo : EntityBase
+    public class ZoneInfo
     {
         [Column("id")]
         [Key]
-        public override int Id { get; set; }
+        public short Id { get; set; }
 
         [Column("name")]
         public string Name { get; set; }
