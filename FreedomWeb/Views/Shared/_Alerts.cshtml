@@ -1,28 +1,28 @@
 ﻿@if (TempData["AlertMsgSuccess"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade-out-toggle" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <div class="alert alert-success alert-dismissible fade show fade-out-toggle mt-3" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         @TempData["AlertMsgSuccess"].ToString()
     </div>
 }
 @if (TempData["AlertMsgInfo"] != null)
 {
-    <div class="alert alert-info alert-dismissible fade-out-toggle" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <div class="alert alert-info alert-dismissible fade show fade-out-toggle mt-3" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         @TempData["AlertMsgInfo"].ToString()
     </div>
 }
 @if (TempData["AlertMsgWarning"] != null)
 {
-    <div class="alert alert-warning alert-dismissible fade-out-toggle" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <div class="alert alert-warning alert-dismissible fade show fade-out-toggle mt-3" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         @TempData["AlertMsgWarning"].ToString()
     </div>
 }
 @if (TempData["AlertMsgDanger"] != null)
 {
-    <div class="alert alert-danger alert-dismissible fade-out-toggle" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <div class="alert alert-danger alert-dismissible fade show fade-out-toggle mt-3" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         @TempData["AlertMsgDanger"].ToString()
     </div>
 }

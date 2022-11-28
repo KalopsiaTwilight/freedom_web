@@ -110,7 +110,7 @@ namespace FreedomLogic.Identity
 
         public Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
-            int id = int.Parse(userId);
+            int id = int.Parse(userId ?? "-1");
             var user = _freedomDb.Users
                 .Include(u => u.FreedomRoles)
                 .Where(e => e.Id == id)

@@ -8,7 +8,7 @@
 
 <div class="form-group status-line">
     <div class="input-group" id="statusLineContainer">
-        <label class="input-group-addon" for="statusText">STATUS INFO</label>
+        <label class="input-group-text" for="statusText">STATUS INFO</label>
         @if (Model.Status == EnumFreedomGameserverStatus.Online)
         {
             <input id="statusText" class="form-control status-good" value="@Model.Status.DisplayName()" readonly />
@@ -24,41 +24,26 @@
     </div>
 </div>
 
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <i class="fa fa-users"></i>
-        <span>Online list</span>
-    </div>
-    <div class="panel-body filtered-table">
-        <div class="panel panel-primary" style="background-color: #1c1e22;">
-            <div class="btn btn-block panel-heading" data-toggle="collapse" data-target="#TableOnlineListSearchFilterCollapse">
-                <i class="glyphicon glyphicon-search"></i>
-                Search filters
-            </div>
-            <div class="panel-collapse collapse" id="TableOnlineListSearchFilterCollapse">
-                <div class="panel-body filter-list">
-                </div>
-            </div>
-        </div>
-        <table class="table table-striped table-bordered" id="TableOnlineList">
-            <thead>
-                <tr style="vertical-align:middle">
-                    <th class="nosort noorder nosearch" style="vertical-align:middle"></th>
-                    <th style="vertical-align:middle">Name</th>
-                    <th class="nosort noorder" style="vertical-align:middle">Owner</th>
-                    <th style="vertical-align:middle">Race</th>
-                    <th style="vertical-align:middle">Class</th>
-                    <th style="vertical-align:middle">Map</th>
-                    <th style="vertical-align:middle">Zone</th>
-                    <th style="vertical-align:middle">Latency</th>
-                    <th class="nosort noorder nosearch" style="vertical-align:middle"></th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-</div>
+<h4 class="p-2">
+    <i class="fa fa-users"></i> <span>Online list</span>
+</h4>
+<table class="table table-striped table-bordered" id="TableOnlineList">
+    <thead>
+        <tr style="vertical-align:middle">
+            <th class="nosort noorder nosearch" style="vertical-align:middle"></th>
+            <th style="vertical-align:middle">Name</th>
+            <th class="nosort noorder" style="vertical-align:middle">Owner</th>
+            <th style="vertical-align:middle">Race</th>
+            <th style="vertical-align:middle">Class</th>
+            <th style="vertical-align:middle">Map</th>
+            <th style="vertical-align:middle">Zone</th>
+            <th style="vertical-align:middle">Latency</th>
+            <th class="nosort noorder nosearch" style="vertical-align:middle"></th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
 
 @section scripts
 {

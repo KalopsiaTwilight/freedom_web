@@ -1,24 +1,21 @@
 ﻿@{
     Layout = null;
 }
-<div class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            @Html.ActionLink("WoW Freedom", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                <li><a href="http://w11.zetaboards.com/WoW_Freedom/index/">Forums</a></li>
-                <li><a href="http://wiki.wowfreedom-rp.com/wiki/Main_Page">Wiki</a></li>
-                <li>@Html.ActionLink("Status", "Status", "Home")</li>
-                <li><a href="http://w11.zetaboards.com/WoW_Freedom/topic/11180604/1/">Connecting</a></li>
-            </ul>
-        </div>
-    </div>
+@using FreedomLogic.Infrastructure
+@inject AppConfiguration appConfig;
+<div class="container-fluid bg-dark bg-gradient">
+    <header class="d-flex flex-wrap justify-content-center py-3 border-bottom border-dark">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+            <span class="fs-4 text-white">WoW Freedom Minimanager</span>
+        </a>
+
+        <ul class="nav nav-pills">
+
+            <li>@Html.ActionLink("Home", "Index", "Home", null, new { @class= "nav-link text-white"})</li>
+            <li class="nav-item"><a href="@appConfig.Links.ForumUrl" class="nav-link text-white">Forums</a></li>
+            <li class="nav-item"><a href="@appConfig.Links.WikiUrl" class="nav-link text-white">Wiki</a></li>
+            <li>@Html.ActionLink("Status", "Status", "Home", null, new { @class= "nav-link text-white"})</li>
+            <li class="nav-item"><a href="@appConfig.Links.ConnectionGuideUrl" class="nav-link text-white">Connecting</a></li>
+        </ul>
+    </header>
 </div>

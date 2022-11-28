@@ -3,7 +3,6 @@
 // This file will need updated according to the specific scenario of the application being upgraded.
 // For more information on ASP.NET Core startup files, see https://docs.microsoft.com/aspnet/core/fundamentals/startup
 
-using AspNetCore.Unobtrusive.Ajax;
 using FreedomLogic.DAL;
 using FreedomLogic.Identity;
 using FreedomLogic.Infrastructure;
@@ -71,21 +70,16 @@ namespace FreedomWeb
                 {
                     options.UseMemberCasing();
                 });
-            services.AddUnobtrusiveAjax();
             services.AddWebOptimizer(pipeline =>
             {
                 pipeline.AddCssBundle("/css/bundle.css",
-                    "css/bootstrap.css", "css/font-awesome.css", "css/dataTables.bootstrap.min.css",
-                    "css/bootstrap-select.min.css", "css/site.css"
+                    "lib/bootstrap/css/bootstrap.css", "css/font-awesome.css", "lib/datatables/datatables.css", "css/app.css"
                 );
-                pipeline.AddJavaScriptBundle("/js/jquery", "js/jquery-2.2.0.js");
-                pipeline.AddJavaScriptBundle("/js/jqueryval", "js/jquery.validate.js");
-                pipeline.AddJavaScriptBundle("/js/jqueryDateFormat", "js/jquery.dateFormat.min.js");
-                pipeline.AddJavaScriptBundle("/js/modernizr", "js/modernizr-2.8.3.js");
-                pipeline.AddJavaScriptBundle("/js/dataTables", "js/jquery.dataTables.min.js", "js/dataTables.bootstrap.min.js");
-                pipeline.AddJavaScriptBundle("/js/bootstrapSelect", "js/bootstrap-select.min.js");
-                pipeline.AddJavaScriptBundle("/js/bootstrap", "js/bootstrap.js", "js/respond.js");
-                pipeline.AddJavaScriptBundle("/js/freedom", "js/Common/common.js", "js/Common/common_datatables.js", "js/Common/site.js");
+                pipeline.AddJavaScriptBundle("/js/jquery", "lib/jquery/jquery-3.6.1.js");
+                pipeline.AddJavaScriptBundle("/js/bootstrap", "lib/bootstrap/js/bootstrap.js");
+                pipeline.AddJavaScriptBundle("/js/modernizr", "lib/modernizr-2.8.3.js");
+                pipeline.AddJavaScriptBundle("/js/dataTables", "lib/datatables/datatables.js");
+                pipeline.AddJavaScriptBundle("/js/freedom", "js/common.js", "js/freedom_datatables.js", "js/site.js");
             });
 
             // Add our own services
@@ -115,7 +109,6 @@ namespace FreedomWeb
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseUnobtrusiveAjax();
         }
 
         private void ConfigureMvcOptions(MvcOptions mvcOptions)

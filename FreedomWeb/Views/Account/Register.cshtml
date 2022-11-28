@@ -2,7 +2,8 @@
 @{
     ViewBag.Title = "Register";
 }
-
+@using FreedomLogic.Infrastructure
+@inject AppConfiguration appConfig
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @id = "FormRegister" }))
 {
     <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
@@ -10,62 +11,60 @@
     <div class="row">
         <!--INPUT FIELDS-->
         <div class="col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(m => m.Username)
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Username, htmlAttributes: new { @class = "form-label" })
                 <div class="input-group">
                     @Html.TextBoxFor(m => m.Username, new { @class = "form-control input-full" })
-                    <span class="input-group-addon">@@freedom.com</span>
+                    <span class="input-group-text">@@freedom.com</span>
                 </div>
             </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.DisplayName)
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.DisplayName, htmlAttributes: new { @class = "form-label" })
                 @Html.TextBoxFor(m => m.DisplayName, new { @class = "form-control input-full" })
             </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.RegEmail)
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.RegEmail, htmlAttributes: new { @class = "form-label" })
                 @Html.TextBoxFor(m => m.RegEmail, new { @class = "form-control input-full" })
             </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.Password)
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Password, htmlAttributes: new { @class = "form-label" })
                 @Html.PasswordFor(m => m.Password, new { @class = "form-control input-full" })
             </div>
-            <div class="form-group">               
-                @Html.LabelFor(m => m.RepeatPassword)
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.RepeatPassword, htmlAttributes: new { @class = "form-label" })
                 @Html.PasswordFor(m => m.RepeatPassword, new { @class = "form-control input-full" })
             </div>
-            <button type="submit" class="btn btn-default">Register</button>
+            <button type="submit" class="btn btn-dark">Register</button>
         </div>
         <!--HELP TEXT-->
         <div class="col-md-6">
-            <div class="panel panel-info">
-                <div class="panel-heading">
+            <div class="p-2">
+                <h4 class="p-2 bg-info mb-0 rounded-top text-white">
                     <i class="fa fa-info-circle"></i>
-                    <span>Register help</span>
-                </div>
-                <div class="panel-body">
-                    <ul>
-                        <li>
-                            <b>Username</b> will be used to login on the website and the in-game server.
-                            In-game username must be in form of "yourusername@freedom.com", however,
-                            website's login does not need "@@freedom.com" bit (it's added automatically).
-                            <u>Username cannot be changed later on!</u>
-                        </li>
-                        <li>
-                            <b>Display name</b> will be used as your identity on the website for the public instead of your username.
-                            Only the administration team will be able to see your username on the website.        
-                        </li>
-                        <li>
-                            <b>Email address</b> will be used for password recovery.
-                        </li>
-                        <li>
-                            <b>Password</b> must be at least 8 characters long.
-                        </li>
-                        <li>
-                            If you have any registration problems, then contact the developers or the staff on the
-                            <a href="https://wowfreedom-rp.com/f/">WoW Freedom Forums &raquo;</a>
-                        </li>
-                    </ul>
-                </div>
+                    Register help
+                </h4>
+                <ul class="p-4 bg-dark text-white rounded-bottom" style="--bs-bg-opacity: 0.9">
+                    <li>
+                        <b>Username</b> will be used to login on the website and the in-game server.
+                        In-game username must be in form of "yourusername@freedom.com", however,
+                        website's login does not need "@@freedom.com" bit (it's added automatically).
+                        <u>Username cannot be changed later on!</u>
+                    </li>
+                    <li>
+                        <b>Display name</b> will be used as your identity on the website for the public instead of your username.
+                        Only the administration team will be able to see your username on the website.
+                    </li>
+                    <li>
+                        <b>Email address</b> will be used for password recovery.
+                    </li>
+                    <li>
+                        <b>Password</b> must be at least 8 characters long.
+                    </li>
+                    <li>
+                        If you have any registration problems, then contact the developers or the staff on the
+                        <a href="@appConfig.Links.ForumUrl">WoW Freedom Forums &raquo;</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

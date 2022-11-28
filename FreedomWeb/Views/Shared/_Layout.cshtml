@@ -7,37 +7,28 @@
     <link rel="stylesheet" href="~/css/bundle.css" />
     <script src="~/js/modernizr" ></script>
 </head>
-<body>
+<body class="d-flex flex-column">
     <partial name="_TopNav"></partial>
-    <div class="container-fluid body-content">
-        <div class="row">
+    <div class="flex-grow-1">
+        <div class="row h-100 me-0">
             <div class="col-md-3">
                 <partial name="_SideBarNav"></partial>
             </div>
             <div class="col-md-9">
                 <partial name="_Alerts"></partial>
-                <div class="main panel panel-default">
-                    <div class="panel-heading">
-                        <h3>@ViewBag.Title</h3>
-                    </div>
-                    <div class="panel-body">
-                        @RenderBody()
-                    </div>
-                </div>  
+                <div class="py-3">
+                    <h3>@ViewBag.Title</h3>
+                </div>
+                @RenderBody()
             </div>
         </div>                            
     </div>
 
-    <footer id="mainFooter">
-        <partial name="_Footer"></partial>
-    </footer>
+    <partial name="_Footer"></partial>
 
     <script src="~/js/jquery"></script>
-        @Html.RenderUnobtrusiveAjaxScript()
-    <script src="~/js/jqueryDateFormat"></script>
     <script src="~/js/bootstrap"></script>
     <script src="~/js/dataTables"></script>
-    <script src="~/js/bootstrapSelect"></script>
     <script src="~/js/freedom"></script>
     @RenderSection("scripts", required: false)
 </body>

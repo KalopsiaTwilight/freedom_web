@@ -2,51 +2,48 @@
 @{
     ViewBag.Title = "Login";
 }
-
+@using FreedomLogic.Infrastructure
+@inject AppConfiguration appConfig
 @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @id = "FormLogin" }))
 {
     <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.ReturnUrl)
-    <div class="row">        
+    <div class="row">
         <!--INPUT FIELDS-->
         <div class="col-md-6">
-            <div class="form-group">
-                @Html.LabelFor(m => m.Username)
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Username, htmlAttributes: new { @class = "form-label" })
                 <div class="input-group">
                     @Html.TextBoxFor(m => m.Username, new { @class = "form-control input-full" })
-                    <span class="input-group-addon">@@freedom.com</span>
+                    <span class="input-group-text">@@freedom.com</span>
                 </div>
             </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.Password)
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Password, htmlAttributes: new { @class = "form-label" })
                 @Html.PasswordFor(m => m.Password, new { @class = "form-control input-full" })
             </div>
-            <div class="checkbox">
-                <label>
-                    @Html.EditorFor(m => m.RememberMe)
-                    @Html.DisplayNameFor(m => m.RememberMe)
-                </label>  
+            <div class="form-check mb-3">
+                @Html.CheckBoxFor(m => m.RememberMe, new {@class = "form-check-input"})
+                @Html.LabelFor(m => m.RememberMe, htmlAttributes: new { @class = "form-check-label" })
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
         </div>
-        <!--HELP TEXT-->  
+        <!--HELP TEXT-->
         <div class="col-md-6">
-            <div class="panel panel-info">
-                <div class="panel-heading">
+            <div class="p-2">
+                <h4 class="p-2 bg-info mb-0 rounded-top text-white">
                     <i class="fa fa-info-circle"></i>
-                    <span>Login help</span>
-                </div>
-                <div class="panel-body">
-                    <ul>
-                        <li>Note: You do not need to add "@@freedom.com" to your username here. It is added automatically for you.</li>
-                        <li><a href="@Url.Action("ForgotPassword", "Account")">Forgot your password? Click here &raquo;</a></li>
-                        <li>
-                            If you have further login problems, then contact the developers or the staff on the
-                            <a href="http://w11.zetaboards.com/WoW_Freedom/index/">WoW Freedom Forums &raquo;</a>
-                        </li>                      
-                    </ul>
-                </div>
+                    Login help
+                </h4>
+                <ul class="p-4 bg-dark text-white rounded-bottom" style="--bs-bg-opacity: 0.9">
+                    <li>Note: You do not need to add "@@freedom.com" to your username here. It is added automatically for you.</li>
+                    <li><a href="@Url.Action("ForgotPassword", "Account")">Forgot your password? Click here &raquo;</a></li>
+                    <li>
+                        If you have further login problems, then contact the developers or the staff on the
+                        <a href="@appConfig.Links.ForumUrl">WoW Freedom Forums &raquo;</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

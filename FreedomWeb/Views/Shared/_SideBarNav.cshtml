@@ -1,109 +1,90 @@
 ﻿@{
     Layout = null;
 }
-<div class="panel panel-default sidebar">
-    <div class="panel-heading">
-        <a href="#"><strong><i class="fa fa-wrench"></i> Mini-manager</strong></a>
+<div class="d-flex flex-column flex-shrink-0 p-3 h-100 text-bg-dark">
+    <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-muted text-decoration-none">
+        @if (User.Identity.IsAuthenticated)
+        {
+        <strong>Welcome back, @User.Identity.Name!</strong>
+        }else
+        {
+        <strong>Hello, visitor!</strong>
+        }
     </div>
-    <div class="panel-body">
-        <!-- Left column -->
-        <ul class="nav nav-stacked">
-            <li class="nav-header panel panel-default">
-                <div class="btn panel-heading" data-toggle="collapse" data-target="#menuSubGeneral">
-                    <i class="glyphicon glyphicon-home"></i>
-                    <span>General</span>
-                    <i class="glyphicon glyphicon-chevron-right pull-right chevron-toggle"></i>
+    <hr>
+    <div class="nav nav-pills flex-column mb-auto">
+        @if (!User.Identity.IsAuthenticated) {
+        <a class="nav-link text-white" href="@Url.Action("Login", "Account")">
+            <i class="fa fa-sign-in pe-2"></i> Login
+        </a>
+        <a class="nav-link text-white" href="@Url.Action("Register", "Account")">
+            <i class="fa fa-user-plus pe-2"></i> Register
+        </a>
+        }
+        <a class="nav-link text-white" href="@Url.Action("Status", "Home")"><i class="fa fa-bar-chart pe-2"></i> Status</a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a href="#collapseAccount" class="nav-link text-white collapsed" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseAccount">
+                <i class="fa fa-user pe-2"></i>
+                Account Management
+                <i class="fa fa-angle-down pull-right"></i>
+            </a>
+            <div class="collapse" id="collapseAccount">
+                <div class="ps-4">
+                    <a class="nav-link text-white" href="@Url.Action("ShowProfile", "Account")">
+                        <i class="fa fa-user pe-2"></i> My profile
+                    </a>
+                    <a class="nav-link text-white" href="@Url.Action("ChangeDisplayName", "Account")">
+                        <i class="fa fa-edit pe-2"></i> Change display name
+                    </a>
+                    <a class="nav-link text-white" href="@Url.Action("ChangePassword", "Account")">
+                        <i class="fa fa-edit pe-2"></i> Change password
+                    </a>
+                    <a class="nav-link text-white" href="@Url.Action("ChangeEmail", "Account")">
+                        <i class="fa fa-edit pe-2"></i> Change email
+                    </a>
+                    <a class="nav-link text-white" href="@Url.Action("CharacterTransfer", "Character")">
+                        <i class="fa fa-upload pe-2"></i> Character transfer
+                    </a>
                 </div>
-                <div class="panel-body collapse" id="menuSubGeneral">
-                    <ul class="nav nav-stacked">
-                        @if (this.User.Identity.IsAuthenticated)
-                        {
-                            <li>
-                                <a href="@Url.Action("Logout", "Account")"><i class="glyphicon glyphicon-log-out"></i> Logout (@User.Identity.Name)</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li>
-                                <a href="@Url.Action("Login", "Account")"><i class="glyphicon glyphicon-log-in"></i> Login</a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("Register", "Account")"><i class="glyphicon glyphicon-edit"></i> Register</a>
-                            </li>
-                        }
-                        <li>
-                            <a href="@Url.Action("Status", "Home")"><i class="glyphicon glyphicon-stats"></i> Status</a>
-                        </li>
-                    </ul>
+            </div>
+            <a href="#collapseServerData" class="nav-link text-white collapsed" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseServerData">
+                <i class="fa fa-database pe-2"></i>
+                Server Data
+                <i class="fa fa-angle-down pull-right"></i>
+            </a>
+            <div class="collapse" id="collapseServerData">
+                <div class="ps-4">
+                    <a class="nav-link text-white" href="@Url.Action("CommandList", "Server")">
+                        <i class="fa fa-search pe-2"></i> In-Game Commands
+                    </a>
                 </div>
-            </li>
-            @if (User.Identity.IsAuthenticated)
+            </div>
+            if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
             {
-                <li class="nav-header panel panel-default">
-                    <div class="btn panel-heading" data-toggle="collapse" data-target="#menuSubAccount">
-                        <i class="glyphicon glyphicon-user"></i>
-                        <span>Account - @User.Identity.Name</span>
-                        <i class="glyphicon glyphicon-chevron-right pull-right chevron-toggle"></i>
+                <a href="#collapseServerControl" class="nav-link text-white collapsed" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseServerControl">
+                    <i class="fa fa-flag pe-2"></i>
+                    Administration
+                    <i class="fa fa-angle-down pull-right"></i>
+                </a>
+                <div class="collapse" id="collapseServerControl">
+                    <div class="ps-4">
+                        <a class="nav-link text-white" href="@Url.Action("Index", "Admin")">
+                            <i class="fa fa-pie-chart pe-2"></i> Admin Overview
+                        </a>
+                        <a class="nav-link text-white" href="@Url.Action("UserList", "Admin")">
+                            <i class="fa fa-users pe-2"></i> User Accounts
+                        </a>
+                        <a class="nav-link text-white" href="@Url.Action("ServerControl", "Admin")">
+                            <i class="fa fa-gears pe-2"></i> Server Control
+                        </a>
                     </div>
-                    <div class="panel-body collapse" id="menuSubAccount">
-                        <ul class="nav nav-stacked">
-                            <li>
-                                <a href="@Url.Action("ShowProfile", "Account")"><i class="glyphicon glyphicon-user"></i> My profile</a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("ChangeDisplayName", "Account")"><i class="glyphicon glyphicon-edit"></i> Change display name</a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("ChangePassword", "Account")"><i class="glyphicon glyphicon-edit"></i> Change password</a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("ChangeEmail", "Account")"><i class="glyphicon glyphicon-edit"></i> Change email</a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("CharacterTransfer", "Character")"><i class="glyphicon glyphicon-transfer"></i> Character transfer</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-header panel panel-default">
-                    <div class="btn panel-heading" data-toggle="collapse" data-target="#menuSubServerDatabase">
-                        <i class="fa fa-database"></i>
-                        <span>Server database</span>
-                        <i class="glyphicon glyphicon-chevron-right pull-right chevron-toggle"></i>
-                    </div>
-                    <div class="panel-body collapse" id="menuSubServerDatabase">
-                        <ul class="nav nav-stacked">
-                            <li>
-                                <a href="@Url.Action("CommandList", "Server")"><i class="glyphicon glyphicon-search"></i> In-game command list</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
-                {
-                    <li class="nav-header panel panel-default">
-                        <div class="btn panel-heading" data-toggle="collapse" data-target="#menuSubAdmin">
-                            <i class="glyphicon glyphicon-flag"></i>
-                            <span>Administration</span>
-                            <i class="glyphicon glyphicon-chevron-right pull-right chevron-toggle"></i>
-                        </div>
-                        <div class="panel-body collapse" id="menuSubAdmin">
-                            <ul class="nav nav-stacked">
-                                <li>
-                                    <a href="@Url.Action("Index", "Admin")"><i class="fa fa-pie-chart"></i> Overview</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("UserList", "Admin")"><i class="fa fa-users"></i> User account list</a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("ServerControl", "Admin")"><i class="fa fa-gears"></i> Server control</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                }
+                </div>
             }
-        </ul>
+            <hr />
+            <a class="nav-link text-white" href="@Url.Action("Logout", "Account")">
+                <i class="fa fa-sign-out pe-2"></i> Logout (@User.Identity.Name)
+            </a>
+        }
     </div>
 </div>
-
