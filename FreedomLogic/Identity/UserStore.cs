@@ -1,6 +1,7 @@
 ﻿using FreedomLogic.DAL;
 using FreedomLogic.Entities;
 using FreedomLogic.Managers;
+using FreedomLogic.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -27,12 +28,14 @@ namespace FreedomLogic.Identity
         private readonly DbFreedom _freedomDb;
         private readonly DbAuth _authDb;
         private readonly AccountManager _accountManager;
+        private readonly ExtraDataLoader _dataLoader;
 
-        public UserStore(DbFreedom freedomDb, DbAuth authDb, AccountManager accountManager)
+        public UserStore(DbFreedom freedomDb, DbAuth authDb, AccountManager accountManager, ExtraDataLoader dataLoader)
         {
             _freedomDb = freedomDb;
             _authDb = authDb;
             _accountManager = accountManager;
+            _dataLoader = dataLoader;
         }
 
         #region IUserStore
@@ -84,6 +87,7 @@ namespace FreedomLogic.Identity
         public async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
         {
             // Update game server data
+            _dataLoader.LoadExtraUserData(user);
             BnetAccount bnetAcc = user.UserData.BnetAccount;
             GameAccount gameAcc = user.UserData.GameAccount;
             _accountManager.UpdateBnetAccount(bnetAcc, user.UserName, user.BnetAccPassHash);

@@ -104,6 +104,8 @@ namespace FreedomLogic.Managers
         {
             gameAcc.Email = regEmail;
             gameAcc.RegEmail = regEmail;
+            gameAcc.Salt = RandomNumberGenerator.GetBytes(32);
+            gameAcc.Verifier = SRP6.GetVerifier(gameAcc.Username, password, gameAcc.Salt);
         }
 
         public void SetGameAccAccessLevel(int gameAccId, GMLevel gmlevel)

@@ -133,7 +133,11 @@ namespace FreedomLogic.Managers
 
                     if (process != null)
                     {
-                        process.Kill();
+                        var stopped = process.CloseMainWindow();
+                        if (!stopped)
+                        {
+                            process.Kill();
+                        }
                     }
                 }
                 catch (Exception e)
@@ -160,7 +164,17 @@ namespace FreedomLogic.Managers
                 string exePath = Path.Combine(_appConfig.TrinityCore.ServerDir, "bnetserver.exe");
                 string workingDir = _appConfig.TrinityCore.ServerDir;
                 int sessionId = _appConfig.TrinityCore.ProcessStartSessionId;
-                ProcessExtensions.StartProcessForSessionId(sessionId, null, exePath, workingDir, true);
+                //ProcessExtensions.StartProcessForSessionId(sessionId, null, exePath, workingDir, true);
+                //ProcessExtensions.StartProcessAsCurrentUser(exePath, null, null, true);
+                ProcessStartInfo psInfo = new()
+                {
+                    LoadUserProfile = true,
+                    UseShellExecute = true,
+                    FileName = exePath,
+                    WorkingDirectory =workingDir,
+                    CreateNoWindow=false
+                };
+                Process.Start(psInfo);
             }
             catch (Exception e)
             {
@@ -184,7 +198,11 @@ namespace FreedomLogic.Managers
 
                     if (process != null)
                     {
-                        process.Kill();
+                        var stopped = process.CloseMainWindow();
+                        if (!stopped)
+                        {
+                            process.Kill();
+                        }
                     }
 
                     int realmId = _appConfig.TrinityCore.RealmId;
@@ -223,10 +241,19 @@ namespace FreedomLogic.Managers
                 _authDb.Entry(realm).State = EntityState.Modified;
                 _authDb.SaveChanges();
 
-                string exePath = Path.Combine(_appConfig.TrinityCore.ServerDir, "bnetserver.exe");
+                string exePath = Path.Combine(_appConfig.TrinityCore.ServerDir, "worldserver.exe");
                 string workingDir = _appConfig.TrinityCore.ServerDir;
                 int sessionId = _appConfig.TrinityCore.ProcessStartSessionId;
-                ProcessExtensions.StartProcessForSessionId(sessionId, null, exePath, workingDir, true);
+                //ProcessExtensions.StartProcessForSessionId(sessionId, null, exePath, workingDir, true);
+                //ProcessExtensions.StartProcessAsCurrentUser(exePath, null, null, true);
+                ProcessStartInfo psInfo = new()
+                {
+                    LoadUserProfile = true,
+                    UseShellExecute = true,
+                    FileName = exePath,
+                    WorkingDirectory = workingDir
+                };
+                Process.Start(psInfo);
             }
             catch (Exception e)
             {

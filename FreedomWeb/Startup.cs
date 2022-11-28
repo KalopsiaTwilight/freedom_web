@@ -55,8 +55,10 @@ namespace FreedomWeb
 
             services.AddIdentityCore<User>()
                 .AddUserStore<UserStore>()
+                .AddRoles<FreedomRole>()
+                .AddRoleStore<RoleStore>()
                 .AddSignInManager()
-                .AddUserManager<UserManager<User>>()
+                .AddUserManager<UserManager>()
                 .AddDefaultTokenProviders();
 
             // MVC Configuration 

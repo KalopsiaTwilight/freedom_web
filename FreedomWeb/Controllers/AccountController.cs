@@ -2,6 +2,7 @@
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using FreedomLogic.Resources;
+using FreedomLogic.Services;
 using FreedomWeb.Infrastructure;
 using FreedomWeb.ViewModels.Accounts;
 using Microsoft.AspNetCore.Authorization;
@@ -16,15 +17,17 @@ namespace FreedomWeb.Controllers
     public class AccountController : FreedomController
     {
         #region Constructor and Identity helpers
-        private SignInManager<User> _signInManager;
-        private UserManager<User> _userManager;
-        private AccountManager _accountManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager _userManager;
+        private readonly AccountManager _accountManager;
+        private readonly ExtraDataLoader _dataLoader;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, AccountManager accountManager)
+        public AccountController(UserManager userManager, SignInManager<User> signInManager, AccountManager accountManager, ExtraDataLoader dataLoader)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _accountManager = accountManager;   
+            _accountManager = accountManager;
+            _dataLoader = dataLoader;
         }
 
         private void AddErrors(IdentityResult result)
@@ -73,20 +76,21 @@ namespace FreedomWeb.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var user = await _userManager.FindByNameAsync(model.Username);
-            var result = user == null 
+            var result = user == null
                 ? Microsoft.AspNetCore.Identity.SignInResult.Failed
                 : await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
             if (result.Succeeded)
             {
                 SetAlertMsg(AlertRes.AlertSuccessLogin, AlertMsgType.AlertSuccess);
                 return RedirectToLocal(model.ReturnUrl);
-            } else
+            }
+            else
             {
                 ModelState.AddModelError("", "Invalid login attempt.");
                 return View(model);
             }
         }
-        
+
         [HttpGet]
         public async Task<ActionResult> Logout()
         {
@@ -122,8 +126,6 @@ namespace FreedomWeb.Controllers
                 return RedirectToLocal(null);
             }
 
-            // TODO:
-            // Create validation for user account name already exists
             var existingUser = await _userManager.FindByNameAsync(model.Username);
             if (existingUser != null)
             {
@@ -273,8 +275,7 @@ namespace FreedomWeb.Controllers
             }
 
             var user = await _userManager.FindByIdAsync(CurrentUserId);
-            var hashedPass = _accountManager.BnetAccountCalculateShaHash(user.UserName, model.CurrentPassword);
-            var result = await _userManager.ChangePasswordAsync(user, hashedPass, model.NewPassword);
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             if (result.Succeeded)
             {
                 SetAlertMsg(AlertRes.AlertSuccessPasswordChanged, AlertMsgType.AlertSuccess);
@@ -324,15 +325,14 @@ namespace FreedomWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ChangeDisplayName(ChangeDisplayNameViewModel model)
+        public async Task<ActionResult> ChangeDisplayName(ChangeDisplayNameViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // TODO: Update display name
-            //_userManager.UpdateDisplayName(CurrentUserId, model.DisplayName.Trim());
+            await _userManager.UpdateDisplayNameAsync(int.Parse(CurrentUserId), model.DisplayName.Trim());
 
             SetAlertMsg(AlertRes.AlertSuccessDisplayNameChanged, AlertMsgType.AlertSuccess);
             return RedirectToAction("Index", "Home");
@@ -350,6 +350,7 @@ namespace FreedomWeb.Controllers
             }
 
             var user = await _userManager.FindByIdAsync((id ?? 0).ToString());
+            _dataLoader.LoadExtraUserData(user);
 
             if (user == null || user.UserData == null)
             {
@@ -376,12 +377,6 @@ namespace FreedomWeb.Controllers
                 if (_userManager != null)
                 {
                     _userManager.Dispose();
-                    _userManager = null;
-                }
-
-                if (_signInManager != null)
-                {
-                    _signInManager = null;
                 }
             }
 

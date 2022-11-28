@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FreedomLogic.Infrastructure;
 using System.IO;
+using Microsoft.EntityFrameworkCore.Internal;
+using FreedomLogic.Services;
 
 namespace FreedomWeb.Controllers
 {
@@ -26,15 +28,17 @@ namespace FreedomWeb.Controllers
         private readonly AccountManager _accountManager;
         private readonly ServerControl _serverControl;
         private readonly AppConfiguration _appConfig;
+        private readonly ExtraDataLoader _dataLoader;
 
         public AdminController(UserManager<User> userManager, DbFreedom freedomDb, AccountManager accountManager,
-            ServerControl serverControl, AppConfiguration appConfig)
+            ServerControl serverControl, AppConfiguration appConfig, ExtraDataLoader dataLoader)
         {
             _userManager = userManager;
             _freedomDb = freedomDb;
             _accountManager = accountManager;
             _serverControl = serverControl;
             _appConfig = appConfig;
+            _dataLoader = dataLoader;
         }
 
         [HttpGet]
@@ -50,6 +54,7 @@ namespace FreedomWeb.Controllers
                 .ToList();
             foreach (var admin in adminUsers)
             {
+                _dataLoader.LoadExtraUserData(admin);
                 var gmLevel = admin.UserData.GameAccountAccess.GMLevel;
                 model.AdminList.Add(new AdminListItem()
                 {
@@ -75,6 +80,7 @@ namespace FreedomWeb.Controllers
                .ToList();
             foreach (var user in users)
             {
+                _dataLoader.LoadExtraUserData(user);
                 var gmLevel = user.UserData.GameAccountAccess.GMLevel;
                 model.UserList.Add(new UserListItem()
                 {
@@ -93,6 +99,7 @@ namespace FreedomWeb.Controllers
         public async Task<ActionResult> SetGameAccess(int? id)
         {
             var user = await _userManager.FindByIdAsync(id?.ToString());
+            _dataLoader.LoadExtraUserData(user);
             if (user == null)
             {
                 // TODO: Handle error

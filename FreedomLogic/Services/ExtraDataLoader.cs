@@ -27,6 +27,10 @@ namespace FreedomLogic.Services
 
         public bool LoadExtraUserData(User user)
         {
+            if (user.UserData != null)
+            {
+                return true;
+            }
             var userData = new UserData
             {
                 WebUser = _freedomDb.Users.Find(user.Id)
