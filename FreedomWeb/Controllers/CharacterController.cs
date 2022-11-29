@@ -72,7 +72,7 @@ namespace FreedomWeb.Controllers
                 accounts.Select(c => new SelectListItem()
                 {
                     Value = c.Id.ToString(),
-                    Text = c.Username,
+                    Text = $"WOW#{c.BnetAccountIndex}",
                     Selected = (c.Id == model.AccountId)
                 }));
 

@@ -4,42 +4,47 @@
     ViewBag.Title = Model.DisplayName + "'s profile";
     bool viewSensittive = (User.FindFirstValue(ClaimTypes.NameIdentifier) == Model.UserId.ToString()) || User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin);
 }
-@if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
-{
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <i class="glyphicon glyphicon-flag"></i>
-        <span>Admin panel</span>
-    </div>
-    <div class="panel-body">
-        <ul>
-            <li>
-                <a href="@Url.Action("SetGameAccess", "Admin", new { id = Model.UserId })">Change GMLevel &raquo;</a>
-            </li>
-        </ul>
-    </div>
-</div>
-}
-<table class="table">
-    <tbody>
+
+<div class="row">
+    <div class="col-md-6">
         @if (viewSensittive)
         {
-            <tr>
-                <td><b>[HIDDEN]</b> @Html.DisplayNameFor(m => m.Username)</td>
-                <td>@Html.DisplayFor(m => m.Username)</td>
-            </tr>
-            <tr>
-                <td><b>[HIDDEN]</b> @Html.DisplayNameFor(m => m.RegEmail)</td>
-                <td>@Html.DisplayFor(m => m.RegEmail)</td>
-            </tr>
+            <div class="mb-3 row">
+                @Html.LabelFor(m => m.Username, htmlAttributes: new { @class = "col-sm-4 col-form-label"})
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(m => m.Username, htmlAttributes: new { @readonly = true, @class = "form-control" })
+                </div>
+            </div>
+            <div class="mb-3 row">
+                @Html.LabelFor(m => m.RegEmail, htmlAttributes: new { @class = "col-sm-4 col-form-label"})
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(m => m.RegEmail, htmlAttributes: new { @readonly = true, @class = "form-control" })
+                </div>
+            </div>
         }
-        <tr>
-            <td>@Html.DisplayNameFor(m => m.DisplayName)</td>
-            <td>@Html.DisplayFor(m => m.DisplayName)</td>
-        </tr>
-        <tr>
-            <td>@Html.DisplayNameFor(m => m.CreationDateTime) (yyyy-MM-dd)</td>
-            <td>@Html.DisplayFor(m => m.CreationDateTime)</td>
-        </tr>
-    </tbody>
-</table>
+        <div class="mb-3 row">
+            @Html.LabelFor(m => m.DisplayName, htmlAttributes: new { @class = "col-sm-4 col-form-label"})
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.DisplayName, htmlAttributes: new { @readonly = true, @class = "form-control" })
+            </div>
+        </div>
+        <div class="mb-3 row">
+            @Html.LabelFor(m => m.CreationDateTime, htmlAttributes: new { @class = "col-sm-4 col-form-label"})
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.CreationDateTime, htmlAttributes: new { @readonly = true, @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        @if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
+        {
+            <h4 class="p-2 bg-dark mb-0 rounded-top text-white">
+                <i class="fa fa-flag"></i>
+                Admin Actions
+            </h4>
+            <div class="p-3 bg-secondary text-dark rounded-bottom" style="--bs-bg-opacity: 0.2">
+                <a role="button" href="@Url.Action("SetGameAccess", "Admin", new { id = Model.UserId })" class="btn btn-dark">Change GMLevel</a>
+            </div>
+        }
+    </div>
+</div>

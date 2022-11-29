@@ -3,23 +3,14 @@
 
 @if (!Model.IsValid)
 {
-    <div class="validation-summary-errors panel panel-danger"
-         data-valmsg-summary="true">
-        <div class="panel-heading">
-            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-            <span>Please, correct the following errors:</span>
-        </div>
-        <div class="panel-body">
-            <ul class="list-unstyled">
-                @foreach (var modelError in Model.SelectMany(keyValuePair => keyValuePair.Value.Errors))
-                {
-                <li class="text-danger">
-                    <i class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></i>
-                    <span>@modelError.ErrorMessage</span>
-                </li>
-                }
-            </ul>
-
-        </div>
+    <div class="alert alert-danger" role="alert" data-valmsg-summary="true">
+        <h5 class="alert-heading"><i class="fa fa-warning me-2"></i>Validation Error</h5>
+        <p>Please, correct the follow errors:</p>
+        <ul class="mb-0">
+            @foreach (var modelError in Model.SelectMany(keyValuePair => keyValuePair.Value.Errors))
+            {
+                <li>@modelError.ErrorMessage</li>
+            }
+        </ul>
     </div>
 }

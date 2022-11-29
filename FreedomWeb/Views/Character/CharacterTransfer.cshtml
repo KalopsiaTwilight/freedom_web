@@ -7,43 +7,40 @@
     <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
     @Html.AntiForgeryToken()
     <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <i class="fa fa-info-circle"></i>
-                    <span>Character transfer help</span>
-                </div>
-                <div class="panel-body">
-                    <ul>
-                        <li>
-                            To transfer a character:
-                            <ol>
-                                <li>Fill in details of the target account to which the character will be transferred.</li>
-                                <li>Select one of your characters from drop-down list for the transfer.</li>
-                                <li>Submit the form.</li>
-                                <li>If you are currently on the character, then it is recommended to fully relog into the other account, 
-                                which now holds your transferred character.</li>
-                            </ol>
-                        </li>
-                        <li>
-                            Character transfer is only possible <u>if target account has enough character slots available</u> (11 is the max).
-                        </li>
-                    </ul>
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.AccountId, htmlAttributes: new { @class = "form-label" })
+                <div class="input-group">
+                    @Html.DropDownListFor(m => m.AccountId, Model.AccountSelectList, new { @class = "form-select" })
                 </div>
             </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.AccountId)
-                <div>
-                    @Html.DropDownListFor(m => m.AccountId, Model.AccountSelectList, new { @class = "selectpicker" })
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.CharacterId, htmlAttributes: new { @class = "form-label" })
+                <div class="input-group">
+                    @Html.DropDownListFor(m => m.CharacterId, Model.CharacterSelectList, new { @class = "form-select" })
                 </div>
-            </div>    
-            <div class="form-group">
-                @Html.LabelFor(m => m.CharacterId)
-                <div>
-                    @Html.DropDownListFor(m => m.CharacterId, Model.CharacterSelectList, new { @class = "selectpicker" })
-                </div>                
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
+        </div>
+        <div class="col-md-6">
+            <h4 class="p-2 bg-dark mb-0 rounded-top text-white">
+                <i class="fa fa-info-circle"></i>
+                Change display name help
+            </h4>
+            <div class="p-3 bg-secondary text-dark rounded-bottom" style="--bs-bg-opacity: 0.2">
+                <p>
+                    To transfer a character:
+                    <ol>
+                        <li>Fill in details of the target account to which the character will be transferred.</li>
+                        <li>Select one of your characters from drop-down list for the transfer.</li>
+                        <li>Submit the form.</li>
+                        <li>
+                            If you are currently on the character, then it is recommended to fully relog into the other account,
+                            which now holds your transferred character.
+                        </li>
+                    </ol>
+                <p> Character transfer is only possible <u>if target account has enough character slots available</u> (11 is the max).</p>
+            </div>
         </div>
     </div>
 }

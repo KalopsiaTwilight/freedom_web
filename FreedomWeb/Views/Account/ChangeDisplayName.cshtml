@@ -2,36 +2,39 @@
 @{
     ViewBag.Title = "Change display name";
 }
-@using (Html.BeginForm("ChangeDisplayName", "Account", FormMethod.Post, new { @id = "FormChangeDisplayName" }))
-{
-    <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
-    @Html.AntiForgeryToken()
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <i class="fa fa-info-circle"></i>
-                    <span>Change display name help</span>
+
+<div class="row">
+    <div class="col-md-6">
+        @using (Html.BeginForm("ChangeDisplayName", "Account", FormMethod.Post, new { @id = "FormChangeDisplayName" }))
+        {
+            <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
+            @Html.AntiForgeryToken()
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.CurrentDisplayName, htmlAttributes: new { @class = "form-label" })
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.CurrentDisplayName, new { @class = "form-control", disabled = true })
                 </div>
-                <div class="panel-body">
-                    <ul>
-                        <li>
-                            <b>Display name</b> will be used as your identity on the website for the public instead of your username.
-                            Only the administration team will be able to see your username on the website.
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.CurrentDisplayName)
-                @Html.TextBoxFor(m => m.CurrentDisplayName, new { @class = "form-control input-full", @disabled = "true" })
                 @Html.HiddenFor(m => m.CurrentDisplayName)
             </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.DisplayName)
-                @Html.TextBoxFor(m => m.DisplayName, new { @class = "form-control input-full" })
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.DisplayName, htmlAttributes: new { @class = "form-label" })
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.DisplayName, new { @class = "form-control"})
+                </div>
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn btn-dark">Submit</button>
+        }
+    </div>
+    <div class="col-md-6">
+        <h4 class="p-2 bg-dark mb-0 rounded-top text-white">
+            <i class="fa fa-info-circle"></i>
+            Change display name help
+        </h4>
+        <div class="p-3 bg-secondary text-dark rounded-bottom" style="--bs-bg-opacity: 0.2">
+            <p>
+                <b>Display name</b> will be used as your identity on the website for the public instead of your username.
+                Only the administration team will be able to see your username on the website.
+            </p>
         </div>
     </div>
-}
+</div>

@@ -31,19 +31,17 @@
         </div>
         <!--HELP TEXT-->
         <div class="col-md-6">
-            <div class="p-2">
-                <h4 class="p-2 bg-info mb-0 rounded-top text-white">
-                    <i class="fa fa-info-circle"></i>
-                    Login help
-                </h4>
-                <ul class="p-4 bg-dark text-white rounded-bottom" style="--bs-bg-opacity: 0.9">
-                    <li>Note: You do not need to add "@@freedom.com" to your username here. It is added automatically for you.</li>
-                    <li><a href="@Url.Action("ForgotPassword", "Account")">Forgot your password? Click here &raquo;</a></li>
-                    <li>
-                        If you have further login problems, then contact the developers or the staff on the
-                        <a href="@appConfig.Links.ForumUrl">WoW Freedom Forums &raquo;</a>
-                    </li>
-                </ul>
+            <h4 class="p-2 bg-dark mb-0 rounded-top text-white">
+                <i class="fa fa-info-circle"></i>
+                Login help
+            </h4>
+            <div class="p-3 bg-secondary text-dark rounded-bottom" style="--bs-bg-opacity: 0.2">
+                <p>Note: You do not need to add "@@freedom.com" to your username here. It is added automatically for you.</p>
+                <p><a class="text-dark" href="@Url.Action("ForgotPassword", "Account")">Forgot your password? Click here &raquo;</a></p>
+                <p>
+                    If you have further login problems, then contact the developers or the staff on the
+                    <a class="text-dark" href="@appConfig.Links.ForumUrl">WoW Freedom Forums &raquo;</a>
+                </p>
             </div>
         </div>
     </div>

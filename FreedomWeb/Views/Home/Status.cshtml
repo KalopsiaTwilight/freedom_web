@@ -6,7 +6,7 @@
     bool isAdmin = User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin);
 }
 
-<div class="form-group status-line">
+<div class="form-group status-line mb-3">
     <div class="input-group" id="statusLineContainer">
         <label class="input-group-text" for="statusText">STATUS INFO</label>
         @if (Model.Status == EnumFreedomGameserverStatus.Online)
