@@ -23,7 +23,9 @@ namespace FreedomLogic.Managers
         [Display(Name = "FieldGMLevelGM", ResourceType = typeof(AccountRes))]
         GameMaster = 2,
         [Display(Name = "FieldGMLevelAdmin", ResourceType = typeof(AccountRes))]
-        Admin = 3
+        Admin = 3,
+        [Display(Name = "FieldGMLevelUnused", ResourceType = typeof(AccountRes))]
+        Unused = 999,
     }
 
     public enum GameExpansion

@@ -1,73 +1,54 @@
 ﻿@{
     ViewBag.Title = "Command list";
 }
-<div class="filtered-table">
-    <div class="panel panel-primary" style="background-color: #1c1e22;">
-        <div class="btn btn-block panel-heading" data-toggle="collapse" data-target="#TableCommandListSearchFilterCollapse">
-            <i class="glyphicon glyphicon-search"></i>
-            Search filters
-        </div>
-        <div class="panel-collapse collapse" id="TableCommandListSearchFilterCollapse">
-            <div class="panel-body filter-list">
-            </div>
-        </div>
-    </div>
-    <table class="table table-striped table-bordered" id="CommandListTable">
-        <thead>
-            <tr>
-                <th>Command</th>
-                <th>Syntax</th>
-                <th>Description</th>
-                <th>Access level</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</div>
+<table class="table table-striped table-bordered" id="CommandListTable">
+    <thead>
+        <tr>
+            <th>Command</th>
+            <th>Syntax</th>
+            <th>Description</th>
+            <th>Access level</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
 
 @section scripts
-{
+    {
     <script type="text/javascript">
         $('#CommandListTable').FreedomServerDataTable({
             "dataUrl": "@Url.Action("CommandListData", "Data")",
-            "order": [[ 0, "asc" ]],
+            "order": [[0, "asc"]],
             "columnDefs": [
                 {
-                    "width": "15%",
                     "targets": 0,
-                    "render": function (row, type, val, meta)
-                    {                       ;
+                    "render": function (row, type, val, meta) {
+                        ;
                         return '<pre style="white-space: pre-wrap; word-break:normal;"><code>' + val.Command + '</code></pre>';
                     }
                 },
                 {
-                    "width": "30%",
                     "targets": 1,
                     "render": function (row, type, val, meta) {
                         return '<pre style="white-space: pre-wrap; word-break:normal;"><code>' + val.Syntax + '</code></pre>';
                     }
                 },
                 {
-                    "width": "45%",
                     "targets": 2,
                     "render": function (row, type, val, meta) {
-                        if (val.Description)
-                        {
+                        if (val.Description) {
                             return '<pre style="white-space: pre-wrap; word-break:normal;"><code>' + val.Description + '</code></pre>';
                         }
-                        else
-                        {
+                        else {
                             return "";
-                        }                        
+                        }
                     }
                 },
                 {
-                    "width": "10%",
                     "targets": 3,
-                    "render": function (row, type, val, meta)
-                    {
-                        return val.GMLevelDisplay;
+                    "render": function (row, type, val, meta) {
+                        return val.GMLevel;
                     }
                 }
             ],

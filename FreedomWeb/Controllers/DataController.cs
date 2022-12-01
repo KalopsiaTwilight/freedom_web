@@ -1,6 +1,7 @@
 ﻿using FreedomLogic.Entities;
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
+using FreedomLogic.Services;
 using FreedomUtils.DataTables;
 using FreedomWeb.Infrastructure;
 using FreedomWeb.Models;
@@ -21,16 +22,18 @@ namespace FreedomWeb.Controllers
     public class DataController : FreedomController
     {
         private readonly UserManager<User> _userManager;
-        private readonly ServerManager _serverManager;
         private readonly CharacterManager _characterManager;
         private readonly ServerControl _serverControl;
+        private readonly CommandStore _commandStore;
+        private readonly ExtraDataLoader _dataLoader;
 
-        public DataController(UserManager<User> userManager, ServerManager serverManager, CharacterManager characterManager, ServerControl serverControl)
+        public DataController(UserManager<User> userManager, CharacterManager characterManager, ServerControl serverControl, CommandStore commandStore, ExtraDataLoader dataLoader)
         {
             _userManager = userManager;
-            _serverManager = serverManager;
             _characterManager = characterManager;
             _serverControl = serverControl;
+            _commandStore = commandStore;
+            _dataLoader = dataLoader;
         }
 
         /// <summary>
@@ -46,17 +49,23 @@ namespace FreedomWeb.Controllers
 
             int total = 0;
             int filtered = 0;
-            // TODO: List available commands for user.
-            //var list = _serverManager.DTGetFilteredAvailableFreedomCommands(
-            //        ref total,
-            //        ref filtered,
-            //        parameters.Start,
-            //        parameters.Length,
-            //        parameters.Columns,
-            //        parameters.Order,
-            //        user.UserData.GameAccountAccess.GMLevel
-            //    );
-            var list = new List<string>();
+            var currentUser = await _userManager.FindByIdAsync(CurrentUserId);
+            _dataLoader.LoadExtraUserData(currentUser);
+            var gmLevel = currentUser.UserData.GameAccountAccess.GMLevel;
+            if (User.IsInRole(FreedomRole.RoleAdmin))
+            {
+                gmLevel = GMLevel.Unused;
+            }
+
+            var list = _commandStore.DTGetFilteredAvailableFreedomCommands(
+                    ref total,
+                    ref filtered,
+                    parameters.Start,
+                    parameters.Length,
+                    parameters.Columns,
+                    parameters.Order,
+                    gmLevel
+                );
 
             return Json(new DTResponseModel() {
                 draw = parameters.Draw,

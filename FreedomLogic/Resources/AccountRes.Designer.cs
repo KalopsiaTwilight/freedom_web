@@ -151,6 +151,15 @@ namespace FreedomLogic.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unused.
+        /// </summary>
+        public static string FieldGMLevelUnused {
+            get {
+                return ResourceManager.GetString("FieldGMLevelUnused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New display name.
         /// </summary>
         public static string FieldNewDisplayName {

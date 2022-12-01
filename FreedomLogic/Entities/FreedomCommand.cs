@@ -26,6 +26,7 @@ namespace FreedomLogic.Entities
         public string Description { get; set; }
 
         [Column("gmlevel")]
+        [JsonIgnore]
         public GMLevel GMLevel { get; set; }
 
         [NotMapped]

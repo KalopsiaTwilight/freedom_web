@@ -16,6 +16,7 @@ namespace FreedomLogic.DAL
         public DbSet<ZoneInfo> ZoneInfos { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<FreedomRole> Roles { get; set; }
+        public DbSet<FreedomCommand> Commands { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

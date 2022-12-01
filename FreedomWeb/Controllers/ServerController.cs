@@ -17,10 +17,8 @@ namespace FreedomWeb.Controllers
     [Authorize]
     public class ServerController : FreedomController
     {
-        private readonly ServerManager _serverManager;
-        public ServerController(ServerManager serverManager)
+        public ServerController()
         {
-            _serverManager = serverManager;
         }
 
         [HttpGet]
