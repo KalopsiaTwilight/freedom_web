@@ -4,73 +4,66 @@
     bool worldServerRunning = Model.WorldServerStatus != FreedomWeb.ViewModels.Admin.EnumServerAppStatus.Offline;
     bool bnetServerRunning = Model.BnetServerStatus != FreedomWeb.ViewModels.Admin.EnumServerAppStatus.Offline;
 }
-<div class="col-md-8">
-    <div class="server-control-data panel panel-info">
-        <div class="panel-heading panel-title">
-            <i class="fa fa-title-icon fa-1-5x fa-gears"></i>
-            <span>Server application info</span>
-            <i class="fa fa-refresh fa-1-5x fa-spin pull-right" style="display:none;" id="ServerControlDataLoadingIcon"></i>
-        </div>
-        <div class="panel-body" id="serverControlDataBody">
-            <partial name="_ServerControlData"></partial>
-        </div>
+<div class="row">
+    <div class="col-md-8">
+        <h4>
+            <i class="fa fa-gears me-1"></i>
+            Application Status
+            <i class="fa fa-refresh fa-spin pull-right" style="display:none;" id="ServerControlDataLoadingIcon"></i>
+        </h4>
+        <partial name="_ServerControlData"></partial>
     </div>
-</div>
-<div class="col-md-4">
-    <div class="server-control-actions panel panel-warning-striped">
-        <div class="panel-heading panel-title">
-            <i class="fa fa-title-icon fa-1-5x fa-bolt"></i>
-            <span>Actions</span>
-            <i class="fa fa-refresh fa-1-5x fa-spin pull-right" style="display:none;" id="ServerControlActionsLoadingIcon"></i>
-        </div>
-        <div class="panel-body" id="serverControlActionsBody">
-            <div class="btn-group">
+    <div class="col-md-4">
+        <h4 class="p-2 bg-dark mb-0 rounded-top text-white">
+            <i class="fa fa-bolt me-1"></i>
+            Actions
+            <i class="fa fa-refresh fa-spin pull-right" style="display:none;" id="ServerControlActionsLoadingIcon"></i>
+        </h4>
+        <div class="p-3 bg-secondary text-dark rounded-bottom" style="--bs-bg-opacity: 0.2">
+            <div class="btn-group w-100 mb-3">
                 @if (bnetServerRunning)
                 {
                     <button type="button" id="btnServerActionStopBnet" class="btn btn-danger">Stop Bnetserver</button>
-                    <button type="button" id="btnServerActionStartBnet" class="btn btn-success" disabled>Start Bnetserver</button>
+                    <button type="button" id="btnServerActionStartBnet" class="btn btn-outline-success" disabled>Start Bnetserver</button>
                 }
                 else
                 {
-                    <button type="button" id="btnServerActionStopBnet" class="btn btn-danger" disabled>Stop Bnetserver</button>
+                    <button type="button" id="btnServerActionStopBnet" class="btn btn-outline-danger" disabled>Stop Bnetserver</button>
                     <button type="button" id="btnServerActionStartBnet" class="btn btn-success">Start Bnetserver</button>
                 }
-
             </div>
-            <div class="btn-group">
+            <div class="btn-group w-100">
                 @if (worldServerRunning)
                 {
                     <button type="button" id="btnServerActionStopWorld" class="btn btn-danger">Stop Worldserver</button>
-                    <button type="button" id="btnServerActionStartWorld" class="btn btn-success" disabled>Start Worldserver</button>
+                    <button type="button" id="btnServerActionStartWorld" class="btn btn-outline-success" disabled>Start Worldserver</button>
                 }
                 else
                 {
-                    <button type="button" id="btnServerActionStopWorld" class="btn btn-danger" disabled>Stop Worldserver</button>
+                    <button type="button" id="btnServerActionStopWorld" class="btn btn-outline-danger" disabled>Stop Worldserver</button>
                     <button type="button" id="btnServerActionStartWorld" class="btn btn-success">Start Worldserver</button>
                 }
             </div>
         </div>
     </div>
-</div>
-<div class="col-md-12">
-    <div class="server-control-logger panel panel-default">
-        <div class="panel-heading panel-title">
-            <i class="fa fa-title-icon fa-1-5x fa-terminal"></i>
-            <span>Action logger</span>
-            <button type="button" class="btn btn-sm btn-default pull-right" id="btnServerControlClearLogs">Clear log</button>
-        </div>
-        <div class="panel-body" id="serverControlLogs">
+    <div class="col-md-12">
+        <h4>
+            <i class="fa fa-terminal me-1"></i>
+            Action Log
+            <button type="button" class="btn btn-sm btn-dark pull-right" id="btnServerControlClearLogs">Clear log</button>
+        </h4>
+        <div id="serverControlLogs" class="text-bg-dark text-white mb-3 p-2 rounded" style="height: 350px;">
         </div>
     </div>
 </div>
 
 @section scripts
-{
+    {
     <script type="text/javascript">
         function addLogEntry(text, type) {
             var _type = type || "default";
             var dateTime = new Date();
-            var dateTimeString = $.format.date(dateTime, "yyyy-MM-dd HH:mm:ss");
+            var dateTimeString = dateTime.toLocaleString('nl-NL');
             var loggerElem = $('#serverControlLogs');
             var _class = "";
 
@@ -93,14 +86,14 @@
                     break;
             }
 
-            loggerElem.append('<div style="float:left;"' + (_class != "" ? ' class="' + _class + '"' : '') + '>[' + dateTimeString + ']:&nbsp;</div>');
-            loggerElem.append('<div style="word-wrap:break-word;margin-left:11em;"' + (_class != "" ? ' class="' + _class + '"' : '') + '>' + text + '</div>');
-            loggerElem.append('<div style="clear:both;"></div>');
+            var parent = $("<div>");
+            parent.append($('<span class="me-3 ' + _class + '">' + dateTimeString + '</span>'));
+            parent.append($('<span class="' + _class + '">' + text + '</span>'));
+            loggerElem.append(parent);
             loggerElem.scrollTop(loggerElem.prop("scrollHeight"));
         }
 
-        function refreshServerControlData()
-        {
+        function refreshServerControlData() {
             if ($("#ServerControlDataLoadingIcon").is(':animated')) {
                 $("#ServerControlDataLoadingIcon").stop().animate({ opacity: '100' });
             }
@@ -112,8 +105,7 @@
             })
         }
 
-        function refreshServerControlActions()
-        {
+        function refreshServerControlActions() {
             if ($("#ServerControlActionsLoadingIcon").is(':animated')) {
                 $("#ServerControlActionsLoadingIcon").stop().animate({ opacity: '100' });
             }
@@ -142,8 +134,7 @@
             })
         }
 
-        function stopBnetServer()
-        {
+        function stopBnetServer() {
             addLogEntry("Clearing/disabling refresh interval", "info");
             clearInterval(serverControlDataIntervalId);
 
@@ -157,12 +148,10 @@
 
             addLogEntry("Sending BnetServer STOP request", "info");
             $.post("@Url.Action("ServerControlStopBnetServer", "Admin")", function (data) {
-                if (data.status)
-                {
+                if (data.status) {
                     addLogEntry("BnetServer STOP command executed successfully", "success");
                 }
-                else
-                {
+                else {
                     addLogEntry("BnetServer STOP command failed to execute. Error: " + data.error, "danger");
                 }
 
@@ -171,8 +160,7 @@
             });
         }
 
-        function startBnetServer()
-        {
+        function startBnetServer() {
             addLogEntry("Clearing/disabling refresh interval", "info");
             clearInterval(serverControlDataIntervalId);
 
@@ -186,12 +174,10 @@
 
             addLogEntry("Sending BnetServer START request", "info");
             $.post("@Url.Action("ServerControlStartBnetServer", "Admin")", function (data) {
-                if (data.status)
-                {
+                if (data.status) {
                     addLogEntry("BnetServer START command executed successfully", "success");
                 }
-                else
-                {
+                else {
                     addLogEntry("BnetServer START command failed to execute. Error: " + data.error, "danger");
                 }
 
@@ -200,8 +186,7 @@
             });
         }
 
-        function stopWorldServer()
-        {
+        function stopWorldServer() {
             addLogEntry("Clearing/disabling refresh interval", "info");
             clearInterval(serverControlDataIntervalId);
 
@@ -215,12 +200,10 @@
 
             addLogEntry("Sending WorldServer STOP request", "info");
             $.post("@Url.Action("ServerControlStopWorldServer", "Admin")", function (data) {
-                if (data.status)
-                {
+                if (data.status) {
                     addLogEntry("WorldServer STOP command executed successfully", "success");
                 }
-                else
-                {
+                else {
                     addLogEntry("WorldServer STOP command failed to execute. Error: " + data.error, "danger");
                 }
 
@@ -229,8 +212,7 @@
             });
         }
 
-        function startWorldServer()
-        {
+        function startWorldServer() {
             addLogEntry("Clearing/disabling refresh interval", "info");
             clearInterval(serverControlDataIntervalId);
 
@@ -244,12 +226,10 @@
 
             addLogEntry("Sending WorldServer START request", "info");
             $.post("@Url.Action("ServerControlStartWorldServer", "Admin")", function (data) {
-                if (data.status)
-                {
+                if (data.status) {
                     addLogEntry("WorldServer START command executed successfully", "success");
                 }
-                else
-                {
+                else {
                     addLogEntry("WorldServer START command failed to execute. Error: " + data.error, "danger");
                 }
 
@@ -258,8 +238,7 @@
             });
         }
 
-        function refreshServerControlPage()
-        {
+        function refreshServerControlPage() {
             refreshServerControlData();
             refreshServerControlActions();
         }
