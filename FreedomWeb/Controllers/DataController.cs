@@ -64,7 +64,8 @@ namespace FreedomWeb.Controllers
                     parameters.Length,
                     parameters.Columns,
                     parameters.Order,
-                    gmLevel
+                    gmLevel,
+                    parameters.Search.Value ?? ""
                 );
 
             return Json(new DTResponseModel() {
@@ -97,7 +98,8 @@ namespace FreedomWeb.Controllers
                     parameters.Length,
                     parameters.Columns,
                     parameters.Order,
-                    allowUsernameViewing
+                    allowUsernameViewing,
+                    parameters.Search.Value ?? ""
                 );
 
             var statusCharList = new List<StatusCharListItem>();

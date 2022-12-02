@@ -32,46 +32,26 @@ namespace FreedomLogic.Managers
             int length,
             IEnumerable<DTColumn> columnList,
             IEnumerable<DTOrder> orderList,
-            GMLevel gmlevel)
+            GMLevel gmlevel,
+            string search = "")
         {
             var list = new List<FreedomCommand>();
 
-            // [0] - Command
-            // [1] - Syntax
-            // [2] - Description
-            // [3] - GMLevel
-            var colArray = columnList.ToArray();
             var orderArray = orderList.ToArray();
+            var colArray = columnList.ToArray();
 
-            // Can't use array in LINQ directly, because: http://stackoverflow.com/a/8354049
-            var filterCommand = colArray[0].Search.Value;
-            var filterSyntax = colArray[1].Search.Value;
-            var filterDescription = colArray[2].Search.Value;
-            var filterGmLevelDisplay = colArray[3].Search.Value;
+            var matchingGmLevels = Enum.GetValues<GMLevel>()
+                .Where(l => l.DisplayName().ToUpper().Contains(search))
+                .ToArray();
 
             // Set up basic filter query parts
             var query = _freedomDb.Commands
-                .Where(c => ((int)c.GMLevel) <= ((int)gmlevel));
-            if (!string.IsNullOrEmpty(filterCommand))
-            {
-                query = query.Where(c => c.Command.ToUpper().Contains(filterCommand.ToUpper()));
-            }
-            if (!string.IsNullOrEmpty(filterSyntax))
-            {
-                query = query.Where(c => c.Syntax.ToUpper().Contains(filterSyntax.ToUpper()));
-            }
-            if (!string.IsNullOrEmpty(filterGmLevelDisplay))
-            {
-                query = query.Where(c => c.Description.ToUpper().Contains(filterDescription.ToUpper()));
-            }
-
-            // Can't filter GMLevel through display value directly, so we enumerate through all GMLevel enums 
-            // and filter out non-matching ones from query
-            foreach (GMLevel value in Enum.GetValues(typeof(GMLevel)))
-            {
-                if (!string.IsNullOrEmpty(filterGmLevelDisplay) && value.DisplayName().Contains(filterGmLevelDisplay.ToUpper(), StringComparison.OrdinalIgnoreCase))
-                    query = query.Where(c => c.GMLevel != value);
-            }
+                .Where(c => ((int)c.GMLevel) <= ((int)gmlevel))
+                .Where(c => c.Command.ToUpper().Contains(search.ToUpper()) 
+                         || c.Syntax.ToUpper().Contains(search.ToUpper())
+                         || c.Description.ToUpper().Contains(search.ToUpper())
+                         || matchingGmLevels.Contains(c.GMLevel)
+                );
 
             // Column ordering
             bool nextLevel = false;

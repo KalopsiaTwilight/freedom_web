@@ -73,12 +73,21 @@ namespace FreedomWeb
             services.AddWebOptimizer(pipeline =>
             {
                 pipeline.AddCssBundle("/css/bundle.css",
-                    "lib/bootstrap/css/bootstrap.css", "css/font-awesome.css", "lib/datatables/datatables.css", "css/app.css"
+                    "lib/bootstrap/css/bootstrap.css", "css/font-awesome.css", 
+                    "css/app.css", 
+                    //"lib/DataTables-1.13.1/css/jquery.dataTables.css", 
+                    "lib/DataTables-1.13.1/css/dataTables.bootstrap5.css"
                 );
                 pipeline.AddJavaScriptBundle("/js/jquery", "lib/jquery/jquery-3.6.1.js");
                 pipeline.AddJavaScriptBundle("/js/bootstrap", "lib/bootstrap/js/bootstrap.js");
                 pipeline.AddJavaScriptBundle("/js/modernizr", "lib/modernizr-2.8.3.js");
-                pipeline.AddJavaScriptBundle("/js/dataTables", "lib/datatables/datatables.js");
+                pipeline.AddJavaScriptBundle("/js/dataTables", 
+                    "lib/DataTables-1.13.1/js/jquery.dataTables.js",
+                    "js/dataTablesStyling.js"
+                    //"lib/DataTables-1.13.1/js/dataTables.bootstrap5.js"
+                    //"lib/ColReorder-1.6.1/js/dataTables.colReorder.js",
+                    //"lib/ColReorder-1.6.1/js/colReorder.bootstrap5.js"
+                );
                 pipeline.AddJavaScriptBundle("/js/freedom", "js/common.js", "js/freedom_datatables.js", "js/site.js");
             });
 

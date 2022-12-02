@@ -70,40 +70,30 @@ namespace FreedomLogic.Managers
             int length,
             IEnumerable<DTColumn> columnList,
             IEnumerable<DTOrder> orderList,
-            bool allowUsernameFilter = false)
+            bool allowUsernameFilter = false,
+            string search = "")
         {
             var list = new List<Character>();
 
-            // [1] - Name
-            // [2] - Owner
-            // [3] - Race
-            // [4] - Class
-            // [5] - Map
-            // [6] - Zone
             var colArray = columnList.ToArray();
             var orderArray = orderList.ToArray();
 
-            // Can't use array in LINQ directly, because: http://stackoverflow.com/a/8354049
-            var filterName = colArray[1].Search.Value ?? "";
-            var filterOwner = colArray[2].Search.Value ?? "";
-            var filterRace = colArray[3].Search.Value ?? "";
-            var filterClass = colArray[4].Search.Value ?? "";
-            var filterMap = colArray[5].Search.Value ?? "";
-            var filterZone = colArray[6].Search.Value ?? "";
 
             // Set up basic filter query parts
             list = _charactersDb.Characters
                 .Where(c => c.IsOnline)
-                .Where(c => c.Name.ToUpper().Contains(filterName.ToUpper()))
+                .Where(c => c.Name.ToUpper().Contains(search.ToUpper()))
                 .ToList();
             // Load extra filtering.
             list.ForEach(c => _extraLoader.LoadExtraCharData(c));
             list = list
-                .Where(c => c.CharData.WebUser.DisplayName.ToUpper().Contains(filterOwner.ToUpper()) || (c.CharData.BnetAccount.UsernameEmail.ToUpper().Contains(filterOwner.ToUpper()) && allowUsernameFilter))
-                .Where(c => c.CharData.RaceData.Name.ToUpper().Contains(filterRace.ToUpper()))
-                .Where(c => c.CharData.ClassData.Name.ToUpper().Contains(filterClass.ToUpper()))
-                .Where(c => c.CharData.MapName.ToUpper().Contains(filterMap.ToUpper()))
-                .Where(c => c.CharData.ZoneName.ToUpper().Contains(filterZone.ToUpper()))
+                .Where(c => c.CharData.WebUser.DisplayName.ToUpper().Contains(search.ToUpper())
+                         || (c.CharData.BnetAccount.UsernameEmail.ToUpper().Contains(search.ToUpper()) && allowUsernameFilter)
+                         || c.CharData.RaceData.Name.ToUpper().Contains(search.ToUpper())
+                         || c.CharData.ClassData.Name.ToUpper().Contains(search.ToUpper())
+                         || c.CharData.MapName.ToUpper().Contains(search.ToUpper())
+                         || c.CharData.ZoneName.ToUpper().Contains(search.ToUpper())
+                )
                 .ToList();
 
             // Column ordering
