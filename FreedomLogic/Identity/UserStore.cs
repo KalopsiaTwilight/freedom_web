@@ -81,6 +81,8 @@ namespace FreedomLogic.Identity
             _freedomDb.Users.Add(user);
             await _freedomDb.SaveChangesAsync();
 
+            user.FreedomRoles = new List<FreedomRole>();
+
             return IdentityResult.Success;
         }
 
