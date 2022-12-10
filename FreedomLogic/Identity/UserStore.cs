@@ -142,7 +142,7 @@ namespace FreedomLogic.Identity
         public Task SetPasswordHashAsync(User user, string plainPassword, CancellationToken cancellationToken)
         {
             user.BnetAccPassHash = _accountManager.BnetAccountCalculateShaHash(user.UserName, plainPassword);
-            user.GameAccPassHash = plainPassword;
+            user.GameAccPassHash = _accountManager.GameAccountCalculateShaHash(user.UserName, plainPassword);
             return Task.CompletedTask;
         }
 

@@ -76,6 +76,11 @@ namespace FreedomLogic.Identity
             return Sha256HashHexdecimal(usernameEmailHash + ":" + password.ToUpper(), true);
         }
 
+        public static string CalculateGameAccountHash(string username, string password)
+        {
+          return Sha1HashHexdecimal(username.ToUpper() + ":" + password.ToUpper());
+        }
+
         public string HashPassword(User user, string password)
         {
             // we are handling hashing elsewhere

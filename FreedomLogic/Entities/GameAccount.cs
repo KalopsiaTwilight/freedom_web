@@ -17,10 +17,8 @@ namespace FreedomLogic.Entities
         [Required]     
         public string Username { get; set; }
 
-        [Column("salt")]
-        public byte[] Salt { get; set; }
-        [Column("verifier")]
-        public byte[] Verifier { get; set; }
+        [Column("sha_pass_hash")]
+        public string ShaPassHash { get; set; }
 
         [Column("expansion")]
         public GameExpansion Expansion { get; set; }

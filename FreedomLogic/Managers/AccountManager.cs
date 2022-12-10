@@ -59,6 +59,11 @@ namespace FreedomLogic.Managers
             return FreedomShaHasher.CalculateBnetHash(username, password);
         }
 
+        public string GameAccountCalculateShaHash(string username, string password)
+        {
+            return FreedomShaHasher.CalculateGameAccountHash(username, password);
+        }
+
         public BnetAccount CreateBnetAccount(string username, string bnetAccSha256Pass)
         {
             BnetAccount bnetAcc = new BnetAccount()
@@ -77,7 +82,7 @@ namespace FreedomLogic.Managers
             bnetAcc.ShaPassHash = bnetAccSha256Pass;
         }
 
-        public GameAccount CreateGameAccount(int bnetAccId, string regEmail, string password)
+        public GameAccount CreateGameAccount(int bnetAccId, string regEmail, string passwordHash)
         {
             if (bnetAccId == 0)
             {
@@ -89,8 +94,7 @@ namespace FreedomLogic.Managers
             GameAccount gameAcc = new GameAccount()
             {
                 Username = username,
-                Salt = salt,
-                Verifier = SRP6.GetVerifier(username, password, salt),
+                ShaPassHash = passwordHash,
                 Email = regEmail,
                 RegEmail = regEmail,
                 Joined = DateTime.Now,
@@ -102,12 +106,11 @@ namespace FreedomLogic.Managers
             return gameAcc;
         }
 
-        public void UpdateGameAccount(GameAccount gameAcc, string regEmail, string password)
+        public void UpdateGameAccount(GameAccount gameAcc, string regEmail, string passwordHash)
         {
             gameAcc.Email = regEmail;
             gameAcc.RegEmail = regEmail;
-            gameAcc.Salt = RandomNumberGenerator.GetBytes(32);
-            gameAcc.Verifier = SRP6.GetVerifier(gameAcc.Username, password, gameAcc.Salt);
+            gameAcc.ShaPassHash = passwordHash;
         }
 
         public void SetGameAccAccessLevel(int gameAccId, GMLevel gmlevel)
