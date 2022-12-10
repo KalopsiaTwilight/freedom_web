@@ -21,13 +21,15 @@ namespace FreedomWeb.Controllers
         private readonly UserManager _userManager;
         private readonly AccountManager _accountManager;
         private readonly ExtraDataLoader _dataLoader;
+        private readonly MailService _mailService;
 
-        public AccountController(UserManager userManager, SignInManager<User> signInManager, AccountManager accountManager, ExtraDataLoader dataLoader)
+        public AccountController(UserManager userManager, SignInManager<User> signInManager, AccountManager accountManager, ExtraDataLoader dataLoader, MailService mailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _accountManager = accountManager;
             _dataLoader = dataLoader;
+            _mailService = mailService;
         }
 
         private void AddErrors(IdentityResult result)
@@ -202,11 +204,11 @@ namespace FreedomWeb.Controllers
                 string code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
 
-                // TODO: Send email
-                //await _userManager.SendEmailAsync(
-                //    user.Id,
-                //    "WoW Freedom Mini-manager: Reset Password", 
-                //    AccountManager.GeneratePasswordResetEmailBody(user.UserName, callbackUrl));
+                await _mailService.SendEmailAsync(
+                    user.RegEmail, 
+                    "WoW Freedom Mini-manager: Reset Password", 
+                    _accountManager.GeneratePasswordResetEmailBody(user.UserName, callbackUrl)
+                );
             }
 
             SetAlertMsg(AlertRes.AlertInfoPasswordRecovery, AlertMsgType.AlertInfo);

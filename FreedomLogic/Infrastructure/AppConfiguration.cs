@@ -3,7 +3,8 @@
     public class AppConfiguration
     {
         public LinksConfiguration Links { get; set; }
-        public TrinityCoreConfiguration TrinityCore { get; set; }
+        public TrinityCoreConfiguration TrinityCore { get; set; }   
+        public SmtpConfiguration Smtp { get; set; }
     }
 
     public class LinksConfiguration
@@ -20,5 +21,16 @@
         public string WorldServerPidFilename { get; set; }
         public string BnetServerPidFilename { get; set; }
         public string ServerDir { get; set; }
+    }
+
+    public class SmtpConfiguration
+    {
+        public string FromAddress { get; set; }
+        public string DisplayName { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
+        public string User { get; set; }
+        public string Password { get; set; }
+
     }
 }

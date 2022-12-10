@@ -244,7 +244,7 @@ namespace FreedomLogic.Identity
 
         public Task SetNormalizedEmailAsync(User user, string normalizedEmail, CancellationToken cancellationToken)
         {
-            user.RegEmail = normalizedEmail;
+            //user.RegEmail = normalizedEmail;
             return Task.CompletedTask;
         }
         #endregion

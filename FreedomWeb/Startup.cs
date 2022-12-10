@@ -8,6 +8,7 @@ using FreedomLogic.Identity;
 using FreedomLogic.Infrastructure;
 using FreedomLogic.Managers;
 using FreedomLogic.Services;
+using FreedomWeb.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -97,6 +98,7 @@ namespace FreedomWeb
             services.AddScoped<CommandStore>();
             services.AddScoped<ServerControl>();
             services.AddScoped<ExtraDataLoader>();
+            services.AddScoped<MailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
