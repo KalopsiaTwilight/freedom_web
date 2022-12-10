@@ -18,11 +18,11 @@ namespace FreedomLogic.Entities
             RealmId = -1;
         }
 
-        [Column("AccountId")]
+        [Column("id")]
         [Key]
         public override int Id { get; set; }
-        
-        [Column("SecurityLevel")]
+
+        [Column("gmlevel")]
         public GMLevel GMLevel { get; set; }
 
         [Column("RealmID")]
