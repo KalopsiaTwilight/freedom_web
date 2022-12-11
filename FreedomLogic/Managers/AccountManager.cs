@@ -110,7 +110,9 @@ namespace FreedomLogic.Managers
         {
             gameAcc.Email = regEmail;
             gameAcc.RegEmail = regEmail;
-            gameAcc.ShaPassHash = passwordHash;
+            if (!string.IsNullOrEmpty(passwordHash)) { 
+                gameAcc.ShaPassHash = passwordHash;
+            }
         }
 
         public void SetGameAccAccessLevel(int gameAccId, GMLevel gmlevel)
