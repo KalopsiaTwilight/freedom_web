@@ -81,7 +81,7 @@ namespace FreedomWeb.Controllers
             foreach (var user in users)
             {
                 _dataLoader.LoadExtraUserData(user);
-                var gmLevel = user.UserData.GameAccountAccess?.GMLevel ?? GMLevel.Unused;
+                var gmLevel = user.UserData?.GameAccountAccess?.GMLevel ?? GMLevel.Unused;
                 model.UserList.Add(new UserListItem()
                 {
                     UserId = user.Id,
