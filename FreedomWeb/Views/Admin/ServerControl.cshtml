@@ -21,6 +21,9 @@
         </h4>
         <div class="p-3 bg-secondary text-dark rounded-bottom" style="--bs-bg-opacity: 0.2">
             <div class="btn-group w-100 mb-3">
+                <button type="button" id="btnRunFixQuery" class="btn btn-success">Run Spawn Fix</button>
+            </div>
+            <div class="btn-group w-100 mb-3">
                 @if (bnetServerRunning)
                 {
                     <button type="button" id="btnServerActionStopBnet" class="btn btn-danger">Stop Bnetserver</button>
@@ -129,6 +132,7 @@
                     $("#btnServerActionStopWorld").prop("disabled", true);
                     $("#btnServerActionStartWorld").prop("disabled", false);
                 }
+                $("#btnRunFixQuery").prop("disabled", false);
 
                 $("#ServerControlActionsLoadingIcon").fadeOut(1000);
             })
@@ -238,6 +242,25 @@
             });
         }
 
+        function runFixQuery() {
+            addLogEntry("Running spawn fix query", "info");
+            clearInterval(serverControlDataIntervalId);
+
+            $("#ServerControlActionsLoadingIcon").show();
+            $("#btnRunFixQuery").prop("disabled", true);
+
+            addLogEntry("Sending run spawn fix query reset", "info");
+            $.post("@Url.Action("ServerControlRunFixQuery", "Admin")", function (data) {
+                if (data.status) {
+                    addLogEntry("Spawn fix query executed successfully!", "success");
+                }
+                else {
+                    addLogEntry("Spawn fix query failed :(", "danger");
+                }
+                serverControlDataIntervalId = setInterval(refreshServerControlPage, 3000);
+            });
+        }
+
         function refreshServerControlPage() {
             refreshServerControlData();
             refreshServerControlActions();
@@ -256,5 +279,6 @@
         $("#btnServerActionStartBnet").click(startBnetServer);
         $("#btnServerActionStopWorld").click(stopWorldServer);
         $("#btnServerActionStartWorld").click(startWorldServer);
+        $("#btnRunFixQuery").click(runFixQuery);
     </script>
 }

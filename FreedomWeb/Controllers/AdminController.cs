@@ -203,5 +203,12 @@ namespace FreedomWeb.Controllers
 
             return Json(new { status = startSuccessful, error = error });
         }
+
+        [HttpPost]
+        public JsonResult ServerControlRunFixQuery()
+        {
+            bool fixQuerySuccesful = _serverControl.RunFixQuery();
+            return Json(new { status = fixQuerySuccesful });
+        }
     }
 }

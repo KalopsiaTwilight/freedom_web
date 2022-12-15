@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.IO;
 using System.Diagnostics;
-using FreedomUtils.Win32APIUtils;
 using Microsoft.EntityFrameworkCore;
 using FreedomLogic.Infrastructure;
 
@@ -13,12 +12,14 @@ namespace FreedomLogic.Managers
     {
         private const byte ServerOfflineFlag = 0x2;
         private readonly DbAuth _authDb;
+        private readonly DbWorld _worldDb;
         private readonly AppConfiguration _appConfig;
 
-        public ServerControl(DbAuth authDb, AppConfiguration config)
+        public ServerControl(DbAuth authDb, DbWorld worldDb, AppConfiguration config)
         {
             _authDb = authDb;
             _appConfig = config;
+            _worldDb = worldDb;
         }
 
         public int GetWorldServerPid()
@@ -262,6 +263,14 @@ namespace FreedomLogic.Managers
             }
 
             error = "";
+            return true;
+        }
+
+        public bool RunFixQuery()
+        {
+            _worldDb.Database.ExecuteSqlInterpolated(@$"
+UPDATE `creature` SET `spawnDifficulties` = '0' WHERE `guid` >= 500000 AND `spawnDifficulties` NOT LIKE '0';
+UPDATE `gameobject` SET `spawnDifficulties` = '0' WHERE `guid` >= 500000 AND `spawnDifficulties` NOT LIKE '0';");
             return true;
         }
     }
