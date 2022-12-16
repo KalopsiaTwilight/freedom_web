@@ -17,7 +17,9 @@ namespace FreedomWeb.Infrastructure
         {
             var email = new MimeMessage
             {
-                Sender = MailboxAddress.Parse($"\"{_smtpConfig.DisplayName}\" <{_smtpConfig.FromAddress}>"),
+                Sender = string.IsNullOrEmpty(_smtpConfig.DisplayName) 
+                    ? MailboxAddress.Parse(_smtpConfig.FromAddress) 
+                    : MailboxAddress.Parse($"\"{_smtpConfig.DisplayName}\" <{_smtpConfig.FromAddress}>"),
                 Subject = subject
             };
             email.To.Add(MailboxAddress.Parse(toAddress));
