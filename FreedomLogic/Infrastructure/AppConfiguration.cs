@@ -21,6 +21,10 @@
         public string WorldServerPidFilename { get; set; }
         public string BnetServerPidFilename { get; set; }
         public string ServerDir { get; set; }
+        public string SoapAddress { get; set; }
+        public string SoapPort { get; set; }
+        public string SoapUser { get; set; }
+        public string SoapPassword { get; set; } 
     }
 
     public class SmtpConfiguration

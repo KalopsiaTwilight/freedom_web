@@ -92,6 +92,8 @@ namespace FreedomWeb
                 pipeline.AddJavaScriptBundle("/js/freedom", "js/common.js", "js/freedom_datatables.js", "js/site.js");
             });
 
+            services.AddHttpClient();
+
             // Add our own services
             services.AddScoped<AccountManager>();
             services.AddScoped<CharacterManager>();

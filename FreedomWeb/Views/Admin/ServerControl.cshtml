@@ -52,7 +52,14 @@
             Action Log
             <button type="button" class="btn btn-sm btn-dark pull-right" id="btnServerControlClearLogs">Clear log</button>
         </h4>
-        <div id="serverControlLogs" class="text-bg-dark text-white mb-3 p-2 rounded" style="height: 350px; overflow-y: scroll;">
+        <div class="text-bg-dark text-white mb-3 p-2 rounded">
+            <div id="serverControlLogs" style="height:350px; overflow-y: scroll;"></div>
+            <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text rounded-0" id="basic-addon1">></span>
+                </div>
+                <input id="remoteCommand" type="text" class="form-control rounded-0" placeholder="Enter command..." aria-label="Username" aria-describedby="basic-addon1">
+            </div>
         </div>
     </div>
 </div>
@@ -243,6 +250,27 @@
             refreshServerControlActions();
         }
 
+        function sendCommand() {
+            var commandText = $("#remoteCommand").val();
+            $("#remoteCommand").val("");
+            addLogEntry("Sending command '" + commandText + "'", "info");
+            $.post("@Url.Action("ServerControlSendRemoteCommand", "Admin")", {
+                commandText
+            }, function (data) {
+                if (data.success) {
+                    addLogEntry("Command executed succesfully.", "success");
+                    if (data.message) {
+                        for (var message of data.message.split("\r\n")) {
+                            addLogEntry(message);
+                        }
+                    }
+                }
+                else {
+                    addLogEntry("Failed to execute command. Error: " + data.message, "danger");
+                }
+            });
+        }
+
         // Setup periodic interval of 3 seconds for server control data refresh
         var serverControlDataIntervalId = setInterval(refreshServerControlPage, 3000);
 
@@ -256,5 +284,10 @@
         $("#btnServerActionStartBnet").click(startBnetServer);
         $("#btnServerActionStopWorld").click(stopWorldServer);
         $("#btnServerActionStartWorld").click(startWorldServer);
+        $("#remoteCommand").on("keypress", function (e) {
+            if (e.which == 13) {
+                sendCommand();
+            }
+        })
     </script>
-}
+    }

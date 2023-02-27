@@ -17,6 +17,11 @@ using FreedomLogic.Infrastructure;
 using System.IO;
 using Microsoft.EntityFrameworkCore.Internal;
 using FreedomLogic.Services;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System;
+using System.Text;
+using System.Xml;
 
 namespace FreedomWeb.Controllers
 {
@@ -29,9 +34,10 @@ namespace FreedomWeb.Controllers
         private readonly ServerControl _serverControl;
         private readonly AppConfiguration _appConfig;
         private readonly ExtraDataLoader _dataLoader;
+        private readonly HttpClient _httpClient;
 
         public AdminController(UserManager<User> userManager, DbFreedom freedomDb, AccountManager accountManager,
-            ServerControl serverControl, AppConfiguration appConfig, ExtraDataLoader dataLoader)
+            ServerControl serverControl, AppConfiguration appConfig, ExtraDataLoader dataLoader, HttpClient httpClient)
         {
             _userManager = userManager;
             _freedomDb = freedomDb;
@@ -39,6 +45,7 @@ namespace FreedomWeb.Controllers
             _serverControl = serverControl;
             _appConfig = appConfig;
             _dataLoader = dataLoader;
+            _httpClient = httpClient;
         }
 
         [HttpGet]
@@ -202,6 +209,36 @@ namespace FreedomWeb.Controllers
             bool startSuccessful = _serverControl.StartBnetServer(out error);
 
             return Json(new { status = startSuccessful, error = error });
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ServerControlSendRemoteCommand(string commandText)
+        {
+            try
+            { 
+                string soapUri = $"http://{_appConfig.TrinityCore.SoapAddress}:{_appConfig.TrinityCore.SoapPort}/";
+                var basicAuthHeaderValue = $"{_appConfig.TrinityCore.SoapUser}:{_appConfig.TrinityCore.SoapPassword}";
+                basicAuthHeaderValue = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(basicAuthHeaderValue));
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basicAuthHeaderValue);
+                var result = await _httpClient.PostAsync(soapUri, new StringContent($@"<?xml version=""1.0"" encoding=""utf-8""?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ns1=""urn:TC"" xmlns:xsd=""http://www.w3.org/1999/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:SOAP-ENC=""http://schemas.xmlsoap.org/soap/encoding/"" SOAP-ENV:encodingStyle=""http://schemas.xmlsoap.org/soap/encoding/"">
+    <SOAP-ENV:Body>
+        <ns1:executeCommand>
+            <command>{commandText}</command>
+        </ns1:executeCommand>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>", new MediaTypeHeaderValue("text/xml")));
+                result.EnsureSuccessStatusCode();
+                var resultBody = await result.Content.ReadAsStringAsync();
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(resultBody);
+                var resultNode = xml.SelectNodes("//result")?.Item(0);
+                return Json(new { success = true, message = resultNode.InnerText });
+            }
+            catch(Exception e)
+            {
+                return Json(new { success = false, message = e.Message.ToString() });
+            }
         }
     }
 }
