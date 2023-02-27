@@ -202,7 +202,7 @@ namespace FreedomWeb.Controllers
             if (user != null && user.RegEmail.ToUpper() == model.Email.Trim().ToUpper())
             {
                 string code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Scheme);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, protocol: Request.Scheme);
 
                 await _mailService.SendEmailAsync(
                     user.RegEmail, 

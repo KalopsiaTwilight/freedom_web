@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Item Appearance BonusIds";
+}
+<table class="table table-striped table-bordered" id="NpcItemDataTable">
+    <thead>
+        <tr>
+            <th>Item Id</th>
+            <th>Item Name</th>
+            <th>Appearance Modifier</th>
+            <th>Bonus Id</th>
+            <th style="width:32px"></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+@section scripts
+    {
+    <script type="text/javascript">
+        var dt = $('#NpcItemDataTable').FreedomServerDataTable({
+            "dataUrl": "@Url.Action("BonusIdInfo", "Item")",
+            "order": [[0, "asc"]],
+            "columns": [
+                { "data": "ItemId" },
+                { "data": "ItemName" },
+                { "data": "ItemAppearanceModifierId" },
+                { "data": "BonusId"}
+            ],
+            "columnDefs": [
+                {
+                    "targets": 4,
+                    "orderable": false,
+                    "render": function (row, type, val, meta) {
+                        return "<button class='btn btn-link' title='Copy additem command'> <i class='fa fa-copy me-1'/></button>";
+                    }
+                }
+            ],
+        });
+        dt.on("processing.dt", function (e, settings, processing) {
+            if (!processing) {
+                $("tr > td > .btn-link").on('click', function () {
+                    var data = dt.row($(this).parents('tr')).data();
+                    navigator.clipboard.writeText(".additem " + data.ItemId + " 1 " + data.BonusId);
+                });
+            }
+        })
+    </script>
+}

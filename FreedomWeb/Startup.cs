@@ -95,7 +95,6 @@ namespace FreedomWeb
             // Add our own services
             services.AddScoped<AccountManager>();
             services.AddScoped<CharacterManager>();
-            services.AddScoped<CommandStore>();
             services.AddScoped<ServerControl>();
             services.AddScoped<ExtraDataLoader>();
             services.AddScoped<MailService>();

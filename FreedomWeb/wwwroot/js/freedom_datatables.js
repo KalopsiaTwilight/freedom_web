@@ -64,16 +64,19 @@
         };
 
         var mergedOptions = $.extend(true, defaultOptions, options);
+        this.on("preInit", function () {
+            console.log("preInit");
+        });
         var dt = this.DataTable(mergedOptions);
         dt.on('processing.dt', function (e, settings, processing) {
             if (processing) {
-                var processingParent = $("<div class='dataTables_processing' style='position:relative;'>");
-                var processingCard = $("<div class='bg-text-light card' style='position:absolute;left:50%;top:50%;height:100px;width:250px;'>");
+                var processingParent = $("<div class='dataTables_processing' style=''>");
+                var processingCard = $("<div class='bg-text-light card' style='height:100px;width:250px;'>");
                 processingCard.append("<i class='fa fa-spinner fa-spin fa-5x' style='margin-top:8px;'></i>");
                 processingParent.append(processingCard);
                 $(e.target).parent().append(processingParent);
             } else {
-                $(e.target).parent().find(".dataTables_processing").remove();
+                $(this).parent().find(".dataTables_processing").remove();
             }
         })
         return dt;

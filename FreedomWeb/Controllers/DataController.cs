@@ -1,8 +1,10 @@
-﻿using FreedomLogic.Entities;
+﻿using FreedomLogic.DAL;
+using FreedomLogic.Entities;
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using FreedomLogic.Services;
 using FreedomUtils.DataTables;
+using FreedomUtils.MvcUtils;
 using FreedomWeb.Infrastructure;
 using FreedomWeb.Models;
 using FreedomWeb.ViewModels.Admin;
@@ -11,7 +13,9 @@ using FreedomWeb.ViewModels.Server;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,16 +28,16 @@ namespace FreedomWeb.Controllers
         private readonly UserManager<User> _userManager;
         private readonly CharacterManager _characterManager;
         private readonly ServerControl _serverControl;
-        private readonly CommandStore _commandStore;
         private readonly ExtraDataLoader _dataLoader;
+        private readonly DbFreedom _freedomDb;
 
-        public DataController(UserManager<User> userManager, CharacterManager characterManager, ServerControl serverControl, CommandStore commandStore, ExtraDataLoader dataLoader)
+        public DataController(UserManager<User> userManager, CharacterManager characterManager, ServerControl serverControl, ExtraDataLoader dataLoader, DbFreedom freedomDb)
         {
             _userManager = userManager;
             _characterManager = characterManager;
             _serverControl = serverControl;
-            _commandStore = commandStore;
             _dataLoader = dataLoader;
+            _freedomDb = freedomDb;
         }
 
         /// <summary>
@@ -45,10 +49,6 @@ namespace FreedomWeb.Controllers
         [HttpPost]
         public async Task<JsonResult> CommandListData(DTParameterModel parameters)
         {
-            //var user = await _userManager.FindByIdAsync(CurrentUserId);
-
-            int total = 0;
-            int filtered = 0;
             var currentUser = await _userManager.FindByIdAsync(CurrentUserId);
             _dataLoader.LoadExtraUserData(currentUser);
             var gmLevel = currentUser.UserData.GameAccountAccess.GMLevel;
@@ -57,22 +57,29 @@ namespace FreedomWeb.Controllers
                 gmLevel = GMLevel.Unused;
             }
 
-            var list = _commandStore.DTGetFilteredAvailableFreedomCommands(
-                    ref total,
-                    ref filtered,
-                    parameters.Start,
-                    parameters.Length,
-                    parameters.Columns,
-                    parameters.Order,
-                    gmLevel,
-                    parameters.Search.Value ?? ""
+            var search = parameters.Search.Value ?? "";
+            var matchingGmLevels = Enum.GetValues<GMLevel>()
+                .Where(l => l.DisplayName().ToUpper().Contains(search))
+                .ToArray();
+
+            // Set up basic filter query parts
+            var query = _freedomDb.Commands
+                .Where(c => ((int)c.GMLevel) <= ((int)gmLevel))
+                .Where(c => c.Command.ToUpper().Contains(search.ToUpper())
+                         || c.Syntax.ToUpper().Contains(search.ToUpper())
+                         || c.Description.ToUpper().Contains(search.ToUpper())
+                         || matchingGmLevels.Contains(c.GMLevel)
                 );
+
+            // Load and set results
+            var data = await query.ApplyDataTableParameters(parameters).ToListAsync();
+            var total = _freedomDb.Commands.Where(c => ((int)c.GMLevel) <= ((int)gmLevel)).Count();
 
             return Json(new DTResponseModel() {
                 draw = parameters.Draw,
                 recordsTotal = total,
-                recordsFiltered = filtered,
-                data = list
+                recordsFiltered = await query.CountAsync(),
+                data = data
             });
         }
 

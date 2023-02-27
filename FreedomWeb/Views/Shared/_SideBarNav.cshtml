@@ -58,6 +58,12 @@
                     <a class="nav-link text-white" href="@Url.Action("CommandList", "Server")">
                         <i class="fa fa-search pe-2"></i> In-Game Commands
                     </a>
+                    <a class="nav-link text-white" href="@Url.Action("NpcItemData", "Item")">
+                        <i class="fa fa-search pe-2"></i> Npc Items
+                    </a>
+                    <a class="nav-link text-white" href="@Url.Action("BonusIdInfo", "Item")">
+                        <i class="fa fa-search pe-2"></i> Item Appearance BonusIds
+                    </a>
                 </div>
             </div>
             if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
