@@ -31,5 +31,7 @@ namespace FreedomWeb.Models
         public string ZoneName { get; set; }
 
         public int Latency { get; set; }
+
+        public string Phase { get; set; }
     }
 }

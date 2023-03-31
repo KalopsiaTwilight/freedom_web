@@ -22,6 +22,8 @@ namespace FreedomLogic.DAL
         public DbSet<NpcItemInfo> NpcItemInfos { get; set; }
         public DbSet<ItemBonusIdInfo> ItemBonusIdInfos { get; set; }
 
+        public DbSet<CharacterExtra> CharacterExtras { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // User <-- Many-To-Many --> FreedomRole

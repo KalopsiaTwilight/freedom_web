@@ -15,6 +15,8 @@ namespace FreedomLogic.Entities
 
         public string MapName { get; set; }
 
+        public string Phase { get; set; }
+
         public RaceInfo RaceData { get; set; }
 
         public ClassInfo ClassData { get; set; }

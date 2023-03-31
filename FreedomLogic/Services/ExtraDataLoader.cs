@@ -61,6 +61,9 @@ namespace FreedomLogic.Services
         public bool LoadExtraCharData(Character character)
         {
             var charData = new CharData();
+            var charExtra = _freedomDb.CharacterExtras.Find(character.Id);
+            charData.Phase = charExtra?.Phase > 0 ? charExtra.Phase.ToString() : "Default"; 
+
             charData.GameAccount = _authDb.GameAccounts.Find(character.GameAccountId);
             if (charData.GameAccount == null || character == null)
                 return false;

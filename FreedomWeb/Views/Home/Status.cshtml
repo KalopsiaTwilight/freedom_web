@@ -162,7 +162,7 @@
                 "targets": 6,
                 "render": function (row, type, val, meta)
                 {
-                    return val.ZoneName;
+                    return val.ZoneName + (val.Phase == "Default" ? "" : " (Phase: " + val.Phase + ")");
                 }
             },
             {

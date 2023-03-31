@@ -128,7 +128,8 @@ namespace FreedomWeb.Controllers
                     Gender = Enum.GetName(character.Gender.GetType(), character.Gender),
                     MapName = !_characterManager.IsGMOn(character.Id) ? character.CharData.MapName : (allowUsernameViewing ? "(" + character.CharData.MapName + ")" : "(Hidden)"), //Kret
                     ZoneName = !_characterManager.IsGMOn(character.Id) ? character.CharData.ZoneName : (allowUsernameViewing ? "(" + character.CharData.ZoneName + ")" : "(Hidden)"), //Kret
-                    Latency = character.Latency
+                    Latency = character.Latency,
+                    Phase = character.CharData.Phase
                 });
             }
 
