@@ -51,9 +51,6 @@ namespace FreedomLogic.Services
 
 
             userData.GameAccountAccess = GetGameAccountAccess(userData.GameAccount.Id);
-            userData.GameAccountCharacters = _charactersDb.Characters
-                .Where(c => c.GameAccountId == userData.GameAccount.Id)
-                .ToList();
             user.UserData = userData;
             return true;
         }

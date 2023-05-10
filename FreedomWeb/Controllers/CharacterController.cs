@@ -131,7 +131,7 @@ namespace FreedomWeb.Controllers
                 return View(model);
             }
             
-            if (currentUser.UserData.GameAccountCharacters
+            if (characters
                 .Where(c => c.Id == model.CharacterId)
                 .FirstOrDefault() == null)
             {

@@ -17,8 +17,6 @@ namespace FreedomLogic.Entities
 
         public User WebUser { get; set; }
 
-        public List<Character> GameAccountCharacters { get; set; }
-
         //public List<Character> BNetAccountCharacters { get; set; }
 
         public BnetAccount BnetAccount { get; set; }
