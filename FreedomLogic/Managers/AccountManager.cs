@@ -113,26 +113,28 @@ namespace FreedomLogic.Managers
             }
         }
 
-        public void SetGameAccAccessLevel(int gameAccId, GMLevel gmlevel)
+        public void SetGameAccAccessLevel(int bnetAccountId, GMLevel gmlevel)
         {
-            GameAccountAccess gameAccAccess = _authDb.GameAccountAccesses.Find(gameAccId);
-
-            if (gameAccAccess != null)
+            var accounts = _authDb.GameAccounts.Where(x => x.BnetAccountId == bnetAccountId).ToList();
+            foreach (var account in accounts)
             {
-                gameAccAccess.GMLevel = gmlevel;
-                _authDb.Entry(gameAccAccess).State = EntityState.Modified;
-            }
-            else
-            {
-                gameAccAccess = new GameAccountAccess()
+                var accountAccess = _authDb.GameAccountAccesses.Find(account.Id);
+                if (accountAccess != null)
                 {
-                    Id = gameAccId,
-                    GMLevel = gmlevel
-                };
-
-                _authDb.GameAccountAccesses.Add(gameAccAccess);
+                    accountAccess.GMLevel = gmlevel;
+                    _authDb.Entry(accountAccess).State = EntityState.Modified;
+                }
+                else
+                {
+                    accountAccess = new GameAccountAccess()
+                    {
+                        GMLevel = gmlevel,
+                        Id = account.Id,
+                        RealmId = -1
+                    };
+                    _authDb.Add(accountAccess);
+                }
             }
-
             _authDb.SaveChanges();
         }
 

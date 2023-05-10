@@ -115,7 +115,7 @@ namespace FreedomWeb.Controllers
 
             var model = new SetGameAccessViewModel();
             model.Username = user.UserName;
-            model.GameAccId = user.UserData.GameAccount.Id;
+            model.BnetAccountId = user.UserData.BnetAccount.Id;
             model.AccountAccess = user.UserData.GameAccountAccess.GMLevel;
             return View(model);
         }
@@ -128,7 +128,7 @@ namespace FreedomWeb.Controllers
                 return View(model);
             }
 
-            _accountManager.SetGameAccAccessLevel(model.GameAccId, model.AccountAccess);
+            _accountManager.SetGameAccAccessLevel(model.BnetAccountId, model.AccountAccess);
             SetAlertMsg(AlertRes.AlertSuccessSetGameAccess, AlertMsgType.AlertSuccess);
             return RedirectToAction("Index", "Admin");
         }

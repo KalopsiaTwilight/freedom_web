@@ -14,7 +14,7 @@ namespace FreedomWeb.ViewModels.Admin
         [Display(Name = "FieldTargetAccountUsername", ResourceType = typeof(AccountRes))]
         public string Username { get; set; }
 
-        public int GameAccId { get; set; }
+        public int BnetAccountId { get; set; }
 
         [Display(Name = "FieldGMLevelList", ResourceType = typeof(AccountRes))]
         public GMLevel AccountAccess { get; set; }
