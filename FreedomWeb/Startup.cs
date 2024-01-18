@@ -11,12 +11,18 @@ using FreedomLogic.Services;
 using FreedomWeb.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
+using Yarp.ReverseProxy.Forwarder;
 
 namespace FreedomWeb
 {
@@ -79,7 +85,7 @@ namespace FreedomWeb
                     //"lib/DataTables-1.13.1/css/jquery.dataTables.css", 
                     "lib/DataTables-1.13.1/css/dataTables.bootstrap5.css"
                 );
-                pipeline.AddJavaScriptBundle("/js/jquery", "lib/jquery/jquery-3.6.1.js");
+                pipeline.AddJavaScriptBundle("/js/jquery", "lib/jquery/jquery-3.6.1.js", "lib/gasparesganga-jquery-loading-overlay/index.min.js");
                 pipeline.AddJavaScriptBundle("/js/bootstrap", "lib/bootstrap/js/bootstrap.js");
                 pipeline.AddJavaScriptBundle("/js/modernizr", "lib/modernizr-2.8.3.js");
                 pipeline.AddJavaScriptBundle("/js/dataTables", 
@@ -100,6 +106,11 @@ namespace FreedomWeb
             services.AddScoped<ServerControl>();
             services.AddScoped<ExtraDataLoader>();
             services.AddScoped<MailService>();
+
+            services.AddHttpForwarder();
+
+            services.AddReverseProxy()
+                .LoadFromConfig(Configuration.GetSection("Proxy"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -115,11 +126,32 @@ namespace FreedomWeb
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            var httpClient = new HttpMessageInvoker(new SocketsHttpHandler()
+            {
+                AllowAutoRedirect = false,
+                AutomaticDecompression = DecompressionMethods.None,
+                UseCookies = false,
+                ActivityHeadersPropagator = new ReverseProxyPropagator(DistributedContextPropagator.Current),
+                ConnectTimeout = TimeSpan.FromSeconds(15),
+            });
+            var transformer = new CustomForwarderTransformer();
+            var requestConfig = new ForwarderRequestConfig { ActivityTimeout = TimeSpan.FromSeconds(100) };
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.Map("/modelviewer/{**catch-all}", async (HttpContext httpContext, IHttpForwarder forwarder) =>
+                {
+                    var error = await forwarder.SendAsync(httpContext, "https://wow.zamimg.com/", httpClient, requestConfig, transformer);
+                    if (error != ForwarderError.None)
+                    {
+                        var errorFeature = httpContext.GetForwarderErrorFeature();
+                        var exception = errorFeature.Exception;
+                    }
+                });
             });
         }
 

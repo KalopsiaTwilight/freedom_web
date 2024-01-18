@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -145,6 +146,54 @@ namespace FreedomWeb.Controllers
             _dataLoader.LoadExtraCharData(movedCharacter);
             SetAlertMsg(string.Format(AlertRes.AlertCharacterTransfer, movedCharacter.Name, movedCharacter.CharData.GameAccount.Username), AlertMsgType.AlertSuccess);
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> ListCharacters()
+        {
+            var user = await _userManager.FindByIdAsync(CurrentUserId);
+            _dataLoader.LoadExtraUserData(user);
+
+            var accounts = _accountManager.GetGameAccountsList(user.UserData.BnetAccount.Id);
+            List<Character> characters = new List<Character>();
+            foreach (GameAccount account in accounts)
+            {
+                characters.AddRange(_characterManager.GetAccountCharacters(account.Id));
+            }
+
+            return Json(characters.Select(c =>
+            new {
+                c.Id,
+                c.Name,
+                c.Gender, 
+                c.Race
+            }));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> CharacterCustomizations(int characterId)
+        {
+            var user = await _userManager.FindByIdAsync(CurrentUserId);
+            _dataLoader.LoadExtraUserData(user);
+
+            var character = await _charactersDb.Characters.FindAsync(characterId);
+            if (character == null)
+            {
+                return NotFound();
+            }
+            var accounts = _accountManager.GetGameAccountsList(user.UserData.BnetAccount.Id);
+            if (!accounts.Any(x => x.Id == character.GameAccountId))
+            {
+                return Forbid();
+            }
+            var customizations = await _charactersDb.CharacterCustomizations
+                .Where(x => x.CharacterId == characterId)
+                .ToListAsync();
+            return Json(customizations.Select(x => new
+            {
+                x.CustomizationOptionId,
+                x.CustomizationChoiceId
+            }));
         }
     }
 }

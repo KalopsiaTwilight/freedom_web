@@ -23,6 +23,9 @@ namespace FreedomLogic.DAL
         public DbSet<ItemBonusIdInfo> ItemBonusIdInfos { get; set; }
 
         public DbSet<CharacterExtra> CharacterExtras { get; set; }
+        public DbSet<TextureFileData> TextureFiles { get; set; }
+        public DbSet<ItemDisplayInfoData> ItemDisplayInfos { get; set; }
+        public DbSet<ModelResourcesData> ModelResources { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,6 +58,9 @@ namespace FreedomLogic.DAL
                 .WithOne(nii => nii.BonusIdInfo)
                 .HasForeignKey<NpcItemInfo>(nii => nii.ItemId)
                 .HasPrincipalKey<ItemBonusIdInfo>(ibi => ibi.ItemId);
+
+            modelBuilder.Entity<ItemDisplayInfoData>()
+                .HasKey(x => new { x.Id, x.DisplayId });
 
             //modelBuilder.Entity<ItemSubclassInfo>()
             //    .HasKey(x => new { x.Id, x.SubclassId });

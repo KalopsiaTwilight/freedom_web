@@ -12,8 +12,12 @@ namespace FreedomLogic.DAL
 
         public DbSet<Character> Characters { get; set; }
 
+        public DbSet<CharacterCustomization> CharacterCustomizations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CharacterCustomization>()
+                .HasKey(x => new { x.CharacterId, x.CustomizationOptionId });
         }
     }
 }
