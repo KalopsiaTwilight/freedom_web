@@ -1,6 +1,6 @@
 ﻿@model FreedomWeb.ViewModels.Admin.ServerControlViewModel
 @{
-    ViewBag.Title = "Server control";
+    ViewBag.Title = "WoW Server control";
     bool worldServerRunning = Model.WorldServerStatus != FreedomWeb.ViewModels.Admin.EnumServerAppStatus.Offline;
     bool bnetServerRunning = Model.BnetServerStatus != FreedomWeb.ViewModels.Admin.EnumServerAppStatus.Offline;
 }
@@ -120,21 +120,45 @@
             $("#ServerControlActionsLoadingIcon").show();
             $.post("@Url.Action("ServerControlActions", "Admin")", function (data) {
                 if (data.bnetServerRunning) {
-                    $("#btnServerActionStopBnet").prop("disabled", false);
-                    $("#btnServerActionStartBnet").prop("disabled", true);
+                    $("#btnServerActionStopBnet")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-danger").prop("disabled", false);
+                    $("#btnServerActionStartBnet")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-outline-success").prop("disabled", true);
                 }
                 else {
-                    $("#btnServerActionStopBnet").prop("disabled", true);
-                    $("#btnServerActionStartBnet").prop("disabled", false);
+                    $("#btnServerActionStopBnet")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-outline-danger").prop("disabled", true);
+                    $("#btnServerActionStartBnet")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-success").prop("disabled", false);
                 }
 
                 if (data.worldServerRunning) {
-                    $("#btnServerActionStopWorld").prop("disabled", false);
-                    $("#btnServerActionStartWorld").prop("disabled", true);
+                    $("#btnServerActionStopWorld")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-danger").prop("disabled", false);
+                    $("#btnServerActionStartWorld")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-outline-success").prop("disabled", true);
                 }
                 else {
-                    $("#btnServerActionStopWorld").prop("disabled", true);
-                    $("#btnServerActionStartWorld").prop("disabled", false);
+                    $("#btnServerActionStopWorld")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-outline-danger").prop("disabled", true);
+                    $("#btnServerActionStartWorld")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-success").prop("disabled", false);
                 }
 
                 $("#ServerControlActionsLoadingIcon").fadeOut(1000);

@@ -4,6 +4,7 @@
     {
         public LinksConfiguration Links { get; set; }
         public TrinityCoreConfiguration TrinityCore { get; set; }   
+        public DbogConfiguration Dbo { get; set; }
         public SmtpConfiguration Smtp { get; set; }
     }
 
@@ -36,5 +37,16 @@
         public string User { get; set; }
         public string Password { get; set; }
 
+    }
+
+    public class DbogConfiguration
+    {
+        public string RootPath { get; set; }
+        public string MasterPidFileName { get; set; }
+        public string QueryPidFileName { get; set; }
+        public string CharPidFileName { get; set; }
+        public string ChatPidFileName { get; set; }
+        public string GamePidFileName { get; set; }
+        public string AuthPidFileName { get; set; }
     }
 }

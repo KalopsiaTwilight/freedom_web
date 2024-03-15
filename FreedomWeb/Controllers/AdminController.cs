@@ -34,12 +34,14 @@ namespace FreedomWeb.Controllers
         private readonly DbFreedom _freedomDb;
         private readonly AccountManager _accountManager;
         private readonly ServerControl _serverControl;
+        private readonly DboServerControl _dboServerControl;
         private readonly AppConfiguration _appConfig;
         private readonly ExtraDataLoader _dataLoader;
         private readonly HttpClient _httpClient;
 
         public AdminController(UserManager<User> userManager, DbFreedom freedomDb, AccountManager accountManager,
-            ServerControl serverControl, AppConfiguration appConfig, ExtraDataLoader dataLoader, HttpClient httpClient)
+            ServerControl serverControl, AppConfiguration appConfig, ExtraDataLoader dataLoader, HttpClient httpClient, 
+            DboServerControl dboServerControl)
         {
             _userManager = userManager;
             _freedomDb = freedomDb;
@@ -48,6 +50,7 @@ namespace FreedomWeb.Controllers
             _appConfig = appConfig;
             _dataLoader = dataLoader;
             _httpClient = httpClient;
+            _dboServerControl = dboServerControl;
         }
 
         [HttpGet]
@@ -160,6 +163,7 @@ namespace FreedomWeb.Controllers
             return RedirectToAction("Index", "Admin");
         }
 
+        #region WoW Server Control
         [HttpGet]
         public ActionResult ServerControl()
         {
@@ -267,5 +271,115 @@ namespace FreedomWeb.Controllers
                 return Json(new { success = false, message = e.Message.ToString() });
             }
         }
+        #endregion
+
+        [HttpGet]
+        public ActionResult DbogServerControl()
+        {
+            var model = new DboServerControlViewModel();
+            LoadDboServerControlDataViewModel(model);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult DboServerControlData()
+        {
+            var model = new DboServerControlViewModel();
+            LoadDboServerControlDataViewModel(model);
+
+            return PartialView("_DboServerControlData", model);
+        }
+
+
+        private void LoadDboServerControlDataViewModel(DboServerControlViewModel model)
+        {
+            bool masterServerRunning = _dboServerControl.IsMasterServerRunning();
+            bool queryServerRunning = _dboServerControl.IsQueryServerRunning();
+            bool charServerRunning = _dboServerControl.IsCharServerRunning();
+            bool chatServerRunning = _dboServerControl.IsChatServerRunning();
+            bool gameServerRunning = _dboServerControl.IsGameServerRunning();
+            bool authServerRunning = _dboServerControl.IsAuthServerRunning();
+
+            model.ServerDirectoryPath = _appConfig.Dbo.RootPath;
+            model.MasterServerPath = Path.Combine(_appConfig.Dbo.RootPath, "MasterServer.exe");
+            model.QueryServerPath = Path.Combine(_appConfig.Dbo.RootPath, "GameServer.exe");
+            model.CharServerPath = Path.Combine(_appConfig.Dbo.RootPath, "CharServer.exe");
+            model.ChatServerPath = Path.Combine(_appConfig.Dbo.RootPath, "ChatServer.exe");
+            model.GameServerPath = Path.Combine(_appConfig.Dbo.RootPath, "GameServer.exe");
+            model.AuthServerPath = Path.Combine(_appConfig.Dbo.RootPath, "AuthServer.exe");
+
+            model.MasterServerPid = masterServerRunning ? _dboServerControl.GetMasterServerPid() : 0;
+            model.QueryServerPid = queryServerRunning ? _dboServerControl.GetQueryServerPid() : 0;
+            model.CharServerPid = charServerRunning ? _dboServerControl.GetCharServerPid() : 0;
+            model.ChatServerPid = chatServerRunning ? _dboServerControl.GetChatServerPid() : 0;
+            model.GameServerPid = gameServerRunning ? _dboServerControl.GetGameServerPid() : 0;
+            model.AuthServerPid = authServerRunning ? _dboServerControl.GetAuthServerPid() : 0;
+
+            model.MasterServerStatus = masterServerRunning ? DboServerAppStatus.Online : DboServerAppStatus.Offline;
+            model.QueryServerStatus = queryServerRunning ? DboServerAppStatus.Online : DboServerAppStatus.Offline;
+            model.CharServerStatus = charServerRunning ? DboServerAppStatus.Online : DboServerAppStatus.Offline;
+            model.ChatServerStatus = chatServerRunning ? DboServerAppStatus.Online : DboServerAppStatus.Offline;
+            model.GameServerStatus = gameServerRunning ? DboServerAppStatus.Online : DboServerAppStatus.Offline;
+            model.AuthServerStatus = authServerRunning ? DboServerAppStatus.Online : DboServerAppStatus.Offline;
+        }
+
+        public JsonResult DboServerControlActions()
+        {
+            bool masterServerRunning = _dboServerControl.IsMasterServerRunning();
+            bool queryServerRunning = _dboServerControl.IsQueryServerRunning();
+            bool charServerRunning = _dboServerControl.IsCharServerRunning();
+            bool chatServerRunning = _dboServerControl.IsChatServerRunning();
+            bool gameServerRunning = _dboServerControl.IsGameServerRunning();
+            bool authServerRunning = _dboServerControl.IsAuthServerRunning();
+
+            return Json(new { 
+                masterServerRunning,
+                queryServerRunning,
+                charServerRunning, 
+                chatServerRunning,
+                gameServerRunning,
+                authServerRunning
+            });
+        }
+
+        [HttpPost]
+        public JsonResult DboServerControlStopServer([FromQuery] string id)
+        {
+            string error;
+            bool success;
+            switch (id)
+            {
+                case DboServerControlViewModel.AuthServerId: success = _dboServerControl.StopAuthServer(out error); break;
+                case DboServerControlViewModel.GameServerId: success = _dboServerControl.StopGameServer(out error); break;
+                case DboServerControlViewModel.MasterServerId: success = _dboServerControl.StopMasterServer(out error); break;
+                case DboServerControlViewModel.QueryServerId: success = _dboServerControl.StopQueryServer(out error); break;
+                case DboServerControlViewModel.CharServerId: success = _dboServerControl.StopCharServer(out error); break;
+                case DboServerControlViewModel.ChatServerId: success = _dboServerControl.StopChatServer(out error); break;
+                default: success = false; error = "Unknown server id."; break;
+            }
+
+            return Json(new { status = success, error = error });
+        }
+
+        [HttpPost]
+        public JsonResult DboServerControlStartServer([FromQuery] string id)
+        {
+            string error;
+            bool success;
+            switch (id)
+            {
+                case DboServerControlViewModel.AuthServerId: success = _dboServerControl.StartAuthServer(out error); break;
+                case DboServerControlViewModel.GameServerId: success = _dboServerControl.StartGameServer(out error); break;
+                case DboServerControlViewModel.MasterServerId: success = _dboServerControl.StartMasterServer(out error); break;
+                case DboServerControlViewModel.QueryServerId: success = _dboServerControl.StartQueryServer(out error); break;
+                case DboServerControlViewModel.CharServerId: success = _dboServerControl.StartCharServer(out error); break;
+                case DboServerControlViewModel.ChatServerId: success = _dboServerControl.StartChatServer(out error); break;
+                default: success = false; error = "Unknown server id."; break;
+            }
+
+            return Json(new { status = success, error = error });
+        }
+
     }
 }

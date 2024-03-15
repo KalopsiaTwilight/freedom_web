@@ -1,0 +1,389 @@
+﻿@model FreedomWeb.ViewModels.Admin.DboServerControlViewModel
+@{
+    ViewBag.Title = "DBOG Server control";
+    bool masterServerRunning = Model.MasterServerStatus != FreedomWeb.ViewModels.Admin.DboServerAppStatus.Offline;
+    bool queryServerRunning = Model.QueryServerStatus != FreedomWeb.ViewModels.Admin.DboServerAppStatus.Offline;
+    bool charServerRunning = Model.CharServerStatus != FreedomWeb.ViewModels.Admin.DboServerAppStatus.Offline;
+    bool chatServerRunning = Model.ChatServerStatus != FreedomWeb.ViewModels.Admin.DboServerAppStatus.Offline;
+    bool gameServerRunning = Model.GameServerStatus != FreedomWeb.ViewModels.Admin.DboServerAppStatus.Offline;
+    bool authServerRunning = Model.AuthServerStatus != FreedomWeb.ViewModels.Admin.DboServerAppStatus.Offline;
+}
+<div class="row">
+    <div class="col-md-8">
+        <h4>
+            <i class="fa fa-gears me-1"></i>
+            Application Status
+            <i class="fa fa-refresh fa-spin pull-right" style="display:none;" id="ServerControlDataLoadingIcon"></i>
+        </h4>
+        <div id="serverControlDataBody">
+            <partial name="_DboServerControlData"></partial>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h4 class="p-2 bg-dark mb-0 rounded-top text-white">
+            <i class="fa fa-bolt me-1"></i>
+            Actions
+            <i class="fa fa-refresh fa-spin pull-right" style="display:none;" id="ServerControlActionsLoadingIcon"></i>
+        </h4>
+        <div class="p-3 bg-secondary text-dark rounded-bottom" style="--bs-bg-opacity: 0.2">
+            <div class="btn-group w-100 mb-3">
+                @if (masterServerRunning)
+                {
+                    <button type="button" id="btnServerActionStopMaster" class="btn btn-danger">Stop Master Server</button>
+                    <button type="button" id="btnServerActionStartMaster" class="btn btn-outline-success" disabled>Start Master Server</button>
+                }
+                else
+                {
+                    <button type="button" id="btnServerActionStopMaster" class="btn btn-outline-danger" disabled>Stop Master Server</button>
+                    <button type="button" id="btnServerActionStartMaster" class="btn btn-success">Start Master Server</button>
+                }
+            </div>
+            <div class="btn-group w-100 mb-3">
+                @if (queryServerRunning)
+                {
+                    <button type="button" id="btnServerActionStopQuery" class="btn btn-danger">Stop Query Server</button>
+                    <button type="button" id="btnServerActionStartQuery" class="btn btn-outline-success" disabled>Start Query Server</button>
+                }
+                else
+                {
+                    <button type="button" id="btnServerActionStopQuery" class="btn btn-outline-danger" disabled>Stop Query Server</button>
+                    <button type="button" id="btnServerActionStartQuery" class="btn btn-success">Start Query Server</button>
+                }
+            </div>
+            <div class="btn-group w-100 mb-3">
+                @if (charServerRunning)
+                {
+                    <button type="button" id="btnServerActionStopChar" class="btn btn-danger">Stop Character Server</button>
+                    <button type="button" id="btnServerActionStartChar" class="btn btn-outline-success" disabled>Start Character Server</button>
+                }
+                else
+                {
+                    <button type="button" id="btnServerActionStopChar" class="btn btn-outline-danger" disabled>Stop Character Server</button>
+                    <button type="button" id="btnServerActionStartChar" class="btn btn-success">Start Character Server</button>
+                }
+            </div>
+            <div class="btn-group w-100 mb-3">
+                @if (chatServerRunning)
+                {
+                    <button type="button" id="btnServerActionStopChat" class="btn btn-danger">Stop Chat Server</button>
+                    <button type="button" id="btnServerActionStartChat" class="btn btn-outline-success" disabled>Start Chat Server</button>
+                }
+                else
+                {
+                    <button type="button" id="btnServerActionStopChat" class="btn btn-outline-danger" disabled>Stop Chat Server</button>
+                    <button type="button" id="btnServerActionStartChat" class="btn btn-success">Start Chat Server</button>
+                }
+            </div>
+            <div class="btn-group w-100 mb-3">
+                @if (gameServerRunning)
+                {
+                    <button type="button" id="btnServerActionStopGame" class="btn btn-danger">Stop Game Server</button>
+                    <button type="button" id="btnServerActionStartGame" class="btn btn-outline-success" disabled>Start Game Server</button>
+                }
+                else
+                {
+                    <button type="button" id="btnServerActionStopGame" class="btn btn-outline-danger" disabled>Stop Game Server</button>
+                    <button type="button" id="btnServerActionStartGame" class="btn btn-success">Start Game Server</button>
+                }
+            </div>
+            <div class="btn-group w-100">
+                @if (authServerRunning)
+                {
+                    <button type="button" id="btnServerActionStopAuth" class="btn btn-danger">Stop Authentication Server</button>
+                    <button type="button" id="btnServerActionStartAuth" class="btn btn-outline-success" disabled>Start Authentication Server</button>
+                }
+                else
+                {
+                    <button type="button" id="btnServerActionStopAuth" class="btn btn-outline-danger" disabled>Stop Authentication Server</button>
+                    <button type="button" id="btnServerActionStartAuth" class="btn btn-success">Start Authentication Server</button>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <h4>
+            <i class="fa fa-terminal me-1"></i>
+            Action Log
+            <button type="button" class="btn btn-sm btn-dark pull-right" id="btnServerControlClearLogs">Clear log</button>
+        </h4>
+        <div class="text-bg-dark text-white mb-3 p-2 rounded">
+            <div id="serverControlLogs" style="height:350px; overflow-y: scroll;"></div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        function addLogEntry(text, type) {
+            var _type = type || "default";
+            var dateTime = new Date();
+            var dateTimeString = dateTime.toLocaleString('nl-NL');
+            var loggerElem = $('#serverControlLogs');
+            var _class = "";
+
+            switch (_type) {
+                case "info":
+                    _class = "text-info";
+                    break;
+                case "success":
+                    _class = "text-success";
+                    break;
+                case "warning":
+                    _class = "text-warning";
+                    break;
+                case "danger":
+                    _class = "text-danger";
+                    break;
+                case "default":
+                default:
+                    _class = "";
+                    break;
+            }
+
+            var parent = $("<div>");
+            parent.append($('<span class="me-3 ' + _class + '">' + dateTimeString + '</span>'));
+            parent.append($('<span class="' + _class + '">' + text + '</span>'));
+            loggerElem.append(parent);
+            loggerElem.scrollTop(loggerElem.prop("scrollHeight"));
+        }
+
+        function refreshServerControlData() {
+            if ($("#ServerControlDataLoadingIcon").is(':animated')) {
+                $("#ServerControlDataLoadingIcon").stop().animate({ opacity: '100' });
+            }
+
+            $("#ServerControlDataLoadingIcon").show();
+            $.post("@Url.Action("DboServerControlData", "Admin")", function (data) {
+                $("#serverControlDataBody").html(data);
+                $("#ServerControlDataLoadingIcon").fadeOut(1000);
+            })
+        }
+
+        function refreshServerControlActions() {
+            if ($("#ServerControlActionsLoadingIcon").is(':animated')) {
+                $("#ServerControlActionsLoadingIcon").stop().animate({ opacity: '100' });
+            }
+
+            $("#ServerControlActionsLoadingIcon").show();
+            $.post("@Url.Action("DboServerControlActions", "Admin")", function (data) {
+                if (data.masterServerRunning) {
+                    $("#btnServerActionStopMaster")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-danger").prop("disabled", false);
+                    $("#btnServerActionStartMaster")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-outline-success").prop("disabled", true);
+                }
+                else {
+                    $("#btnServerActionStopMaster")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-outline-danger").prop("disabled", true);
+                    $("#btnServerActionStartMaster")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-success").prop("disabled", false);
+                }
+
+                if (data.queryServerRunning) {
+                    $("#btnServerActionStopQuery")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-danger").prop("disabled", false);
+                    $("#btnServerActionStartQuery")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-outline-success").prop("disabled", true);
+                }
+                else {
+                    $("#btnServerActionStopQuery")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-outline-danger").prop("disabled", true);
+                    $("#btnServerActionStartQuery")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-success").prop("disabled", false);
+                }
+
+                if (data.charServerRunning) {
+                    $("#btnServerActionStopChar")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-danger").prop("disabled", false);
+                    $("#btnServerActionStartChar")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-outline-success").prop("disabled", true);
+                }
+                else {
+                    $("#btnServerActionStopChar")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-outline-danger").prop("disabled", true);
+                    $("#btnServerActionStartChar")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-success").prop("disabled", false);
+                }
+
+                if (data.chatServerRunning) {
+                    $("#btnServerActionStopChat")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-danger").prop("disabled", false);
+                    $("#btnServerActionStartChat")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-outline-success").prop("disabled", true);
+                }
+                else {
+                    $("#btnServerActionStopChat")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-outline-danger").prop("disabled", true);
+                    $("#btnServerActionStartChat")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-success").prop("disabled", false);
+                }
+
+                if (data.gameServerRunning) {
+                    $("#btnServerActionStopGame")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-danger").prop("disabled", false);
+                    $("#btnServerActionStartGame")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-outline-success").prop("disabled", true);
+                }
+                else {
+                    $("#btnServerActionStopGame")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-outline-danger").prop("disabled", true);
+                    $("#btnServerActionStartGame")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-success").prop("disabled", false);
+                }
+
+                if (data.authServerRunning) {
+                    $("#btnServerActionStopAuth")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-danger").prop("disabled", false);
+                    $("#btnServerActionStartAuth")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-outline-success").prop("disabled", true);
+                }
+                else {
+                    $("#btnServerActionStopAuth")
+                        .removeClass("btn-danger")
+                        .removeClass("btn-outline-danger")
+                        .addClass("btn-outline-danger").prop("disabled", true);
+                    $("#btnServerActionStartAuth")
+                        .removeClass("btn-success")
+                        .removeClass("btn-outline-success")
+                        .addClass("btn-success").prop("disabled", false);
+                }
+
+                $("#ServerControlActionsLoadingIcon").fadeOut(1000);
+            })
+        }
+
+        function stopServer(id, name) {
+            return function () {
+                addLogEntry("Clearing/disabling refresh interval", "info");
+                clearInterval(serverControlDataIntervalId);
+
+                if ($("#ServerControlActionsLoadingIcon").is(':animated')) {
+                    $("#ServerControlActionsLoadingIcon").stop().animate({ opacity: '100' });
+                }
+
+                $("#ServerControlActionsLoadingIcon").show();
+                $("#btnServerActionStop" + id).prop("disabled", true);
+                $("#btnServerActionStart" + id).prop("disabled", true);
+
+                addLogEntry("Sending " + name + " STOP request", "info");
+                $.post("@Url.Action("DboServerControlStopServer", "Admin")?id=" + id, function (data) {
+                    if (data.status) {
+                        addLogEntry(name + " STOP command executed successfully", "success");
+                    }
+                    else {
+                        addLogEntry(name + " STOP command failed to execute. Error: " + data.error, "danger");
+                    }
+
+                    addLogEntry("Resetting/enabling refresh interval. Wait for next refresh before using buttons again.", "info");
+                    serverControlDataIntervalId = setInterval(refreshServerControlPage, 3000);
+                });
+            }
+        }
+
+        function startServer(id, name) {
+            return function () {
+                addLogEntry("Clearing/disabling refresh interval", "info");
+                clearInterval(serverControlDataIntervalId);
+
+                if ($("#ServerControlActionsLoadingIcon").is(':animated')) {
+                    $("#ServerControlActionsLoadingIcon").stop().animate({ opacity: '100' });
+                }
+
+                $("#ServerControlActionsLoadingIcon").show();
+                $("#btnServerActionStart" + id).prop("disabled", true);
+                $("#btnServerActionStop" + id).prop("disabled", true);
+
+                addLogEntry("Sending " + name + " START request", "info");
+                $.post("@Url.Action("DboServerControlStartServer", "Admin")?id=" + id, function (data) {
+                    if (data.status) {
+                        addLogEntry(name + " START command executed successfully", "success");
+                    }
+                    else {
+                        addLogEntry(mame + " START command failed to execute. Error: " + data.error, "danger");
+                    }
+
+                    addLogEntry("Resetting/enabling refresh interval. Wait for next refresh before using buttons again.", "info");
+                    serverControlDataIntervalId = setInterval(refreshServerControlPage, 3000);
+                });
+            }
+        }
+
+        function refreshServerControlPage() {
+            refreshServerControlData();
+            refreshServerControlActions();
+        }
+
+
+        // Setup periodic interval of 3 seconds for server control data refresh
+        var serverControlDataIntervalId = setInterval(refreshServerControlPage, 3000);
+
+        // Setup clear-log button
+        $("#btnServerControlClearLogs").click(function () {
+            $("#serverControlLogs").html("");
+        });
+
+        // Setup server control action buttons
+        $("#btnServerActionStopMaster").click(stopServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.MasterServerId", "Master Server"));
+        $("#btnServerActionStartMaster").click(startServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.MasterServerId", "Master Server"));
+
+        $("#btnServerActionStopQuery").click(stopServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.QueryServerId", "Query Server"));
+        $("#btnServerActionStartQuery").click(startServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.QueryServerId", "Query Server"));
+
+        $("#btnServerActionStopChar").click(stopServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.CharServerId", "Character Server"));
+        $("#btnServerActionStartChar").click(startServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.CharServerId", "Character Server"));
+
+        $("#btnServerActionStopChat").click(stopServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.ChatServerId", "Chat Server"));
+        $("#btnServerActionStartChat").click(startServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.ChatServerId", "Chat Server"));
+
+        $("#btnServerActionStopGame").click(stopServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.GameServerId", "Game Server"));
+        $("#btnServerActionStartGame").click(startServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.GameServerId", "Game Server"));
+
+        $("#btnServerActionStopAuth").click(stopServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.AuthServerId", "Authentication Server"));
+        $("#btnServerActionStartAuth").click(startServer("@FreedomWeb.ViewModels.Admin.DboServerControlViewModel.AuthServerId", "Authentication Server"));
+    </script>
+}

@@ -104,6 +104,7 @@ namespace FreedomWeb
             services.AddScoped<AccountManager>();
             services.AddScoped<CharacterManager>();
             services.AddScoped<ServerControl>();
+            services.AddScoped<DboServerControl>();
             services.AddScoped<ExtraDataLoader>();
             services.AddScoped<MailService>();
 

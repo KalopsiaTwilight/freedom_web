@@ -1,0 +1,126 @@
+﻿@using FreedomWeb.ViewModels.Admin;
+@model FreedomWeb.ViewModels.Admin.DboServerControlViewModel
+@{
+    Layout = null;
+}
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.MasterServerStatus, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.MasterServerStatus, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.QueryServerStatus, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.QueryServerStatus, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.CharServerStatus, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.CharServerStatus, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.ChatServerStatus, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.ChatServerStatus, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.GameServerStatus, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.GameServerStatus, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.AuthServerStatus, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.AuthServerStatus, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.ServerDirectoryPath, htmlAttributes: new { @class = "col-sm-4 col-form-label"})
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.ServerDirectoryPath, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.MasterServerPath, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.MasterServerPath, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.MasterServerPid, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.MasterServerPid, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.QueryServerPath, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.QueryServerPath, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.QueryServerPid, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.QueryServerPid, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.CharServerPath, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.CharServerPath, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.CharServerPid, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.CharServerPid, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.ChatServerPath, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.ChatServerPath, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.ChatServerPid, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.ChatServerPid, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.GameServerPath, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.GameServerPath, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.GameServerPid, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.GameServerPid, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.AuthServerPath, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.AuthServerPath, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
+<div class="mb-3 row">
+    @Html.LabelFor(m => m.AuthServerPid, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+    <div class="col-sm-8">
+        @Html.TextBoxFor(m => m.AuthServerPid, htmlAttributes: new { @readonly = true, @class = "form-control" })
+    </div>
+</div>
