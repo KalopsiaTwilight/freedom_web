@@ -1,6 +1,6 @@
-﻿@model FreedomWeb.ViewModels.Admin.UserListViewModel
-@{
+﻿@{
     ViewBag.Title = "User list";
+    bool isAdmin = User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin);
 }
 <div class="panel panel-info">
     <h4 class="p-2">
@@ -19,75 +19,53 @@
                 <th class="nosort nosearch"></th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var user in Model.UserList)
-            {
-                <tr>
-                    <td style="vertical-align:middle"></td>
-                    <td style="vertical-align:middle">@user.Username</td>
-                    <td style="vertical-align:middle">@user.DisplayName</td>
-                    <td style="vertical-align:middle">@user.Email</td>
-                    <td style="vertical-align:middle">@user.Roles</td>
-                    <td style="vertical-align:middle">@user.GameAccess</td>
-                    <td style="vertical-align:middle">
-                        <a href="@Url.Action("ShowProfile", "Account", new { id = user.UserId })">Show profile &raquo;</a>
-                        <br />
-                        <a href="@Url.Action("SetGameAccess", "Admin", new { id = user.UserId })">Change GMLevel &raquo;</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
+        <tbody></tbody>
     </table>
 </div>
 
 @section scripts
-    {
+{
     <script type="text/javascript">
-        $('#TableUserList').DataTable({
-            "initComplete": function () {
-                this.api().columns().every(function () {
-                    var column = this;
-                    var header = $(column.header());
-                    if (header.hasClass('nosearch'))
-                        return;
+        function getActionRowHtml(userId) {
+            var showProfileHrefElem = '<a href="@Url.Action("ShowProfile", "Account")/' + userId + '">Show profile &raquo;</a>';
+            var showSetGameAccessHrefElem = '<a href="@Url.Action("SetGameAccess", "Admin")/' + userId + '">Change GMLevel &raquo;</a>';
+            var showAdminStuff = @isAdmin.ToString().ToLower();
+            if (showAdminStuff) {
+                return showProfileHrefElem + '\n<br />\n' + showSetGameAccessHrefElem;
+            }
+            else {
+                return showProfileHrefElem;
+            }
+        }
 
-                    var input = $('<input/>', {
-                        'class': 'form-control',
-                        'type': 'search',
-                        'placeholder': "Search: " + column.title()
-                    });
-                    input.appendTo($('#TableUserListSearchFilter'));
-                    input.on('keyup change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
-
-                        column
-                            .search(val ? '^.*' + val + '.*$' : '', true, false)
-                            .draw();
-                    });
-                });
-            },
-            "order": [[1, "asc"]],
-            "dom": '<"top">rt<"row" <"col-md-4"l><"col-md-4"i><"col-md-4"p>><"clear">',
-            "drawCallback": function (settings) {
-                // Index column
-                if (settings.bSorted || settings.bFiltered) { // Need to redo the counters if filtered or sorted
-                    for (var i = 0; i < settings.aiDisplay.length; i++) {
-                        $('td:eq(0)', settings.aoData[settings.aiDisplay[i]].nTr).html((i + 1) + "#");
-                    }
-                }
-            },
+        var dt = $('#TableUserList').FreedomServerDataTable({
+            "dataUrl": "@Url.Action("UserListInfo", "Admin")",
+            "order": [[0, "asc"]],
+            "columns": [
+                { "data": "Id" },
+                { "data": "UserName" },
+                { "data": "DisplayName" },
+                { "data": "RegEmail" },
+                { "data": "Roles", orderable: false },
+                { "data": "GameAccess", orderable: false }
+            ],
             "columnDefs": [
                 {
-                    "sortable": false,
-                    "targets": 'nosort'
-                },
-                {
-                    "searchable": false,
-                    "targets": 'nosearch'
+                    "targets": 6,
+                    "orderable": false,
+                    "render": function (row, type, val, meta) {
+                        return getActionRowHtml(val.Id);
+                    }
                 }
             ],
         });
+        dt.on("processing.dt", function (e, settings, processing) {
+            if (!processing) {
+                $("tr > td > .btn-link").on('click', function () {
+                    var data = dt.row($(this).parents('tr')).data();
+                    navigator.clipboard.writeText(".additem " + data.ItemId + " 1 " + data.BonusId);
+                });
+            }
+        })
     </script>
 }

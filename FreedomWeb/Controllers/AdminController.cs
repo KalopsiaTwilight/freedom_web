@@ -22,6 +22,8 @@ using System.Net.Http.Headers;
 using System;
 using System.Text;
 using System.Xml;
+using FreedomUtils.DataTables;
+using FreedomWeb.ViewModels.Item;
 
 namespace FreedomWeb.Controllers
 {
@@ -79,27 +81,52 @@ namespace FreedomWeb.Controllers
         [HttpGet]
         public ActionResult UserList()
         {
-            var model = new UserListViewModel();
-            model.UserList = new List<UserListItem>();
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UserListInfo(DTParameterModel parameters)
+        {
+            var search = parameters.Search.Value ?? "";
 
             var users = _freedomDb.Users
-               .Include(u => u.FreedomRoles)
                .ToList();
-            foreach (var user in users)
+
+            var dataQuery = _freedomDb.Users
+                .Where(x => x.UserName.ToUpper().Contains(search.ToUpper())
+                         || x.DisplayName.ToUpper().Contains(search)
+                         || x.RegEmail.ToUpper().Contains(search)
+                 )
+                .Include(x => x.FreedomRoles);
+            var dbData = await dataQuery
+                .ApplyDataTableParameters(parameters)
+                .ToListAsync();
+
+            var data = dbData
+                            .Select(user =>
+                            {
+                                _dataLoader.LoadExtraUserData(user);
+                                var gmLevel = user.UserData?.GameAccountAccess?.GMLevel ?? GMLevel.Unused;
+                                return new UserListItem
+                                {
+                                    Id = user.Id,
+                                    UserName = user.UserName,
+                                    DisplayName = user.DisplayName,
+                                    RegEmail = user.RegEmail,
+                                    Roles = string.Join(", ", user.FreedomRoles.Select(r => r.Name)),
+                                    GameAccess = gmLevel.DisplayName(),
+                                };
+                            });
+
+            var total = await _freedomDb.ItemBonusIdInfos.CountAsync();
+
+            return Json(new DTResponseModel()
             {
-                _dataLoader.LoadExtraUserData(user);
-                var gmLevel = user.UserData?.GameAccountAccess?.GMLevel ?? GMLevel.Unused;
-                model.UserList.Add(new UserListItem()
-                {
-                    UserId = user.Id,
-                    Username = user.UserName,
-                    DisplayName = user.DisplayName,
-                    Email = user.RegEmail,
-                    Roles = string.Join(", ", user.FreedomRoles.Select(r => r.Name)),
-                    GameAccess = gmLevel.DisplayName(),
-                });
-            }
-            return View(model);
+                draw = parameters.Draw,
+                recordsTotal = total,
+                recordsFiltered = dataQuery.Count(),
+                data = data
+            });
         }
 
         [HttpGet]
@@ -215,7 +242,7 @@ namespace FreedomWeb.Controllers
         public async Task<JsonResult> ServerControlSendRemoteCommand(string commandText)
         {
             try
-            { 
+            {
                 string soapUri = $"http://{_appConfig.TrinityCore.SoapAddress}:{_appConfig.TrinityCore.SoapPort}/";
                 var basicAuthHeaderValue = $"{_appConfig.TrinityCore.SoapUser}:{_appConfig.TrinityCore.SoapPassword}";
                 basicAuthHeaderValue = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(basicAuthHeaderValue));
@@ -235,7 +262,7 @@ namespace FreedomWeb.Controllers
                 var resultNode = xml.SelectNodes("//result")?.Item(0);
                 return Json(new { success = true, message = resultNode.InnerText });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return Json(new { success = false, message = e.Message.ToString() });
             }
