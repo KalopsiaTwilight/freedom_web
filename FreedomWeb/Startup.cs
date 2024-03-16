@@ -48,6 +48,8 @@ namespace FreedomWeb
             services.AddDbContext<DbAuth>(options => options.UseMySQL(Configuration.GetConnectionString("AuthDb")));
             services.AddDbContext<DbCharacters>(options => options.UseMySQL(Configuration.GetConnectionString("CharactersDb")));
             services.AddDbContext<DbWorld>(options => options.UseMySQL(Configuration.GetConnectionString("WorldDb")));
+            services.AddDbContext<DbDboAcc>(options => options.UseMySQL(Configuration.GetConnectionString("DboAcc")));
+            services.AddDbContext<DbDboChar>(options => options.UseMySQL(Configuration.GetConnectionString("DboChar")));
 
             // Configure .NET Identity
             services.AddScoped<IPasswordHasher<User>, FreedomShaHasher>();

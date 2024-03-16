@@ -24,6 +24,7 @@ using System.Text;
 using System.Xml;
 using FreedomUtils.DataTables;
 using FreedomWeb.ViewModels.Item;
+using FreedomLogic.Entities;
 
 namespace FreedomWeb.Controllers
 {
@@ -32,16 +33,18 @@ namespace FreedomWeb.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly DbFreedom _freedomDb;
+        private readonly DbDboAcc _dbDboAcc;
         private readonly AccountManager _accountManager;
         private readonly ServerControl _serverControl;
         private readonly DboServerControl _dboServerControl;
         private readonly AppConfiguration _appConfig;
         private readonly ExtraDataLoader _dataLoader;
         private readonly HttpClient _httpClient;
+        private readonly DbDboChar _dbDboChar;
 
         public AdminController(UserManager<User> userManager, DbFreedom freedomDb, AccountManager accountManager,
             ServerControl serverControl, AppConfiguration appConfig, ExtraDataLoader dataLoader, HttpClient httpClient, 
-            DboServerControl dboServerControl)
+            DboServerControl dboServerControl, DbDboAcc dbDboAcc, DbDboChar dbDboChar)
         {
             _userManager = userManager;
             _freedomDb = freedomDb;
@@ -51,6 +54,8 @@ namespace FreedomWeb.Controllers
             _dataLoader = dataLoader;
             _httpClient = httpClient;
             _dboServerControl = dboServerControl;
+            _dbDboAcc = dbDboAcc;
+            _dbDboChar = dbDboChar;
         }
 
         [HttpGet]
@@ -139,19 +144,25 @@ namespace FreedomWeb.Controllers
             _dataLoader.LoadExtraUserData(user);
             if (user == null)
             {
-                // TODO: Handle error
-                //return RedirectToError(ErrorCode.BadRequest);
+                SetAlertMsg($"Account with id: {id?.ToString()} could not be found.", AlertMsgType.AlertDanger);
+                return RedirectToAction("Index", "Home");
             }
 
-            var model = new SetGameAccessViewModel();
-            model.Username = user.UserName;
-            model.BnetAccountId = user.UserData.BnetAccount.Id;
-            model.AccountAccess = user.UserData.GameAccountAccess.GMLevel;
+            var dboAcc = await _dbDboAcc.Accounts.FirstOrDefaultAsync(x => x.Email == user.UserName + "@FREEDOM.COM");
+
+            var model = new SetGameAccessViewModel
+            {
+                UserId = user.Id,
+                Username = user.UserName,
+                BnetAccountId = user.UserData.BnetAccount.Id,
+                AccountAccess = user.UserData.GameAccountAccess.GMLevel,
+                DboAccountAccess = dboAcc?.AdminLevel2 ?? DboAccountLevel.NoAccess
+            };
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult SetGameAccess(SetGameAccessViewModel model)
+        public async Task<ActionResult> SetGameAccess(SetGameAccessViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -159,6 +170,34 @@ namespace FreedomWeb.Controllers
             }
 
             _accountManager.SetGameAccAccessLevel(model.BnetAccountId, model.AccountAccess);
+
+            var user = await _userManager.FindByIdAsync(model.UserId.ToString());
+            var dboAcc = await _dbDboAcc.Accounts.FirstOrDefaultAsync(x => x.Email == user.UserName + "@FREEDOM.COM");
+
+            if (dboAcc != null)
+            {
+                if (model.DboAccountAccess > DboAccountLevel.NoAccess)
+                {
+                    dboAcc.AccountStatus = "active";
+                } else
+                {
+                    dboAcc.AccountStatus = "block";
+                }
+                dboAcc.AdminLevel = model.DboAccountAccess;
+                dboAcc.AdminLevel2 = model.DboAccountAccess;
+                _dbDboAcc.Update(dboAcc);
+
+                var characters = await _dbDboChar.Characters.Where(x => x.AccountId == dboAcc.Id).ToListAsync();
+                foreach(var character in characters)
+                {
+                    character.AccountLevel = model.DboAccountAccess;
+                    _dbDboChar.Update(character);
+                }
+
+                await _dbDboChar.SaveChangesAsync();
+                await _dbDboAcc.SaveChangesAsync();
+            }
+
             SetAlertMsg(AlertRes.AlertSuccessSetGameAccess, AlertMsgType.AlertSuccess);
             return RedirectToAction("Index", "Admin");
         }

@@ -1,4 +1,5 @@
 ﻿using FreedomLogic.DAL;
+using FreedomLogic.Entities;
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using FreedomLogic.Resources;
@@ -8,7 +9,12 @@ using FreedomWeb.ViewModels.Accounts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FreedomWeb.Controllers
@@ -22,14 +28,16 @@ namespace FreedomWeb.Controllers
         private readonly AccountManager _accountManager;
         private readonly ExtraDataLoader _dataLoader;
         private readonly MailService _mailService;
+        private readonly DbDboAcc _dbDboAcc;
 
-        public AccountController(UserManager userManager, SignInManager<User> signInManager, AccountManager accountManager, ExtraDataLoader dataLoader, MailService mailService)
+        public AccountController(UserManager userManager, SignInManager<User> signInManager, AccountManager accountManager, ExtraDataLoader dataLoader, MailService mailService, DbDboAcc dbDboAcc)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _accountManager = accountManager;
             _dataLoader = dataLoader;
             _mailService = mailService;
+            _dbDboAcc = dbDboAcc;
         }
 
         private void AddErrors(IdentityResult result)
@@ -383,6 +391,84 @@ namespace FreedomWeb.Controllers
             }
 
             base.Dispose(disposing);
+        }
+        #endregion
+
+        #region DBO Management
+        [HttpGet]
+        public async Task<ActionResult> ManageDboAccount()
+        {
+            var user = await _userManager.FindByIdAsync(CurrentUserId);
+            var model = new DboAccountManagementViewModel();
+
+            var dboAcc = await _dbDboAcc.Accounts.FirstOrDefaultAsync(x => x.Email == user.UserName + "@FREEDOM.COM");
+
+            if (dboAcc != null)
+            {
+                model.AccountId = dboAcc.Id;
+                model.AccountName = dboAcc.Username;
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ManageDboAccount(DboAccountManagementViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.FindByIdAsync(CurrentUserId);
+            DboAccount dboAccount = new DboAccount();
+            if (model.AccountId.HasValue)
+            {
+                var dboAcc = await _dbDboAcc.Accounts.FirstOrDefaultAsync(x => x.Email == user.UserName + "@FREEDOM.COM");
+                if (dboAcc == null)
+                {
+                    SetAlertMsg("Something went wrong updating your account, please try again later.", AlertMsgType.AlertDanger);
+                    return RedirectToAction("Index", "Home");
+                }
+                dboAccount = dboAcc;
+            } else
+            {
+                dboAccount.Email = user.UserName + "@FREEDOM.COM";
+                dboAccount.AccountStatus = "active";
+                dboAccount.RegistrationDate = DateTime.Now;
+                if (user.FreedomRoles.Any(x => x.Name == FreedomRole.RoleAdmin))
+                {
+                    dboAccount.AdminLevel = DboAccountLevel.Admin;
+                    dboAccount.AdminLevel2 = DboAccountLevel.Admin;
+                }
+            }
+
+
+            var existingUser = await _dbDboAcc.Accounts.FirstOrDefaultAsync(x => x.Username == model.AccountName);
+            if(existingUser != null && existingUser.Id != dboAccount.Id)
+            {
+                SetAlertMsg("That account name is invalid, please select a new one.", AlertMsgType.AlertDanger);
+                return View(model);
+            }
+
+            dboAccount.PasswordHash = Convert.ToHexString(MD5.HashData(Encoding.UTF8.GetBytes(model.NewPassword))).ToLower();
+            dboAccount.Username = model.AccountName;
+            _dbDboAcc.Update(dboAccount);
+            await _dbDboAcc.SaveChangesAsync();
+
+            if (model.AccountId.HasValue)
+            {
+                SetAlertMsg("Your account was succesfully updated!", AlertMsgType.AlertSuccess);
+            } else
+            {
+                model.AccountId = dboAccount.Id;
+                SetAlertMsg("Your account was succesfully created!", AlertMsgType.AlertSuccess);
+            }
+
+            model.NewPassword = "";
+            model.RepeatPassword = "";
+            return View(model);
         }
         #endregion
     }

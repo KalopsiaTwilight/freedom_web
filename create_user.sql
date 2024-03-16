@@ -5,3 +5,5 @@ GRANT ALL PRIVILEGES ON `world` . * TO 'web'@'localhost' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON `characters` . * TO 'web'@'localhost' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON `auth` . * TO 'web'@'localhost' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON `freedom` . * TO 'web'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON `dbo_acc` . * TO 'web'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON `dbo_char` . * TO 'web'@'localhost' WITH GRANT OPTION;

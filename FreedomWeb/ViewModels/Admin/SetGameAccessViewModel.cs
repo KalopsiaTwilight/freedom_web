@@ -1,4 +1,5 @@
-﻿using FreedomLogic.Managers;
+﻿using FreedomLogic.Entities;
+using FreedomLogic.Managers;
 using FreedomLogic.Resources;
 using FreedomUtils.MvcUtils;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,11 +14,14 @@ namespace FreedomWeb.ViewModels.Admin
     {
         [Display(Name = "FieldTargetAccountUsername", ResourceType = typeof(AccountRes))]
         public string Username { get; set; }
+        public int UserId { get; set; }
 
         public int BnetAccountId { get; set; }
 
-        [Display(Name = "FieldGMLevelList", ResourceType = typeof(AccountRes))]
+        [Display(Name = "WoW GMLevel / Game account access")]
         public GMLevel AccountAccess { get; set; }
+        [Display(Name = "DBOG GMLevel / Game account access")]
+        public DboAccountLevel DboAccountAccess { get; set; }
 
         public List<SelectListItem> GMLevelList
         {
@@ -32,6 +36,26 @@ namespace FreedomWeb.ViewModels.Admin
                         Value = ((int)gmlevel).ToString(),
                         Text = gmlevel.DisplayName(),
                         Selected = gmlevel == AccountAccess,
+                    });
+                }
+
+                return list;
+            }
+        }
+
+        public List<SelectListItem> DboAccountLevelList
+        {
+            get
+            {
+                var list = new List<SelectListItem>();
+
+                foreach (DboAccountLevel accountLevel in Enum.GetValues(typeof(DboAccountLevel)))
+                {
+                    list.Add(new SelectListItem()
+                    {
+                        Value = ((int)accountLevel).ToString(),
+                        Text = accountLevel.DisplayName(),
+                        Selected = accountLevel == DboAccountAccess,
                     });
                 }
 

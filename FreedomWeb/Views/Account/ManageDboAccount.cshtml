@@ -1,0 +1,48 @@
+﻿@model FreedomWeb.ViewModels.Accounts.DboAccountManagementViewModel
+@{
+    ViewBag.Title = "Manage DBOG Account";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        @using (Html.BeginForm("ManageDboAccount", "Account", FormMethod.Post, new { @id = "FormChangePassword" }))
+        {
+            <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.AccountId)
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.AccountName, htmlAttributes: new { @class = "form-label" })
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.AccountName, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.NewPassword, htmlAttributes: new { @class = "form-label" })
+                <div class="input-group">
+                    @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.RepeatPassword, htmlAttributes: new { @class = "form-label" })
+                <div class="input-group">
+                    @Html.PasswordFor(m => m.RepeatPassword, new { @class = "form-control" })
+                </div>
+            </div>
+            <button type="submit" class="btn btn-dark">Submit</button>
+        }
+    </div>
+    <div class="col-md-6">
+        <h4 class="p-2 bg-dark mb-0 rounded-top text-white">
+            <i class="fa fa-info-circle me-1"></i>
+            DBO Account management help
+        </h4>
+        <div class="p-3 bg-secondary text-dark rounded-bottom" style="--bs-bg-opacity: 0.2">
+            <p>
+                <b>Username</b> can be up to 15 characters long.
+            </p>
+            <p>
+                <b>Password</b> must be at least 8 characters long up to 16 characters.
+            </p>
+        </div>
+    </div>
+</div>
