@@ -856,14 +856,22 @@ class WowModelViewer extends ZamModelViewer {
     }
 
     setCustomItem(slot, itemData) {
-        const s = window.WH.Wow.Item
-        if (slot === s.INVENTORY_TYPE_SHOULDERS) {
-            // this.method(`setShouldersOverride`, [this.getShouldersOverrideData()]);
-        }
-        const a = (slot === s.INVENTORY_TYPE_ROBE) ? s.INVENTORY_TYPE_CHEST : slot
-        
-        this.method(`clearSlots`, "1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21,22,23,27")
-        this.method(`setCustomItem`, [a, itemData]);
+        const viewer = this;
+        $.ajax({
+            url: "/Tools/CreateOrUpdateCustomItem?id=",
+            method: "POST",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(itemData),
+            success: function (data) {
+                viewer.method(`clearSlots`, "1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,19,20,21,22,23,27")
+                viewer.method(`setItems`, [[{
+                    slot: slot,
+                    display: data.Id,
+                    visual: 0
+                }]])
+            }
+        });
     }
 
     setNewAppearance(options) {

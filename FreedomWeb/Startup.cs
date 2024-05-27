@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,11 +23,12 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using Yarp.ReverseProxy.Forwarder;
 
 namespace FreedomWeb
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IConfiguration configuration)
         {
@@ -112,8 +114,8 @@ namespace FreedomWeb
 
             services.AddHttpForwarder();
 
-            services.AddReverseProxy()
-                .LoadFromConfig(Configuration.GetSection("Proxy"));
+            services.AddReverseProxy();
+                //.LoadFromConfig(Configuration.GetSection("Proxy"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -141,13 +143,27 @@ namespace FreedomWeb
             var transformer = new CustomForwarderTransformer();
             var requestConfig = new ForwarderRequestConfig { ActivityTimeout = TimeSpan.FromSeconds(100) };
 
+            var isArmorPath = IsArmorPath();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.Map("/modelviewer/{**catch-all}", async (HttpContext httpContext, IHttpForwarder forwarder) =>
+                endpoints.Map("/modelviewer/{**catch-all}", async (HttpContext httpContext, IHttpForwarder forwarder, IMemoryCache memoryCache) =>
                 {
+                    // If it's a custom item request, we return the custom item json
+                    var match = IsArmorPath().Match(httpContext.Request.Path);
+                    if (match.Success)
+                    {
+                        if (memoryCache.TryGetValue(FreedomWebConstants.CustomItemCacheKeyPrefix + match.Groups[1], out var responseObj))
+                        {
+                            httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                            httpContext.Response.ContentType = "application/json";
+                            await httpContext.Response.WriteAsJsonAsync(responseObj);
+                            return;
+                        }
+                    }
+                    // Forward request to wowhead otherwise
                     var error = await forwarder.SendAsync(httpContext, "https://wow.zamimg.com/", httpClient, requestConfig, transformer);
                     if (error != ForwarderError.None)
                     {
@@ -161,5 +177,8 @@ namespace FreedomWeb
         private void ConfigureMvcOptions(MvcOptions mvcOptions)
         { 
         }
+
+        [GeneratedRegex("/live/meta/armor/\\d+/(\\d+)")]
+        private static partial Regex IsArmorPath();
     }
 }

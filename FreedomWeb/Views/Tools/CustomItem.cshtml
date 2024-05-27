@@ -368,7 +368,7 @@
                 <div class="form-group mb-3">
                     <label for="ci_componentmodel_extraData" class="form-label">Shoulderpad Options</label>
                     <div class="input-group">
-                        <select id="ci_componentmodel_gender" class="form-select">
+                        <select id="ci_componentmodel_extraData" class="form-select">
                             <option value="-1">Model is not a shoulder pad</option>
                             <option value="0">Model is Left Shoulderpad</option>
                             <option value="1">Model is Right Shoulderpad</option>
@@ -606,7 +606,7 @@
 
 @section scripts
 {
-    <script type="text/javascript" src="~/js/3dviewer.js"></script>
+    <script type="text/javascript" src="~/modelviewer/live/viewer/viewer.min.js"></script>
     <script type="text/javascript" src="~/js/wow-model-viewer.js"></script>
     <script type="text/javascript">
         function debounce(func) {
@@ -1219,10 +1219,10 @@
                         $("#ci_component_id").val(idStr);
                     })
                     $("#component" + id + "TexturesSection .accordion-body").append(button)
-                    const randomizeButton = $("<button type='button' class='btn btn-secondary me-3'>Randomize</button>");
-                    randomizeButton.on("click", idStr === "0" ? onRandomizeComponent1Texture : onRandomizeComponent2Texture);
-                    $("#component" + id + "TexturesSection .accordion-body").append(randomizeButton);
                 }
+                const randomizeButton1 = $("<button type='button' class='btn btn-secondary me-3'>Randomize</button>");
+                randomizeButton1.on("click", idStr === "0" ? onRandomizeComponent1Texture : onRandomizeComponent2Texture);
+                $("#component" + id + "TexturesSection .accordion-body").append(randomizeButton1);
 
                 // Set Model Files Content for component
 
@@ -1264,9 +1264,9 @@
                     $("#ci_component_id").val(idStr);
                 });
                 $("#component" + id + "ModelsSection .accordion-body").append(button)
-                const randomizeButton = $("<button type='button' class='btn btn-secondary me-3'>Randomize</button>");
-                randomizeButton.on("click", idStr === "0" ? onRandomizeComponent1Model : onRandomizeComponent2Model);
-                $("#component" + id + "ModelsSection .accordion-body").append(randomizeButton);
+                const randomizeButton2 = $("<button type='button' class='btn btn-secondary me-3'>Randomize</button>");
+                randomizeButton2.on("click", idStr === "0" ? onRandomizeComponent1Model : onRandomizeComponent2Model);
+                $("#component" + id + "ModelsSection .accordion-body").append(randomizeButton2);
             }
         }
 
