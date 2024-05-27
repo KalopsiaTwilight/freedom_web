@@ -80,11 +80,11 @@ namespace FreedomWeb.Models
         [JsonPropertyName("Id")]
         public int Id { get; set; }
         [JsonPropertyName("Start")]
-        public int[] Start { get; set; }
-        [JsonPropertyName("Start")]
-        public int[] Mid { get; set; }
-        [JsonPropertyName("Start")]
-        public int[] End { get; set; }
+        public long[] Start { get; set; }
+        [JsonPropertyName("Mid")]
+        public long[] Mid { get; set; }
+        [JsonPropertyName("End")]
+        public long[] End { get; set; }
     }
 
     public class WoWHeadItemDataFileData
