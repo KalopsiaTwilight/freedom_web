@@ -248,66 +248,6 @@
                         </ul>
                     </div>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="ci_texture_gender" class="form-label">Apply Texture to Gender(s)</label>
-                    <div class="input-group">
-                        <select id="ci_texture_gender" class="form-select">
-                            <option value="3">All</option>
-                            <option value="0">Male</option>
-                            <option value="1">Female</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="ci_texture_race" class="form-label">Apply Texture to Race(s)</label>
-                    <div class="input-group">
-                        <select id="ci_texture_race" class="form-select">
-                            <option value="0">All</option>
-                            <option value="1">Human</option>
-                            <option value="2">Orc</option>
-                            <option value="3">Dwarf</option>
-                            <option value="4">Night Elf</option>
-                            <option value="5">Undead</option>
-                            <option value="6">Tauren</option>
-                            <option value="7">Gnome</option>
-                            <option value="8">Troll</option>
-                            <option value="10">Blood Elf</option>
-                            <option value="11">Draenei</option>
-                            <option value="22">Worgen</option>
-                            <option value="24">Pandaren</option>
-                            <option value="27">Nightborne</option>
-                            <option value="28">Highmountain Tauren</option>
-                            <option value="29">Void Elf</option>
-                            <option value="30">Lightforged Draenei</option>
-                            <option value="31">Zandalari Troll</option>
-                            <option value="32">Kul Tiran</option>
-                            <option value="34">Dark Iron Dwarf</option>
-                            <option value="35">Vulpera</option>
-                            <option value="36">Mag'har Orc</option>
-                            <option value="37">Mechagnome</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="ci_texture_class" class="form-label">Apply Texture to Class(es)</label>
-                    <div class="input-group">
-                        <select id="ci_texture_class" class="form-select">
-                            <option value="0">All</option>
-                            <option value="1">Warrior</option>
-                            <option value="2">Paladin</option>
-                            <option value="3">Hunter</option>
-                            <option value="4">Rogue</option>
-                            <option value="5">Priest</option>
-                            <option value="6">Death Knight</option>
-                            <option value="7">Shaman</option>
-                            <option value="8">Mage</option>
-                            <option value="9">Warlock</option>
-                            <option value="10">Monk</option>
-                            <option value="11">Druid</option>
-                            <option value="12">Demon Hunter</option>
-                        </select>
-                    </div>
-                </div>
                 <input id="ci_texture_fileId" type="hidden" />
             </div>
             <div class="modal-footer">
@@ -372,66 +312,6 @@
                             <option value="-1">Model is not a shoulder pad</option>
                             <option value="0">Model is Left Shoulderpad</option>
                             <option value="1">Model is Right Shoulderpad</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="ci_componentmodel_gender" class="form-label">Apply Model to Gender(s)</label>
-                    <div class="input-group">
-                        <select id="ci_componentmodel_gender" class="form-select">
-                            <option value="3">All</option>
-                            <option value="0">Male</option>
-                            <option value="1">Female</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="ci_componentmodel_race" class="form-label">Apply Model to Race(s)</label>
-                    <div class="input-group">
-                        <select id="ci_componentmodel_race" class="form-select">
-                            <option value="0">All</option>
-                            <option value="1">Human</option>
-                            <option value="2">Orc</option>
-                            <option value="3">Dwarf</option>
-                            <option value="4">Night Elf</option>
-                            <option value="5">Undead</option>
-                            <option value="6">Tauren</option>
-                            <option value="7">Gnome</option>
-                            <option value="8">Troll</option>
-                            <option value="10">Blood Elf</option>
-                            <option value="11">Draenei</option>
-                            <option value="22">Worgen</option>
-                            <option value="24">Pandaren</option>
-                            <option value="27">Nightborne</option>
-                            <option value="28">Highmountain Tauren</option>
-                            <option value="29">Void Elf</option>
-                            <option value="30">Lightforged Draenei</option>
-                            <option value="31">Zandalari Troll</option>
-                            <option value="32">Kul Tiran</option>
-                            <option value="34">Dark Iron Dwarf</option>
-                            <option value="35">Vulpera</option>
-                            <option value="36">Mag'har Orc</option>
-                            <option value="37">Mechagnome</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="ci_componentmodel_class" class="form-label">Apply Model to Class(es)</label>
-                    <div class="input-group">
-                        <select id="ci_componentmodel_class" class="form-select">
-                            <option value="0">All</option>
-                            <option value="1">Warrior</option>
-                            <option value="2">Paladin</option>
-                            <option value="3">Hunter</option>
-                            <option value="4">Rogue</option>
-                            <option value="5">Priest</option>
-                            <option value="6">Death Knight</option>
-                            <option value="7">Shaman</option>
-                            <option value="8">Mage</option>
-                            <option value="9">Warlock</option>
-                            <option value="10">Monk</option>
-                            <option value="11">Druid</option>
-                            <option value="12">Demon Hunter</option>
                         </select>
                     </div>
                 </div>
@@ -799,9 +679,9 @@
             const textureData = {
                 fileName: $("#ci_texture_textureFile").val(),
                 fileId: parseInt($("#ci_texture_fileId").val(), 10),
-                gender: parseInt($("#ci_texture_gender").val(), 10),
-                race: parseInt($("#ci_texture_race").val(), 10),
-                class: parseInt($("#ci_texture_class").val(), 10),
+                gender: 3,
+                race: 0,
+                class: 0,
             };
             if (itemMaterials[section]) {
                 itemMaterials[section].push(textureData);
@@ -817,9 +697,9 @@
             const modelData = {
                 fileName: $("#ci_componentmodel_modelfile").val(),
                 fileId: parseInt($("#ci_componentmodel_fileId").val(), 10),
-                gender: parseInt($("#ci_componentmodel_gender").val(), 10),
-                race: parseInt($("#ci_componentmodel_race").val(), 10),
-                class: parseInt($("#ci_componentmodel_class").val(), 10),
+                gender: 3,
+                race: 0,
+                class: 0,
                 extraData: parseInt($("#ci_componentmodel_extraData").val(), 10)
             };
             itemComponentModels[componentId].models.push(modelData);
