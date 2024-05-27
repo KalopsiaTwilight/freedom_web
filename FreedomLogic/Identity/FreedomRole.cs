@@ -9,6 +9,9 @@ namespace FreedomLogic.Identity
         [NotMapped]
         public const string RoleAdmin = "admin";
 
+        [NotMapped]
+        public const string RoleGM = "gm";
+
         [Column("id")]
         public int Id { get; set; }
 

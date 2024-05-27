@@ -1,11 +1,14 @@
-﻿using FreedomWeb.Infrastructure;
+﻿using FreedomLogic.Identity;
+using FreedomWeb.Infrastructure;
 using FreedomWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 
 namespace FreedomWeb.Controllers
 {
+    [Authorize(Roles = $"{FreedomRole.RoleGM},{FreedomRole.RoleAdmin}")]
     public class ToolsController : Controller
     {
         private readonly IMemoryCache _memoryCache;
