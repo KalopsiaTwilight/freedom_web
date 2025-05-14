@@ -26,5 +26,11 @@ namespace FreedomWeb.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public ActionResult Maps()
+        {
+            return View();
+        }
     }
 }

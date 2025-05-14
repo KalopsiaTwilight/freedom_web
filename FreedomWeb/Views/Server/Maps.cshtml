@@ -1,0 +1,119 @@
+﻿@{
+    ViewBag.Title = "Maps";
+}
+
+
+<div class="form-group mb-3">
+    <div class="dropdown-menu d-block position-static pt-0 mx-0 rounded-3 shadow overflow-hidden">
+        <div class="p-2 mb-2 bg-body-tertiary border-bottom">
+            <input id="map_search" type="search" class="form-control" autocomplete="false" placeholder="Search for a map...">
+        </div>
+        <ul id="map_search_results" class="list-unstyled mb-0" style="max-height: 250px; overflow-y: scroll;">
+        </ul>
+    </div>
+</div>
+<h4 id="mapName"></h4>
+<div id="map" style="height: 512px">
+</div>
+@section Stylesheets {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+}
+@section scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script>
+        var map;
+        var currentMapName;
+        var currentTileLayer;
+        function debounce(func) {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => { func.apply(this, args); }, 250);
+            };
+        }
+
+        function onSearchMap() {
+            $.ajax({
+                url: "/Data/Maps?search=" + $("#map_search").val(),
+                method: "GET",
+                success: function (data) {
+                    $("#map_search_results").empty();
+                    for (const elem of data) {
+                        const itemElem = $(" <a class='dropdown-item d-flex align-items-center gap-2 py-2' href='#'>")
+                        itemElem.text(elem);
+                        itemElem.on("click", function () {
+                            loadMap(elem);
+                            $("#map_search_results").empty();
+                        });
+                        const li = $("<li>");
+                        li.append(itemElem);
+                        $("#map_search_results").append(li);
+                    }
+                }
+            });
+        }
+
+        function mapToGameCoords(coord) {
+            var adtSize = 51200 / 96;
+            var normalizedY = (coord.lat * -1) / 512;
+            var normalizedX = coord.lng / 512
+
+
+            var adtToCenterX = normalizedY * 64 - 32;
+            var adtToCenterY = normalizedX * 64 - 32;
+
+            var gameX = -Math.floor(adtToCenterX * adtSize)
+            var gameY = -Math.floor(adtToCenterY * adtSize)
+
+           return [gameX, gameY];
+        }
+
+        function loadMap(mapName) {
+            if (currentTileLayer) {
+                map.removeLayer(currentTileLayer);
+            }
+            currentTileLayer = L.tileLayer(window.location.origin + '/Data/tiles/' + mapName +  '/{z}/{x}/{y}', {
+                maxZoom: 6,
+                minZoom: 0,
+                bounds: [[0,0],[-512,512]],
+                zoomReverse: true,
+                tileSize: 512,
+            }).addTo(map);
+            map.setView([-327.5,256], 0)
+
+            $("#mapName").text(mapName);
+            currentMapName = mapName;
+        }
+
+        $(document).ready(function () {
+            $("#map_search").on("keyup", debounce(onSearchMap));
+
+            map = L.map('map', {
+                crs: L.CRS.Simple,
+                center: [0,0],
+                zoom: 0
+            });
+            map.on('click', function (e) {
+                if (!currentMapName) {
+                    return;
+                }
+
+                var clickedCoord = e.latlng;
+                var gameCoords = mapToGameCoords(clickedCoord);
+                var mapId = currentMapName.split(" - ")[0]
+                L.popup()
+                    .setLatLng(clickedCoord)
+                    .setContent(`In-game coordinates:<br/>x: ${gameCoords[0]}, y: ${gameCoords[1]}<br/><br/>Go here:<br/>.go xyz ${gameCoords[0]} ${gameCoords[1]} 200 ${mapId}`)
+                    .openOn(map);
+            });
+
+
+            var mapName = "0 - Eastern Kingdoms"
+            loadMap(mapName);
+        });
+    </script>
+}

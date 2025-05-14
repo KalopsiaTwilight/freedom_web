@@ -6,6 +6,7 @@
         public TrinityCoreConfiguration TrinityCore { get; set; }   
         public DbogConfiguration Dbo { get; set; }
         public SmtpConfiguration Smtp { get; set; }
+        public MapsConfiguration Maps { get; set; }
     }
 
     public class LinksConfiguration
@@ -48,5 +49,10 @@
         public string ChatPidFileName { get; set; }
         public string GamePidFileName { get; set; }
         public string AuthPidFileName { get; set; }
+    }
+
+    public class MapsConfiguration
+    {
+        public string TileRootFolder { get; set; }
     }
 }

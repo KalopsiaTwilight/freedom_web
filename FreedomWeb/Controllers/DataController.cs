@@ -1,6 +1,7 @@
 ﻿using FreedomLogic.DAL;
 using FreedomLogic.Entities;
 using FreedomLogic.Identity;
+using FreedomLogic.Infrastructure;
 using FreedomLogic.Managers;
 using FreedomLogic.Services;
 using FreedomUtils.DataTables;
@@ -17,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,14 +32,43 @@ namespace FreedomWeb.Controllers
         private readonly ServerControl _serverControl;
         private readonly ExtraDataLoader _dataLoader;
         private readonly DbFreedom _freedomDb;
+        private readonly AppConfiguration _appConfig;
 
-        public DataController(UserManager<User> userManager, CharacterManager characterManager, ServerControl serverControl, ExtraDataLoader dataLoader, DbFreedom freedomDb)
+        public DataController(UserManager<User> userManager, CharacterManager characterManager, ServerControl serverControl, 
+            ExtraDataLoader dataLoader, DbFreedom freedomDb, AppConfiguration appConfig)
         {
             _userManager = userManager;
             _characterManager = characterManager;
             _serverControl = serverControl;
             _dataLoader = dataLoader;
             _freedomDb = freedomDb;
+            _appConfig = appConfig;
+        }
+
+
+
+        [HttpGet]
+        [Route("/Data/tiles/{dir}/{zoom}/{x}/{y}")]
+        public IActionResult GetTile([FromRoute] string dir, [FromRoute] int zoom, [FromRoute] int x, [FromRoute] int y)
+        {
+            var filePath = Path.Join(_appConfig.Maps.TileRootFolder, dir, zoom.ToString(), $"{y}_{x}.png");
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+            var fileStream = System.IO.File.Open(filePath, FileMode.Open);
+            return File(fileStream, "image/png");
+        }
+
+        [HttpGet]
+        public IActionResult Maps(string search)
+        {
+            var maps = Directory.GetDirectories(_appConfig.Maps.TileRootFolder)
+                .Where(x => string.IsNullOrEmpty(search) || Path.GetFileName(x).ToLower().Contains(search.ToLower()))
+                .Select(Path.GetFileName)
+                .ToList();
+
+            return Json(maps);
         }
 
         /// <summary>
