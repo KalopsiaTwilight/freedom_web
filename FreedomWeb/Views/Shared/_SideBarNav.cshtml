@@ -69,21 +69,6 @@
                     </a>
                 </div>
             </div>
-            if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin) || (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleGM)))
-            {
-                <a href="#collapseToolsControl" class="nav-link text-white collapsed" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseToolsControl">
-                    <i class="fa fa-wrench pe-2"></i>
-                    Tools
-                    <i class="fa fa-angle-down pull-right"></i>
-                </a>
-                <div class="collapse" id="collapseToolsControl">
-                    <div class="ps-4">
-                        <a class="nav-link text-white" href="@Url.Action("CustomItem", "Tools")">
-                            <i class="fa fa-pie-chart pe-2"></i> Custom Item Preview
-                        </a>
-                    </div>
-                </div>
-            }
             if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
             {
                 <a href="#collapseServerControl" class="nav-link text-white collapsed" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseServerControl">
