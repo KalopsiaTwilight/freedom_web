@@ -14,6 +14,8 @@ namespace FreedomLogic.DAL
         public DbSet<GameAccount> GameAccounts { get; set; }
         public DbSet<GameAccountAccess> GameAccountAccesses { get; set; }
 
+        public DbSet<AccountBan> AccountBans { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<GameAccount>()
@@ -22,6 +24,11 @@ namespace FreedomLogic.DAL
             builder.Entity<GameAccount>()
                 .HasOne(a => a.BnetAccount)
                 .WithMany(b => b.GameAccounts);
+            builder.Entity<GameAccount>()
+                .HasOne(a => a.AccountBan)
+                .WithOne(b => b.GameAccount)
+                .HasForeignKey<AccountBan>(x => x.Id)
+                .IsRequired(false);
         }
     }
 }

@@ -33,6 +33,7 @@ namespace FreedomWeb.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly DbFreedom _freedomDb;
+        private readonly DbAuth _authDb;
         private readonly DbDboAcc _dbDboAcc;
         private readonly AccountManager _accountManager;
         private readonly ServerControl _serverControl;
@@ -44,7 +45,7 @@ namespace FreedomWeb.Controllers
 
         public AdminController(UserManager<User> userManager, DbFreedom freedomDb, AccountManager accountManager,
             ServerControl serverControl, AppConfiguration appConfig, ExtraDataLoader dataLoader, HttpClient httpClient, 
-            DboServerControl dboServerControl, DbDboAcc dbDboAcc, DbDboChar dbDboChar)
+            DboServerControl dboServerControl, DbDboAcc dbDboAcc, DbDboChar dbDboChar, DbAuth authDb)
         {
             _userManager = userManager;
             _freedomDb = freedomDb;
@@ -56,6 +57,7 @@ namespace FreedomWeb.Controllers
             _dboServerControl = dboServerControl;
             _dbDboAcc = dbDboAcc;
             _dbDboChar = dbDboChar;
+            _authDb = authDb;
         }
 
         [HttpGet]
@@ -420,5 +422,85 @@ namespace FreedomWeb.Controllers
             return Json(new { status = success, error = error });
         }
 
+        [HttpGet]
+        public ActionResult BanList()
+        {
+            var model = new BannedUsersViewModel
+            {
+                BanList = new List<BannedUserListItem>()
+            };
+            var bans = _authDb.AccountBans
+                .Include(u => u.GameAccount)
+                .ToList();
+
+
+            var bnetAccounts = bans.Select(x => x.GameAccount.BnetAccountId).ToList();
+            var users = _freedomDb.Users.Where(x => bnetAccounts.Contains(x.BnetAccountId));
+            foreach (var bannedUser in bans)
+            {
+                var freedomUser = users.FirstOrDefault(x => x.BnetAccountId == bannedUser.GameAccount.BnetAccountId);
+                model.BanList.Add(new BannedUserListItem()
+                {
+                    UserId = freedomUser?.BnetAccountId ?? -1,
+                    Username = freedomUser?.UserName,
+                    DisplayName = freedomUser?.DisplayName,
+                    Active = bannedUser.Active,
+                    BanDate = bannedUser.BanDate.ToString(),
+                    UnbanDate = bannedUser.Unbandate.ToString(),
+                    BannedBy = bannedUser.BannedBy,
+                    BanReason = bannedUser.BanReason
+                });
+            }
+            return View(model);
+        }
+        [HttpGet]
+        public async Task<ActionResult> BanAccounts(int? id)
+        {
+            var user = await _userManager.FindByIdAsync(id?.ToString());
+            _dataLoader.LoadExtraUserData(user);
+            if (user == null)
+            {
+                SetAlertMsg($"Account with id: {id?.ToString()} could not be found.", AlertMsgType.AlertDanger);
+                return RedirectToAction("Index", "Home");
+            }
+
+            var model = new BanGameAccountsViewModel
+            {
+                UserId = user.Id,
+                Username = user.UserName,
+                BnetAccountId = user.UserData.BnetAccount.Id,
+                Duration = BanDuration.OneDay
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult BanAccounts(BanGameAccountsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            _accountManager.BanGameAccounts(model.BnetAccountId, model.Duration, model.Reason, User.Identity.Name);
+
+            SetAlertMsg("Game accounts have been sucessfully banned!", AlertMsgType.AlertSuccess);
+            return RedirectToAction("BanList", "Admin");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> UnBanAccounts(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                SetAlertMsg($"Account with id: {userId} could not be found.", AlertMsgType.AlertDanger);
+                return RedirectToAction("Index", "Home");
+            }
+
+            _accountManager.UnbanGameAccounts(user.BnetAccountId);
+            SetAlertMsg("Game accounts have been sucessfully unbanned!", AlertMsgType.AlertSuccess);
+            return RedirectToAction("BanList", "Admin");
+        }
     }
 }

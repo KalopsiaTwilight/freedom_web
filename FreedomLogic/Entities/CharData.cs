@@ -1,11 +1,5 @@
-﻿using FreedomLogic.DAL;
-using FreedomLogic.Identity;
-using FreedomLogic.Managers;
-using System;
+﻿using FreedomLogic.Identity;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FreedomLogic.Entities
 {

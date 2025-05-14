@@ -44,5 +44,6 @@ namespace FreedomLogic.Entities
         public BnetAccount BnetAccount { get; set; }
 
         public GameAccountAccess AccountAccess { get; set; }
+        public virtual AccountBan AccountBan { get; set; }
     }
 }

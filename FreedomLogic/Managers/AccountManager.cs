@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
@@ -41,6 +42,17 @@ namespace FreedomLogic.Managers
         Shadowlands = 8
     }
 
+    public enum BanDuration
+    {
+        [Display(Name = "One Day")]
+        OneDay,
+        [Display(Name = "One Week")]
+        OneWeek,
+        [Display(Name = "One Month")]
+        OneMonth,
+        [Display(Name = "Permanent")]
+        Permanent
+    }
 
     public class AccountManager
     {
@@ -200,5 +212,58 @@ namespace FreedomLogic.Managers
                 .Select(a => a.Id)
                 .ToArray();
         }
+
+
+        public void BanGameAccounts(int bnetAccountId, BanDuration duration, string reason, string bannedBy)
+        {
+            var accounts = _authDb.GameAccounts.Where(x => x.BnetAccountId == bnetAccountId).ToList();
+            foreach (var account in accounts)
+            {
+                var ban = _authDb.AccountBans.Find(account.Id);
+                var isNew = ban == null;
+                ban ??= new AccountBan()
+                {
+                    Id = account.Id,
+                };
+                ban.BanReason = reason;
+                ban.Active = true;
+                ban.BannedBy = bannedBy;
+                ban.BanDate = DateTime.Now;
+                switch(duration)
+                {
+                    case BanDuration.OneDay: ban.Unbandate = DateTime.Now.AddDays(1); break;
+                    case BanDuration.OneWeek: ban.Unbandate = DateTime.Now.AddDays(7); break;
+                    case BanDuration.OneMonth: ban.Unbandate = DateTime.Now.AddMonths(1); break;
+                    case BanDuration.Permanent: ban.Unbandate = ban.BanDate; break;
+                }
+                if (isNew)
+                {
+                    _authDb.Add(ban);
+                }
+                else
+                {
+                    _authDb.Entry(ban).State = EntityState.Modified;
+                }
+            }
+            _authDb.SaveChanges();
+        }
+
+        public void UnbanGameAccounts(int bnetAccountId)
+        {
+            var accounts = _authDb.GameAccounts.Where(x => x.BnetAccountId == bnetAccountId).ToList();
+            foreach (var account in accounts)
+            {
+                var ban = _authDb.AccountBans.Find(account.Id);
+                if (ban == null)
+                {
+                    continue;
+                }
+                ban.Active = false;
+                ban.Unbandate = DateTime.Now;
+                 _authDb.Entry(ban).State = EntityState.Modified;
+            }
+            _authDb.SaveChanges();
+        }
+
     }
 }

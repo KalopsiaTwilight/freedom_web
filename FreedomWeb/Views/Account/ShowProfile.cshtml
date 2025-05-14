@@ -44,6 +44,12 @@
             </h4>
             <div class="p-3 bg-secondary text-dark rounded-bottom" style="--bs-bg-opacity: 0.2">
                 <a role="button" href="@Url.Action("SetGameAccess", "Admin", new { id = Model.UserId })" class="btn btn-dark">Change GMLevel</a>
+
+                @using (Html.BeginForm("UnBanAccounts", "Admin", new { userId = Model.UserId }, FormMethod.Post, true, new { @id = "FormSetGameAccess", style = "display:inline;" }))
+                {
+                    <button type="submit" role="button" class="btn btn-secondary">Unban GameAccounts</button>
+                }
+                <a role="button" href="@Url.Action("BanAccounts", "Admin", new { id = Model.UserId })" class="btn btn-danger">Ban GameAccounts</a>
             </div>
         }
     </div>

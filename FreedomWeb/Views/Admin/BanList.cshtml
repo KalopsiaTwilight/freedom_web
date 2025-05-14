@@ -1,0 +1,68 @@
+﻿@model FreedomWeb.ViewModels.Admin.BannedUsersViewModel
+@{
+    ViewBag.Title = "Banned Accounts";
+}
+
+<div class="panel panel-info">
+    <table class="table table-striped table-bordered" id="TableBanList">
+        <thead>
+            <tr style="vertical-align:middle">
+                <th class="nosort nosearch"></th>
+                <th>Username</th>
+                <th>Display Name</th>
+                <th>Ban Date</th>
+                <th>Unban Date</th>
+                <th>Banned By</th>
+                <th>Ban reason</th>
+                <th>Active</th>
+                <th class="nosort nosearch"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.BanList)
+            {
+                <tr>
+                    <td style="vertical-align:middle"></td>
+                    <td style="vertical-align:middle">@user.Username</td>
+                    <td style="vertical-align:middle">@user.DisplayName</td>
+                    <td style="vertical-align:middle">@user.BanDate</td>
+                    <td style="vertical-align:middle">@user.UnbanDate</td>
+                    <td style="vertical-align:middle">@user.BannedBy</td>
+                    <td style="vertical-align:middle">@user.BanReason</td>
+                    <td style="vertical-align:middle">@user.Active</td>
+                    <td style="vertical-align:middle">
+                        <a href="@Url.Action("ShowProfile", "Account", new { id = user.UserId })">Show profile &raquo;</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts
+    {
+    <script type="text/javascript">
+        $('#TableBanList').DataTable({
+            "searching": true,
+            "order": [[1, "asc"]],
+            "drawCallback": function (settings) {
+                // Index column
+                if (settings.bSorted || settings.bFiltered) { // Need to redo the counters if filtered or sorted
+                    for (var i = 0; i < settings.aiDisplay.length; i++) {
+                        $('td:eq(0)', settings.aoData[settings.aiDisplay[i]].nTr).html((i + 1) + "#");
+                    }
+                }
+            },
+            "columnDefs": [
+                {   // index column
+                    "sortable": false,
+                    "targets": 'nosort'
+                },
+                {
+                    "searchable": false,
+                    "targets": 'nosearch'
+                }
+            ],
+        });
+    </script>
+}
