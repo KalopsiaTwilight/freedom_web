@@ -14,6 +14,7 @@
         public string ForumUrl { get; set; }
         public string WikiUrl { get; set; }
         public string ConnectionGuideUrl { get; set; }
+        public string Discord { get; set; }
     }
 
     public class TrinityCoreConfiguration
