@@ -502,5 +502,19 @@ namespace FreedomWeb.Controllers
             SetAlertMsg("Game accounts have been sucessfully unbanned!", AlertMsgType.AlertSuccess);
             return RedirectToAction("BanList", "Admin");
         }
+
+        [HttpGet]
+        public async Task<ActionResult> PasswordReset(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetLink = Url.Action("ResetPassword", "Account", new { userId = user.Id, code }, protocol: Request.Scheme);
+            return View(new PasswordResetTokenViewModel()
+            {
+                ResetLink = resetLink,
+                Username = user.UserName
+            });
+        }
     }
 }
