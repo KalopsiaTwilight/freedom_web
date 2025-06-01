@@ -1,4 +1,5 @@
-﻿using FreedomLogic.DAL;
+﻿using AspNetCoreGeneratedDocument;
+using FreedomLogic.DAL;
 using FreedomLogic.Entities;
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
@@ -38,13 +39,26 @@ namespace FreedomWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> NpcItemData(DTParameterModel parameters)
+        public async Task<JsonResult> NpcItemData([FromQuery] string searchBy, DTParameterModel parameters)
         {
             var search = parameters.Search.Value ?? "";
 
-            var dataQuery = _freedomDb.NpcItemInfos
-                .Where(x => x.CreatureName.ToUpper().Contains(search.ToUpper())
-                         || x.CreatureId.ToString().Contains(search))
+            IQueryable<NpcItemInfo> dataQuery;
+            if (searchBy == "item")
+            {
+                dataQuery = _freedomDb.NpcItemInfos
+                    .Where(x => x.ItemTemplateExtra.Name.ToUpper().Contains(search.ToUpper())
+                             || x.ItemId.ToString().Contains(search));
+            } else
+            {
+                dataQuery = _freedomDb.NpcItemInfos
+                    .Where(x => x.CreatureName.ToUpper().Contains(search.ToUpper())
+                             || x.CreatureId.ToString().Contains(search));
+            }
+
+
+                
+            var data = await dataQuery
                 .Select(x => new NpcItemDataViewModel
                 {
                     CreatureName = x.CreatureName,
@@ -52,8 +66,7 @@ namespace FreedomWeb.Controllers
                     ItemId = x.ItemId,
                     ItemName = x.ItemTemplateExtra.Name,
                     ItemInventoryType = x.ItemTemplateExtra.InventoryType
-                });
-            var data = await dataQuery
+                })
                 .ApplyDataTableParameters(parameters)
                 .ToListAsync();
 
