@@ -1,0 +1,971 @@
+﻿@using FreedomLogic.Identity
+@{
+    ViewBag.Title = "Models";
+}
+
+
+<div class="d-flex">
+    <div class="d-flex flex-column flex-shrink-0 me-3 bg-light pa-3 rounded-2" style="width: 320px; height:750px">
+        <ul class="modelviewer nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item flex-grow-1" role="presentation">
+                <button class="nav-link active w-100" id="search-tab" data-bs-toggle="tab"
+                        data-bs-target="#search" type="button" role="tab"
+                        aria-controls="search" aria-selected="true">
+                    Search
+                </button>
+            </li>
+            <li class="nav-item flex-grow-1" role="presentation">
+                <button class="nav-link w-100" id="collections-tab" data-bs-toggle="tab"
+                        data-bs-target="#collections" type="button" role="tab"
+                        aria-controls="collections" aria-selected="false">
+                    Collections
+                </button>
+            </li>
+            <li class="nav-item flex-grow-1" role="presentation">
+                <button class="nav-link w-100" id="settings-tab" data-bs-toggle="tab"
+                        data-bs-target="#settings" type="button" role="tab"
+                        aria-controls="settings" aria-selected="false">
+                    Settings
+                </button>
+            </li>
+        </ul>
+        <div class="modelviewer tab-content bg-white h-100 rounded-2" id="myTabContent">
+            <div class="tab-pane fade show active h-100" id="search" role="tabpanel" aria-labelledby="search-tab">
+                <div id="fileSearchTab" class="p-3 border-start rounded-0 h-100 d-flex flex-column">
+                    <input id="fileSearch" type="search" class="form-control mb-2" autocomplete="false" placeholder="Search by id, name or tag!">
+                    <div id="file_search_results" class="list-group mb-2 flex-grow-1">
+                    </div>
+                    <p id="search_pagination_text" class="text-center">Showing results 1-10 out of 82982</p>
+                    <nav class="d-flex justify-content-around" aria-label="Model results pagination">
+                        <ul id="search_pagination" class="pagination m-0">
+
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="tab-pane fade h-100" id="collections" role="tabpanel" aria-labelledby="collections-tab">
+                <div id="collections_select_collection" class="p-3 rounded-0 h-100">
+                    <input id="collection_search" type="search" class="form-control mb-2" autocomplete="false" placeholder="Search through your collections...">
+                    <hr />
+                    <div id="collection_search_results" class="list-group mb-0">
+                    </div>
+                    <hr />
+                    <p id="collection_search_pagination_text" class="text-center">Showing results 1-10 out of 82982</p>
+                    <nav class="d-flex justify-content-around" aria-label="Model results pagination">
+                        <ul id="collection_search_pagination" class="pagination">
+                        </ul>
+                    </nav>
+                </div>
+                <div id="collections_select_model" class="p-3 rounded-0 h-100" style="display:none">
+                    <div class="input-group">
+                        <button id="collections_model_backBtn" class="btn btn-light border" aria-label="Previous" type="button"><span aria-hidden="true">«</span></button>
+                        <input id="collection_model_search" type="search" class="form-control" autocomplete="false" placeholder="Search by id, name or tag!">
+                    </div>
+                    <hr />
+                    <div id="collection_model_search_results" class="list-group mb-0">
+                    </div>
+                    <hr />
+                    <p id="collection_model_search_pagination_text" class="text-center">Showing results 1-10 out of 82982</p>
+                    <nav class="d-flex justify-content-around" aria-label="Model results pagination">
+                        <ul id="collection_model_search_pagination" class="pagination">
+                        </ul>
+                    </nav>
+                </div>
+
+            </div>
+            <div class="tab-pane fade h-100" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                <div class="p-3 border-end rounded-0 h-100">
+                    <div class="mb-3">
+                        <label for="fovControl" class="form-label">Camera FOV</label>
+                        <input type="number" class="form-control" id="fovControl">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cameraControl" class="form-label">
+                            Camera Controls
+                        </label>
+                        <div class="input-group">
+                            <select id="cameraControl" class="form-select">
+                                <option value="orbital">Mouse Controlled Orbital</option>
+                                <option value="fps">First Person Camera</option>
+                                <option value="rotating">Static Rotating</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="lightingControl" checked>
+                          <label class="form-check-label" for="lightingControl">
+                            Enable Lighting
+                          </label>
+                        </div>
+                    </div>                   
+                    <div class="mb-3">
+                        <label for="fovControl" class="form-label">Lighting Color</label>
+                        <input type="color" class="form-control form-control-color" id="lightColorControl" value="#FFFFFF">
+                    </div>                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="fpsControl">
+                            <label class="form-check-label" for="fpsControl">
+                                Display FPS Counter
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="rounded p-3 bg-dark flex-grow-1">
+        <div id="modelviewer_container" class="wmv_container">
+        </div>
+    </div>
+</div>
+
+
+<div class="modelviewer modal fade" id="addTagModal" tabindex="-1" aria-labelledby="addTagModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addTagModalLabel">Add model tag</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-3">
+                    <div class="dropdown-menu d-block position-static pt-0 mx-0 rounded-3 shadow overflow-hidden">
+                        <div class="p-2 mb-2 bg-body-tertiary border-bottom">
+                            <input id="addTag_input" type="search" class="form-control" autocomplete="false" placeholder="Start typing to see tag suggestions...">
+                        </div>
+                        <ul id="addTag_tagResults" class="list-unstyled mb-0" style="max-height: 250px; overflow-y: auto;">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="addTag_save_btn" type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    Add tag
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Stylesheets {
+    <style>
+        .wmv_container {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+}
+@section scripts {
+    <script src="/lib/wmvts/wmvts-standalone.min.js?v=0.0.1"></script>
+    <script>
+        $(document).ready(function () {
+            const state = {
+                canAddNewTags: '@(User.IsInRole(FreedomRole.RoleGM) || User.IsInRole(FreedomRole.RoleAdmin))' === 'True',
+                currentModelId: -1,
+                search: {
+                    isActiveTab: true,
+                    isLoading: false,
+                    lastQuery: {
+                        val: undefined,
+                        page: undefined
+                    },
+                    page: 0,
+                    pageSize: 10,
+                    total: 0,
+                    data: [],
+                    hasFocus: true
+                },
+                collections: {
+                    isActiveTab: false,
+                    currentCollection: '',
+                    search: {
+                        isActiveTab: true,
+                        isLoading: false,
+                        lastQuery: {
+                            val: undefined,
+                            page: undefined
+                        },
+                        page: 0,
+                        pageSize: 10,
+                        total: 0,
+                        data: [],
+                    },
+                    models: {
+                        isActiveTab: false,
+                        isLoading: false,
+                        lastQuery: {
+                            val: undefined,
+                            page: undefined
+                        },
+                        page: 0,
+                        pageSize: 10,
+                        total: 0,
+                        data: [],
+                        hasFocus: false
+                    }
+                },
+                settings: {
+                    isActiveTab: false,
+                    cameraFov: 60,
+                    selectedCamera: 'orbital',
+                    enableLighting: true,
+                    lightingColor: "#FFFFFF",
+                    showFps: false
+                }
+            }
+
+            const wmvts = window["wmvts-standalone"];
+            const container = $("#modelviewer_container")[0];
+            const dataLoader = new wmvts.WoWModelServerDataProvider("https://cdn.wowfreedom-rp.com");
+            const progressReporter = new wmvts.SimpleProgressReporter(container)
+            const viewer = new wmvts.WoWModelViewer({
+                dataLoader,
+                progressReporter,
+                onError: (type, err) => {
+                    notifyError("Something went wrong with the modelviewer.<br/>Please show a developer the following:<br/><br/>Type: " + type + "<br/>" + err)
+                },
+                canvas: {
+                    container,
+                    resizeToContainer: true,
+                    clearColor: [33/255,37/255,41/255, 1]
+                },
+                scene: {
+                    camera: new wmvts.OrbitalCamera(),
+                    cameraFov: 60,
+                    ambientColor: [0.1, 0.1, 0.1, 1],
+                    lightDirection: [0, 1, 1],
+                    lightColor: [1, 1, 1, 1]
+                }
+            });
+
+            function setModelViewerModel(data) {
+                viewer.removeModelByFileId(state.currentModelId);
+                state.currentModelId = data.FileId;
+                if (data.Type === "m2") {
+                    viewer.addM2Model(state.currentModelId);
+                } else if (data.Type === "wmo") {
+                    viewer.addWMOModel(state.currentModelId);
+                }
+            }
+
+            // AJAX Requests
+
+            function callSearchCollections(searchVal, page, callback) {
+                $.ajax({
+                    url: "/Data/Collections?search=" + searchVal + "&page=" + page,
+                    method: "GET",
+                    success: callback
+                });
+            }
+
+            function callAddTag(tagName) {
+                $.ajax({
+                    url: "/Data/Models/" + state.currentModelId + "/tags",
+                    data: JSON.stringify(tagName),
+                    contentType: "application/json; charset=utf-8",
+                    method: "POST",
+                    success: function (data) {
+                        if (data.Success) {
+                            notifySuccess("Succesfully added tag!");
+                            syncCurrentModelsView(true);
+                        } else {
+                            notifyError(data.Error);
+                        }
+                    }
+                });
+            }
+
+            function callSearchModels(force) {
+                const searchVal = $("#fileSearch").val();
+                const page = state.search.page;
+                if (!force && state.search.lastQuery.val === searchVal && state.search.lastQuery.page === page) {
+                    reloadSearchResults();
+                    return;
+                }
+                state.search.isLoading = true;
+                $.ajax({
+                    url: "/Data/Models?search=" + searchVal + "&page=" + page,
+                    method: "GET",
+                    success: function (data) {
+                        state.search.data = data.Data;
+                        state.search.total = data.Total;
+                        state.search.isLoading = false;
+                        state.search.lastQuery.val = searchVal;
+                        state.search.lastQuery.page = page;
+                        if (state.currentModelId === -1) {
+                            setModelViewerModel(data.Data[0]);
+                        }
+                        reloadSearchResults();
+                    }
+                });
+                reloadSearchResults();
+            }
+
+            function callSearchCollectionModels(force) {
+                const searchVal =  $("#collection_model_search").val();
+                const page = state.collections.models.page;
+                
+                if (!force && state.collections.models.lastQuery.val === searchVal && state.collections.models.lastQuery.page === page) {
+                    reloadCollectionModelsResults();
+                    return;
+                }
+                state.collections.models.isLoading = true;
+                $.ajax({
+                    url: "/Data/Collections/" + state.collections.currentCollection + "/models?search=" + searchVal + "&page=" + page,
+                    method: "GET",
+                    success: function (data) {
+                        state.collections.models.data = data.Data;
+                        state.collections.models.total = data.Total;
+                        state.collections.models.isLoading = false;
+                        state.collections.models.lastQuery.val = searchVal;
+                        state.collections.models.lastQuery.page = page;
+                        if (state.currentModelId === -1) {
+                            setModelViewerModel(data.Data[0]);
+                        }
+                        reloadCollectionModelsResults();
+                    }
+                });
+                reloadCollectionModelsResults();
+            }
+
+            function callRemoveTag(tagName) {
+                $.ajax({
+                    url: "/Data/Models/" + state.currentModelId + "/tags/" + tagName,
+                    method: "DELETE",
+                    success: function (data) {
+                        if (data.Success) {
+                            notifySuccess("Succesfully removed tag!")
+                            syncCurrentModelsView(true);
+                        } else {
+                            notifyError(data.Error);
+                        }
+                    }
+                });
+            }
+
+            function callAddModelToCollection(collectionName) {
+                $.ajax({
+                    url: "/Data/Collections/" + collectionName + "/models ",
+                    data: JSON.stringify(state.currentModelId),
+                    contentType: "application/json; charset=utf-8",
+                    method: "POST",
+                    success: function (data) {
+                        if (data.Success) {
+                            notifySuccess("Succesfully added model to collection!")
+                            syncCollectionsSearch(true);
+                        } else {
+                            notifyError(data.Error);
+                        }
+                    }
+                });
+            }
+
+            function callSearchTags() {
+                 if(!state.canAddNewTags) {
+                    $("#addTag_save_btn").attr('disabled', true);
+                 } else {
+                    $("#addTag_save_btn").attr('disabled', false);
+                 }
+                 $.ajax({
+                    url: "/Data/Tags?search=" + $("#addTag_input").val(),
+                    method: "GET",
+                    success: function (data) {
+                        fillSearchResults(data, "#addTag_input", "#addTag_tagResults", () => {
+                            $("#addTag_save_btn").attr('disabled', false);
+                        });
+                    }
+                });
+            }
+
+            function syncCollectionsSearch(force) {
+                const searchVal =  $("#collection_search").val();
+                const page = state.collections.search.page;
+
+                if (!force && state.collections.search.lastQuery.val === searchVal && state.collections.search.lastQuery.page === page) {
+                    reloadCollectionModelsResults();
+                    return;
+                }
+                state.collections.search.isLoading = true;
+                callSearchCollections(searchVal, page, (data) => {
+                    state.collections.search.lastQuery.val = searchVal;
+                    state.collections.search.lastQuery.page = page;
+                    state.collections.search.data = data.Data;
+                    state.collections.search.total = data.Total;
+                    state.collections.search.isLoading = false;
+                    reloadCollectionSearchResults();
+                })
+                reloadCollectionSearchResults();
+            }
+
+            // Generic Page UI utils
+
+            function addToolTip(elem, title, position) {
+                if (!position) {
+                    position = 'right';
+                }
+                new bootstrap.Tooltip(elem, {
+                    placement: position,
+                    title: title,
+                    trigger: 'hover',
+                    delay: {
+                        show: 500,
+                        hide: 100
+                    }
+                });
+            }
+
+            function getPaginationLayout(numButtons, currentPage, totalPages) {
+                if (totalPages < numButtons) {
+                    const pageNums = [];
+                    for(let i = 1; i <= totalPages; i++) {
+                        pageNums.push(i.toString());
+                    }
+                    return pageNums;
+                }
+                const halfLimit = Math.ceil(numButtons / 2);
+                const isMiddle = currentPage >= halfLimit
+                    && currentPage < (totalPages-halfLimit);
+                const isLeft = currentPage < halfLimit;
+
+                if (isMiddle) {
+                    const pageNums = [];
+                    for (let i = currentPage - Math.floor(halfLimit/2);
+                        i <= currentPage + 1 + Math.ceil(halfLimit/2); i++) {
+                        pageNums.push(i.toString());
+                    }
+                    if (numButtons <= 5) {
+                        return pageNums;
+                    } else {
+                        return ["1", "...", ...pageNums, "...", totalPages.toString()];
+                    }
+                }
+                const numLeft = isLeft ? halfLimit : numButtons - halfLimit-1;
+                const numRight = isLeft ? numButtons - halfLimit-1: halfLimit;
+                const left = [];
+                for(let i = 0; i < numLeft; i++) {
+                    left.push((i+1).toString());
+                }
+                const right = []
+                for (let i = 0; i < numRight; i++) {
+                    right.push((totalPages - i).toString())
+                }
+                return left.concat("...", right.reverse());
+            }
+
+            function reloadPagination(tabState, paginationText, paginationElem, setPageFn) {
+                if (tabState.isLoading) {
+                   const spinnerContainer = $('<div class="d-flex justify-content-center">');
+                   const spinnerelem = $('<div class="spinner-grow" role="status"><span class="visually-hidden">Loading...</span></div>');
+                   spinnerContainer.append(spinnerelem);
+
+                   $(paginationElem).empty();
+                   $(paginationElem).append(spinnerContainer);
+                   $(paginationText).text('');
+                   return;
+                }
+                
+                const resultsStart = Math.min(tabState.page*tabState.pageSize+1, tabState.total);
+                const resultsEnd = Math.min((tabState.page+1)*tabState.pageSize, tabState.total);
+
+                $(paginationText).text(`Showing results ${resultsStart}-${resultsEnd} out of ${tabState.total}`);
+
+                $(paginationElem).empty();
+                const addPaginationItem = (it, disabled, active) => {
+                    const li = $('<li class="page-item">');
+                    if (disabled) {
+                        li.addClass('disabled');
+                    }
+                    if (active) {
+                        li.addClass('active');
+                    }
+                    li.append(it);
+                    $(paginationElem).append(li);
+                }
+
+                const prevBtn = $('<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>')
+                const nextBtn = $('<a class="page-link" href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span></a>')
+
+                prevBtn.on("click", (evt) => {
+                    evt.preventDefault();
+                    setPageFn(tabState.page-1);
+                })
+                nextBtn.on("click", (evt) => {
+                    evt.preventDefault();
+                    setPageFn(tabState.page+1);
+                })
+
+                const totalPages = Math.ceil(tabState.total / tabState.pageSize);
+                const layout = getPaginationLayout(5, tabState.page, totalPages);
+                addPaginationItem(prevBtn, tabState.page === 0);
+                for(const elem of layout) {
+                    const pageNum = parseInt(elem, 10) - 1;
+                    const link = $('<a class="page-link" href="#">');
+                    link.text(elem);
+                    link.on("click", (evt) => {
+                        evt.preventDefault();
+                        setPageFn(pageNum);
+                    })
+                    addPaginationItem(link, isNaN(pageNum), tabState.page === pageNum)
+                }
+                addPaginationItem(nextBtn, tabState.page >= totalPages-1);
+            }
+
+            function reloadModelSearchResults(tabState, resultsElem) {
+                 $(resultsElem + " .tooltipped").each((_, elem) => {
+                    bootstrap.Tooltip.getInstance(elem).dispose();
+                });
+                $(resultsElem).empty();
+
+                if (tabState.isLoading) {
+                   const spinnerContainer = $('<div class="d-flex justify-content-center">');
+                   const spinnerelem = $('<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>');
+                   spinnerContainer.append(spinnerelem);
+                   $(resultsElem).append(spinnerContainer);
+                   return;
+                }
+                if (tabState.total === 0) {
+                    $(resultsElem).append($("<span class='p-2'>No results found.</span>"))
+                    return;
+                }
+
+                for (const elem of tabState.data) {
+                    const modelElem = $("<div class='list-group-item' role='button'>");
+                    const textContainer = $("<div class='d-flex align-items-center gap-2'>");
+
+                    const fileIdSpan = $("<span>");
+                    fileIdSpan.text(elem.FileId);
+                    textContainer.append(fileIdSpan);
+
+                    const fileNameSpan = $("<span class='overflow-hidden tooltipped'>");
+                    fileNameSpan.text(elem.FileName);
+                    addToolTip(fileNameSpan[0], elem.FileName);
+                    textContainer.append(fileNameSpan);
+
+                    modelElem.append(textContainer);
+
+                    if (elem.FileId == state.currentModelId) {
+                        modelElem.removeAttr('role');
+
+                        const badgesContainerElem = $("<div class='d-flex justify-content-between my-2'>")
+                        const userBadgesElem = $("<div class='modelviewer scrollbar-styled pb-2 d-flex flex-grow-1 gap-1' style='overflow-x: auto;'>");
+
+                        const tags = elem.Tags.sort((a,b) => b.Count - a.Count);
+
+                        for(let tag of tags) {
+                            const badgeElem = $('<span class="tooltipped badge text-dark" role="button">');
+                            if (tag.HasUpvoted) {
+                                badgeElem.addClass('bg-success')
+                                badgeElem.on('click', function () {
+                                    $(this).attr('disabled');
+                                    callRemoveTag(tag.Name);
+                                });
+                                addToolTip(badgeElem[0], "Remove vote", "top");
+                            } else {
+                                badgeElem.addClass('bg-light')
+                                badgeElem.on('click', function() {
+                                    $(this).attr('disabled');
+                                    callAddTag(tag.Name);
+                                })
+                                addToolTip(badgeElem[0], "Vote tag", "top");
+                            }
+                            badgeElem.text(tag.Name + " | " + tag.Count);
+                            userBadgesElem.append(badgeElem);
+                        }
+                        if (tags.length === 0) {
+                            userBadgesElem.append($("<span>No tags yet.</span>"))
+                        }
+
+                        const addBadge = $("<button type='button' class='btn badge bg-light ms-2' data-bs-toggle='modal' data-bs-target='#addTagModal' style='height:20.4px'>");
+                        addBadge.append($("<i class='fa fa-solid fa-plus'>"))
+                        addBadge.on('click', function () {
+                            $("#addTag_input").val("");
+                            $("#addTag_tagResults").empty();
+                            $("#addTag_save_btn").attr('disabled', true);
+                        });
+                        badgesContainerElem.append(userBadgesElem);
+                        badgesContainerElem.append(addBadge);
+                        addToolTip(addBadge[0], "Add new tag");
+
+                        const collectionContainerElement = $('<div class="dropdown-menu d-block position-static pt-0 mx-0 rounded-3 shadow overflow-hidden">');
+                        const collectionInputContainerElem = $('<div class="input-group input-group-sm p-2 mb-2 border-bottom">');
+
+                        const collectionInput = $('<input id="collection_suggest" class="form-control" autocomplete="false" placeholder="Add to collection">');
+                        collectionInputContainerElem.append(collectionInput);
+                        collectionInputContainerElem.on('keyup input', debounce(function () {
+                            callSearchCollections($("#collection_suggest").val(), 0, function (data) {
+                                fillSearchResults(data, "#collection_suggest", "#collection_suggest_list", () => {
+                                    callAddModelToCollection($('#collection_suggest').val());
+                                    $('#collection_suggest').val('');
+                                })
+                            });
+                        }));
+
+                        const collectionAddBtn = $('<button class="btn btn-light border" type="button"><i class="fa fa-solid fa-plus"></i></button>')
+                        collectionInputContainerElem.append(collectionAddBtn);
+                        collectionAddBtn.on('click', function () {
+                            callAddModelToCollection($('#collection_suggest').val());
+                        })
+                        addToolTip(collectionAddBtn[0], "Add to collection");
+
+                        collectionContainerElement.append(collectionInputContainerElem);
+                        const collectionSuggestList = $('<ul id="collection_suggest_list" class="list-unstyled mb-0 " style="max-height: 250px; overflow-y: auto; font-size:14px;">')
+                        collectionContainerElement.append(collectionSuggestList);
+
+                        modelElem.append(badgesContainerElem);
+                        modelElem.append(collectionContainerElement);
+                        modelElem.addClass('active')
+                    } else {
+                        modelElem.on("click", function (evt) {
+                            evt.preventDefault();
+                            setModelViewerModel(elem);
+                            reloadCurrentModelsView();
+                        });
+                    }
+                    $(resultsElem).append(modelElem);
+                }
+            }
+
+            function fillSearchResults(data, inputElem, listElem, onSelectItem) {
+                $(listElem).empty();
+                for (const elem of data.Data) {
+                    const itemElem = $("<a class='dropdown-item d-flex align-items-center gap-2 py-2' href='#'>")
+                    itemElem.text(elem.Name);
+                    itemElem.on("click", function (evt) {
+                        $(inputElem).val(elem.Name);
+                        $(listElem).empty();
+                        if (onSelectItem) {
+                            onSelectItem(elem);
+                        }
+                        evt.preventDefault();
+                    });
+                    const li = $("<li>");
+                    li.append(itemElem);
+                    $(listElem).append(li);
+                }
+                if (data.Total === 0) {
+                    const itemElem = $("<div class='dropdown-item d-flex align-items-center gap-2 py-2'>")
+                    itemElem.text("No results found.");
+                    const li = $("<li>");
+                    li.append(itemElem);
+                    $(listElem).append(li);
+                }
+            }
+
+            function syncCurrentModelsView(force) {
+                if (state.search.isActiveTab) {
+                    callSearchModels(force);
+                }
+                if (state.collections.isActiveTab) {
+                    callSearchCollectionModels(force);
+                }
+            }
+            
+            function getSelectedModelInfo() {
+                let tabState;
+                if (state.search.isActiveTab) {
+                    tabState = state.search;
+                }
+                else if (state.collections.isActiveTab) {
+                    tabState = state.collections.models;
+                } else {
+                    return undefined;
+                }
+                return tabState.data.find((x) => x.FileId === state.currentModelId);
+            }
+
+            function reloadCurrentModelsView() {
+                if (state.search.isActiveTab) {
+                    reloadSearchResults();
+                }
+                if (state.collections.isActiveTab) {
+                    reloadCollectionModelsResults();
+                }
+            }
+            // Tab specific UI
+
+            function setSearchPage(num) {
+                state.search.page = num;
+                callSearchModels();
+            }
+
+            function setSearchCollectionsPage(num) {
+                state.collections.search.page = num;
+                syncCollectionsSearch();
+            }
+
+            function setCollectionModelsPage(num) {
+                state.collections.models.page = num;
+                callSearchCollectionModels();
+            }
+
+            function reloadSearchResults() {
+                reloadModelSearchResults(state.search, "#file_search_results");
+                reloadPagination(state.search, "#search_pagination_text", "#search_pagination", setSearchPage);
+            }
+
+            function reloadCollectionModelsResults() {
+                reloadModelSearchResults(state.collections.models, "#collection_model_search_results");
+                reloadPagination(state.collections.models, "#collection_model_search_pagination_text", "#collection_model_search_pagination", setCollectionModelsPage);
+            }
+
+            function reloadCollectionSearchResults() {
+                 $("#collection_search_results .tooltipped").each((_, elem) => {
+                    bootstrap.Tooltip.getInstance(elem).dispose();
+                });
+                $("#collection_search_results").empty();
+
+                reloadPagination(state.collections.search, "#collection_search_pagination_text", "#collection_search_pagination", setSearchCollectionsPage);
+                if (state.collections.search.total === 0) {
+                    $("#collection_search_results").append($("<span class='p-2'>No results found.</span>"))
+                    return;
+                }
+                for (const elem of state.collections.search.data) {
+                    const itemElem = $("<div class='list-group-item' role='button'>");
+                    const textContainer = $("<div class='d-flex align-items-center gap-2'>");
+
+                    const nameSpan = $("<span class='overflow-hidden tooltipped'>");
+                    nameSpan.text(elem.Name);
+                    addToolTip(nameSpan[0], elem.Name);
+                    textContainer.append(nameSpan);
+
+                    itemElem.append(textContainer);
+                    itemElem.on('click', function () {
+                        state.collections.currentCollection = elem.Name;
+                        setActiveCollectionsTab('models')
+                    });
+                    $("#collection_search_results").append(itemElem);
+                }
+            }
+
+            function setActiveCollectionsTab(tab) {
+                if (tab === 'search') {
+                    state.collections.search.isActiveTab = true;
+                    state.collections.models.isActiveTab = false;
+                    $("#collection_search").val('');
+                    state.collections.search.page = 0;
+                    $("#collections_select_collection").show()
+                    $("#collections_select_model").hide();
+                    syncCollectionsSearch();
+                } else {
+                    state.collections.search.isActiveTab = false;
+                    state.collections.models.isActiveTab = true;
+                    $("#collection_model_search").val('');
+                    state.collections.models.page = 0;
+                    $("#collections_select_collection").hide()
+                    $("#collections_select_model").show();
+                    callSearchCollectionModels();
+                }
+            }
+
+            function loadSettings() {
+                const prevSettings = localStorage.getItem('wf_wmv_settings');
+                if (prevSettings) {
+                    var obj = JSON.parse(prevSettings);
+                    state.settings = obj;
+                    state.settings.isActiveTab = false;
+                }
+
+                $("#fovControl").val(state.settings.cameraFov).trigger('change');
+                $("#cameraControl").val(state.settings.selectedCamera).trigger('change');
+                if (state.settings.enableLighting) {
+                    $("#lightingControl").attr('checked', true).trigger('change');
+                } else {
+                    $("#lightingControl").removeAttr('checked', true).trigger('change');
+                }
+                $("#lightColorControl").val(state.settings.lightingColor).trigger('change');
+                if (state.settings.showFps) {
+                    $("#fpsControl").attr('checked', true).trigger('change');
+                } else {
+                    $("#fpsControl").removeAttr('checked', true).trigger('change');
+                }
+            }
+
+            function saveSettings() {
+                localStorage.setItem('wf_wmv_settings', JSON.stringify(state.settings));
+            }
+
+            // Wire up events
+
+            $("#fileSearch").on('keyup input', debounce(function () {
+                const searchVal = $("#fileSearch").val();
+                if (searchVal === state.search.lastQuery.val) {
+                    return;
+                }
+                state.search.page = 0;
+                callSearchModels();
+            }))
+
+            $("#addTag_input").on('keyup input', debounce(callSearchTags));
+
+            $("#addTag_save_btn").on('click', function () {
+                callAddTag($("#addTag_input").val());
+            })
+
+            $("#collection_search").on('keyup input', debounce(() => {
+                const searchVal = $("#collection_search").val();
+                if (searchVal === state.collections.search.lastQuery.val) {
+                    return;
+                }
+                state.collections.search.page = 0;
+                syncCollectionsSearch();
+            }));
+
+            $("#collection_model_search").on('keyup input', debounce(() => {
+                const searchVal = $("#collection_model_search").val();
+                if (searchVal === state.collections.models.lastQuery.val) {
+                    return;
+                }
+                state.collections.models.page = 0;
+                callSearchCollectionModels();
+            }));
+
+            $(document).on('keydown', function (evt) {
+                let tabState;
+                if (state.search.isActiveTab) {
+                    tabState = state.search;
+                }
+                if (state.collections.isActiveTab) {
+                    if (state.collections.search.isActiveTab) {
+                        return true;
+                    }
+                    tabState = state.collections.models;
+                }
+                switch (evt.key) {
+                    case "ArrowDown": {
+                        const currentIndex = tabState.data.findIndex((x) => x.FileId === state.currentModelId);
+                        if (currentIndex != tabState.data.length-1) {
+                            setModelViewerModel(tabState.data[currentIndex+1])
+                            reloadCurrentModelsView();
+                        }
+                        return false;
+                    }
+                    case "ArrowUp": {
+                        let currentIndex = tabState.data.findIndex((x) => x.FileId === state.currentModelId);
+                        if (currentIndex === -1) {
+                            currentIndex = tabState.data.length;
+                        }
+                        if (currentIndex !== 0) {
+                            setModelViewerModel(tabState.data[currentIndex-1]);
+                            reloadCurrentModelsView();
+                        }
+                        return false;
+                    }
+                    case "ArrowRight": {
+                        const totalPages = Math.ceil(tabState.total / tabState.pageSize);
+                        if (tabState.page != totalPages-1) {
+                            tabState.page = tabState.page+1;
+                            syncCurrentModelsView();
+                        }
+                        return false;
+                    }
+                    case "ArrowLeft": { 
+                        if (tabState.page != 0) {
+                            tabState.page = tabState.page-1;
+                            syncCurrentModelsView();
+                        }
+                        return false;
+                    }
+                }
+                return true;
+            })
+
+            $("#collections_model_backBtn").on('click', function () {
+                setActiveCollectionsTab('search');
+            });
+
+            $("#fovControl").on('keyup input', debounce(() => {
+                const fovVal = parseInt($("#fovControl").val(), 10);
+                if (!isNaN(fovVal)) {
+                    viewer.useCameraFov(fovVal);
+                    state.settings.cameraFov = fovVal;
+                }
+                saveSettings();
+            }));
+
+            $("#cameraControl").on('change', () => {
+                const val = $("#cameraControl").val();
+                let camera;
+                switch(val) {
+                    case 'orbital': {
+                        camera = new wmvts.OrbitalCamera();
+                        break;
+                    }
+                    case 'fps': {
+                        camera = new wmvts.FirstPersonCamera();
+                        break;
+                    }
+                    case 'rotating': {
+                        camera = new wmvts.RotatingCamera();
+                        break;
+                    }
+                    default: {
+                        camera = new wmvts.Camera();
+                    }
+                }
+                state.settings.selectedCamera = val;
+                viewer.useCamera(camera);
+                saveSettings();
+            });
+
+            $("#lightingControl").on('change', function () {
+                const enableLighting = $("#lightingControl").is(":checked");
+                state.settings.enableLighting = enableLighting;
+                if (enableLighting) {
+                    viewer.enableLighting();
+                } else {
+                    viewer.disableLighting();
+                }
+                saveSettings();
+            });
+
+            $("#lightColorControl").on("change input", function () {
+                const val = $("#lightColorControl").val();
+                const r = parseInt(val.substr(1, 2), 16);
+                const g = parseInt(val.substr(3, 2), 16);
+                const b = parseInt(val.substr(5, 2), 16);
+                state.settings.lightingColor = val;
+
+                viewer.useLightColor([r/255,g/255,b/255, 1]);
+                saveSettings();
+            })
+
+            $("#fpsControl").on('change', function () {
+                const showFps = $("#fpsControl").is(":checked");
+                state.settings.showFps = showFps;
+                if (showFps) {
+                    viewer.showFps();
+                } else {
+                    viewer.hideFps();
+                }
+                saveSettings();
+            });
+
+            function setActiveTab(tabName) {
+                state.search.isActiveTab = false;
+                state.settings.isActiveTab = false;
+                state.collections.isActiveTab = false;
+                state[tabName].isActiveTab = true;
+            }
+
+            $("#search-tab").on('click focus', () => {
+                setActiveTab('search');
+                $("#fileSearch").val('');
+                state.search.page = 0;
+                callSearchModels();
+            });
+            $("#collections-tab").on('click focus', () => {
+                setActiveTab('collections');
+                setActiveCollectionsTab('search');
+            });
+            $("#settings-tab").on('click focus', () => {
+                setActiveTab('settings');
+            });
+            loadSettings();
+            callSearchModels();
+        });
+    </script>
+}

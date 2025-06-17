@@ -90,7 +90,7 @@ namespace FreedomWeb
                     "lib/DataTables-1.13.1/css/dataTables.bootstrap5.css"
                 );
                 pipeline.AddJavaScriptBundle("/js/jquery", "lib/jquery/jquery-3.6.1.js", "lib/gasparesganga-jquery-loading-overlay/index.min.js");
-                pipeline.AddJavaScriptBundle("/js/bootstrap", "lib/bootstrap/js/bootstrap.js");
+                pipeline.AddJavaScriptBundle("/js/bootstrap", "lib/bootstrap/js/bootstrap.bundle.min.js");
                 pipeline.AddJavaScriptBundle("/js/modernizr", "lib/modernizr-2.8.3.js");
                 pipeline.AddJavaScriptBundle("/js/dataTables", 
                     "lib/DataTables-1.13.1/js/jquery.dataTables.js",

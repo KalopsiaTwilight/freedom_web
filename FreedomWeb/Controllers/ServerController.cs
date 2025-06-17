@@ -32,5 +32,11 @@ namespace FreedomWeb.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public ActionResult ModelViewer()
+        {
+            return View();
+        }
     }
 }

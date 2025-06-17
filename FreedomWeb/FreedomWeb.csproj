@@ -96,5 +96,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\lib\bootstrap\" />
     <Folder Include="wwwroot\lib\jquery\" />
+    <Folder Include="wwwroot\lib\wmvts\" />
   </ItemGroup>
 </Project>

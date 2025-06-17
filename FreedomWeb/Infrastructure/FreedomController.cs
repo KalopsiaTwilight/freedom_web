@@ -46,5 +46,8 @@ namespace FreedomWeb.Infrastructure
 
         protected string CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
         protected string GetCurrentUserName => User.FindFirstValue(ClaimTypes.Name);
+
+        protected bool UserIsGm => User.IsInRole(FreedomRole.RoleGM) || User.IsInRole(FreedomRole.RoleAdmin);
+        protected bool UserIsAdmin => User.IsInRole(FreedomRole.RoleAdmin);
     }
 }

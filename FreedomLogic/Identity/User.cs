@@ -44,6 +44,8 @@ namespace FreedomLogic.Identity
         public string SecurityStamp { get; set; }
 
         public ICollection<FreedomRole> FreedomRoles { get; set; }
+        public ICollection<ModelViewerModelToTag> ModelTags { get; set; }
+        public ICollection<ModelViewerCollection> ModelViewerCollections { get; set; }
 
         [NotMapped]
         public UserData UserData { get; set; }

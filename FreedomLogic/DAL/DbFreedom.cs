@@ -26,6 +26,12 @@ namespace FreedomLogic.DAL
         public DbSet<TextureFileData> TextureFiles { get; set; }
         public DbSet<ItemDisplayInfoData> ItemDisplayInfos { get; set; }
         public DbSet<ModelResourcesData> ModelResources { get; set; }
+        public DbSet<ModelViewerModelData> ModelViewerModelData { get; set; }
+
+        public DbSet<ModelViewerCollection> ModelViewerCollections { get; set; }
+        public DbSet<ModelViewerModelToTag> ModelViewerModelToTag { get; set; }
+        public DbSet<ModelViewerTag> ModelViewerTags { get; set; }
+        public DbSet<ModelViewerModelToCollection> ModelViewerModelToCollection { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,6 +67,40 @@ namespace FreedomLogic.DAL
 
             modelBuilder.Entity<ItemDisplayInfoData>()
                 .HasKey(x => new { x.Id, x.DisplayId });
+
+            modelBuilder.Entity<ModelViewerModelToTag>()
+                .HasOne(x => x.Model)
+                .WithMany(x => x.Tags)
+                .HasForeignKey(x => x.ModelId)
+                .HasPrincipalKey(x => x.Id);
+            modelBuilder.Entity<ModelViewerModelToTag>()
+                .HasOne(x => x.Tag)
+                .WithMany(x => x.Models)
+                .HasForeignKey(x => x.TagId)
+                .HasPrincipalKey(x => x.Id);
+            modelBuilder.Entity<ModelViewerModelToTag>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.ModelTags)
+                .HasForeignKey(x => x.UserId)
+                .HasPrincipalKey(x => x.Id);
+            modelBuilder.Entity<ModelViewerModelToTag>()
+                .HasKey(x => new { x.TagId, x.UserId, x.ModelId });
+            modelBuilder.Entity<ModelViewerCollection>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.ModelViewerCollections)
+                .HasForeignKey(x => x.UserId);
+            modelBuilder.Entity<ModelViewerModelToCollection>()
+                .HasOne(x => x.Collection)
+                .WithMany(x => x.Models)
+                .HasForeignKey(x => x.CollectionId)
+                .HasPrincipalKey(x => x.Id);
+            modelBuilder.Entity<ModelViewerModelToCollection>()
+                .HasOne(x => x.Model)
+                .WithMany(x => x.Collections)
+                .HasForeignKey(x => x.ModelId)
+                .HasPrincipalKey(x => x.Id);
+            modelBuilder.Entity<ModelViewerModelToCollection>()
+                .HasKey(x => new { x.ModelId, x.CollectionId });
 
             //modelBuilder.Entity<ItemSubclassInfo>()
             //    .HasKey(x => new { x.Id, x.SubclassId });

@@ -2,6 +2,7 @@
     // Simple wrapped DataTable helper (for small-scale, non-serverside data)
     $.fn.FreedomSimpleDataTable = function (options) {        
         var defaultOptions = {
+            "bAutoWidth": false,
             "lengthMenu": [[25, 50, 100], [25, 50, 100]],
             "initComplete": function () {
                 var table = this;
@@ -55,6 +56,7 @@
     // Must specify "dataUrl" key with local URL to the data
     $.fn.FreedomServerDataTable = function (options) {
         var defaultOptions = {
+            "bAutoWidth": false,
             "lengthMenu": [[25, 50, 100], [25, 50, 100]],
             "serverSide": true,
             "ajax": {

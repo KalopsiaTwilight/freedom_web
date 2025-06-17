@@ -13,53 +13,182 @@ body {
 }
 
 /* z-index for processing div */
-div.dataTables_processing
-{
+div.dataTables_processing {
     z-index: 1000;
 }
 
 /* Styles for Status page
 -----------------------------------------------------------*/
-div.status-line .status-bad
-{
+div.status-line .status-bad {
     color: red;
     background-color: darkred;
 }
 
-div.status-line .status-loading
-{
+div.status-line .status-loading {
     color: orange;
     background-color: darkorange;
 }
 
-div.status-line .status-good
-{
+div.status-line .status-good {
     color: green;
     background-color: darkgreen;
 }
 
-div.status-line .form-control
-{
+div.status-line .form-control {
     border: none;
-    background-image: -webkit-repeating-linear-gradient(
-        45deg,
-        rgba(0,0,0,.4),
-        rgba(0,0,0,.4) 20px,
-        rgba(0,0,0,.2) 20px,
-        rgba(0,0,0,.2) 40px);
-    background-image: -o-repeating-linear-gradient(
-        45deg,
-        rgba(0,0,0,.4),
-        rgba(0,0,0,.4) 20px,
-        rgba(0,0,0,.2) 20px,
-        rgba(0,0,0,.2) 40px);
-    background-image: repeating-linear-gradient(
-        45deg,
-        rgba(0,0,0,.4),
-        rgba(0,0,0,.4) 20px,
-        rgba(0,0,0,.2) 20px,
-        rgba(0,0,0,.2) 40px
-    );
+    background-image: -webkit-repeating-linear-gradient( 45deg, rgba(0,0,0,.4), rgba(0,0,0,.4) 20px, rgba(0,0,0,.2) 20px, rgba(0,0,0,.2) 40px);
+    background-image: -o-repeating-linear-gradient( 45deg, rgba(0,0,0,.4), rgba(0,0,0,.4) 20px, rgba(0,0,0,.2) 20px, rgba(0,0,0,.2) 40px);
+    background-image: repeating-linear-gradient( 45deg, rgba(0,0,0,.4), rgba(0,0,0,.4) 20px, rgba(0,0,0,.2) 20px, rgba(0,0,0,.2) 40px );
     font-size: 24px;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
+
+:root {
+    --sidebar-width: 280px;
+    --sidebar-width-collapsed: 80px;
+}
+
+
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+    .sidebar .nav-link {
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+    }
+
+    .sidebar .collapse.show {
+        width: 100%;
+    }
+
+    .sidebar .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+    }
+
+    .sidebar.nav-collapsed {
+        width: var(--sidebar-width-collapsed);
+    }
+
+
+.toggle-btn {
+    position: absolute;
+    right: -15px;
+    top: 20px;
+    background: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.nav-collapsed .toggle-btn {
+    transform: rotate(180deg);
+}
+
+.nav-collapsed .blockout-nav-collapsed {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.nav-collapsed .hide-nav-collapsed {
+    display: none !important;
+}
+
+.modelviewer {
+    --mv-gray: #8C8C8C;
+    --mv-light-gray: #DCDCDC;
+    /*#739DA3*/
+    --mv-primary-color: #93A3AC;
+    --mv-primary-color-light: #E9EDEE;
+    --mv-primary-color-rgb: 69, 83, 90;
+    --mv-primary-border-color: #93A3AC;
+    --mv-primary-text-color: #45535a;
+    --mv-highlight-color: #93A3AC;
+    --bs-link-color: var(--mv-highlight-color);
+    --bs-link-hover-color: var(--mv-highlight-color);
+    --bs-success-rgb: 119, 163, 115;
+}
+
+.modelviewer .dropdown-menu {
+    --bs-dropdown-link-active-bg: var(--mv-primary-color);
+}
+
+.scrollbar-styled::-webkit-scrollbar-track {
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+
+.scrollbar-styled::-webkit-scrollbar {
+    width: 12px;
+    background-color: transparent;
+}
+
+.scrollbar-styled::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);*/
+    background-color: var(--mv-light-gray);
+}
+
+.modelviewer .btn > i {
+    color: var(--mv-gray);
+}
+
+.modelviewer .list-group {
+    --bs-list-group-active-color: #fff;
+    --bs-list-group-active-bg: var(--mv-primary-color);
+    --bs-list-group-active-border-color: var(--mv-primary-border-color);
+}
+
+.modelviewer .active.list-group-item:hover {
+    background-color: var(--mv-primary-color);
+}
+
+.modelviewer .list-group-item:hover {
+    background-color: var(--mv-primary-color-light);
+}
+
+.modelviewer .pagination {
+    --bs-pagination-color: var(--mv-primary-text-color);
+    --bs-pagination-bg: #fff;
+    --bs-pagination-border-width: 1px;
+    --bs-pagination-border-color: #dee2e6;
+    --bs-pagination-border-radius: .375rem;
+    --bs-pagination-hover-color: var(--mv-highlight-color);
+    --bs-pagination-hover-bg: #e9ecef;
+    --bs-pagination-hover-border-color: #dee2e6;
+    --bs-pagination-focus-color: var(--mv-highlight-color);
+    --bs-pagination-focus-bg: #e9ecef;
+    --bs-pagination-focus-box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+    --bs-pagination-active-color: #fff;
+    --bs-pagination-active-bg: var(--mv-highlight-color);
+    --bs-pagination-active-border-color: var(--mv-highlight-color);
+    --bs-pagination-disabled-color: #6c757d;
+    --bs-pagination-disabled-bg: #fff;
+    --bs-pagination-disabled-border-color: #dee2e6
+}
+
+.modelviewer .form-control:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: var(--mv-primary-border-color);
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(var(--mv-primary-color-rgb), .25);
+}
+
+.badge.btn {
+}
+
+    .badge.btn:hover {
+        background-color: #d3d4d5 !important;
+    }

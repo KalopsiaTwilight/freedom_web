@@ -6,30 +6,27 @@
     <title>@ViewBag.Title - WoW Freedom Mini-manager</title>
     <link rel="stylesheet" href="~/css/bundle.css" />
     @RenderSection("stylesheets", required: false)
-    <script src="~/js/modernizr" ></script>
+    <script src="~/js/modernizr"></script>
 </head>
 <body class="d-flex flex-column">
     <partial name="_TopNav"></partial>
-    <div class="flex-grow-1">
-        <div class="row h-100 me-0">
-            <div class="col-md-3">
-                <partial name="_SideBarNav"></partial>
-            </div>
-            <div class="col-md-9">
+    <div class="d-flex flex-grow-1">
+        <partial name="_SideBarNav">
+            <div class="container-fluid px-4">
                 <partial name="_Alerts"></partial>
                 <div class="py-3">
                     <h3>@ViewBag.Title</h3>
                 </div>
                 @RenderBody()
-               <div class="mb-3"></div>
+                <div class="mb-3"></div>
             </div>
-        </div>                            
     </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
     <partial name="_Footer"></partial>
 
     <script src="~/js/jquery"></script>
-    <script src="~/js/bootstrap"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/dataTables"></script>
     <script src="~/js/freedom"></script>
     @RenderSection("scripts", required: false)
