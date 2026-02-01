@@ -48,6 +48,8 @@ namespace FreedomLogic.Managers
         OneDay,
         [Display(Name = "One Week")]
         OneWeek,
+        [Display(Name = "Two Weeks")]
+        TwoWeeks,
         [Display(Name = "One Month")]
         OneMonth,
         [Display(Name = "Permanent")]
@@ -234,6 +236,7 @@ namespace FreedomLogic.Managers
                     case BanDuration.OneDay: ban.Unbandate = DateTime.Now.AddDays(1); break;
                     case BanDuration.OneWeek: ban.Unbandate = DateTime.Now.AddDays(7); break;
                     case BanDuration.OneMonth: ban.Unbandate = DateTime.Now.AddMonths(1); break;
+                    case BanDuration.TwoWeeks: ban.Unbandate = DateTime.Now.AddDays(14); break;
                     case BanDuration.Permanent: ban.Unbandate = ban.BanDate; break;
                 }
                 if (isNew)
