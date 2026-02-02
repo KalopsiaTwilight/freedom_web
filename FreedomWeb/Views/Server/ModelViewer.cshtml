@@ -91,10 +91,6 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="fovControl" class="form-label">Lighting Color</label>
-                        <input type="color" class="form-control form-control-color" id="lightColorControl" value="#FFFFFF">
-                    </div>
-                    <div class="mb-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="" id="fpsControl">
                             <label class="form-check-label" for="fpsControl">
@@ -201,9 +197,8 @@
                 },
                 settings: {
                     isActiveTab: false,
-                    cameraFov: 60,
+                    cameraFov: 90,
                     selectedCamera: 'orbital',
-                    lightingColor: "#FFFFFF",
                     showFps: false
                 }
             }
@@ -212,7 +207,7 @@
             const container = $("#modelviewer_container")[0];
             const dataLoader = new wmvts.WoWModelServerDataProvider("https://cdn.wowfreedom-rp.com");
             const progressReporter = new wmvts.SimpleProgressReporter(container)
-            const viewer = new wmvts.WoWModelViewer({
+			const viewer = new wmvts.BrowserWoWModelViewer({
                 dataLoader,
                 progressReporter,
                 onError: (type, err) => {
@@ -221,28 +216,25 @@
                 canvas: {
                     container,
                     resizeToContainer: true,
-                    clearColor: [33/255,37/255,41/255, 1]
                 },
                 scene: {
-                    camera: new wmvts.OrbitalCamera(),
-                    cameraFov: 60,
-                    ambientColor: [0.1, 0.1, 0.1, 1],
-                    lightDirection: [0, 1, 1],
-                    lightColor: [1, 1, 1, 1]
+                    cameraFov: 90,
+                    backgroundColor: [33/255,37/255,41/255, 1]
                 }
             });
             let model;
 
             function setModelViewerModel(data) {
-                viewer.removeModelByFileId(state.currentModelId);
+				if (model) {
+					viewer.removeSceneObject(model);
+				}
                 state.currentModelId = data.FileId;
                 if (data.Type === "m2") {
                     model = viewer.addM2Model(state.currentModelId);
                     showM2Controls();
                 } else if (data.Type === "wmo") {
-                    viewer.addWMOModel(state.currentModelId);
+                    model = viewer.addWMOModel(state.currentModelId);
                     hideM2Controls();
-                    model = null;
                 }
             }
 
@@ -852,7 +844,6 @@
 
                 $("#fovControl").val(state.settings.cameraFov).trigger('change');
                 $("#cameraControl").val(state.settings.selectedCamera).trigger('change');
-                $("#lightColorControl").val(state.settings.lightingColor).trigger('change');
                 if (state.settings.showFps) {
                     $("#fpsControl").attr('checked', true).trigger('change');
                 } else {
@@ -970,50 +961,27 @@
 
             $("#cameraControl").on('change', () => {
                 const val = $("#cameraControl").val();
-                let camera;
+                state.settings.selectedCamera = val;
                 switch(val) {
                     case 'orbital': {
-                        camera = new wmvts.OrbitalCamera();
+						viewer.useOrbitalCamera();
                         break;
                     }
                     case 'fps': {
-                        camera = new wmvts.FirstPersonCamera();
+						viewer.useFirstPersonCamera();
                         break;
                     }
                     case 'rotating': {
-                        camera = new wmvts.RotatingCamera();
+						viewer.useRotatingCamera();
                         break;
                     }
                     default: {
-                        camera = new wmvts.Camera();
+						viewer.useStaticCamera();
                     }
                 }
-                state.settings.selectedCamera = val;
-                viewer.useCamera(camera);
                 saveSettings();
             });
 
-            $("#lightingControl").on('change', function () {
-                const enableLighting = $("#lightingControl").is(":checked");
-                state.settings.enableLighting = enableLighting;
-                if (enableLighting) {
-                    viewer.enableLighting();
-                } else {
-                    viewer.disableLighting();
-                }
-                saveSettings();
-            });
-
-            $("#lightColorControl").on("change input", function () {
-                const val = $("#lightColorControl").val();
-                const r = parseInt(val.substr(1, 2), 16);
-                const g = parseInt(val.substr(3, 2), 16);
-                const b = parseInt(val.substr(5, 2), 16);
-                state.settings.lightingColor = val;
-
-                viewer.useLightColor([r/255,g/255,b/255, 1]);
-                saveSettings();
-            })
 
             $("#fpsControl").on('change', function () {
                 const showFps = $("#fpsControl").is(":checked");
