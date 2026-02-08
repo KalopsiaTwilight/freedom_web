@@ -85,7 +85,7 @@
                         <div class="input-group">
                             <select id="cameraControl" class="form-select">
                                 <option value="orbital">Mouse Controlled Orbital</option>
-                                <option value="fps">First Person Camera</option>
+                                <option value="fps">First Person Camera (WASD)</option>
                                 <option value="rotating">Static Rotating</option>
                             </select>
                         </div>
@@ -147,11 +147,12 @@
     </style>
 }
 @section scripts {
-    <script src="/lib/wmvts/wmvts-standalone.min.js?v=0.0.1"></script>
+    <script src="/lib/wmvts/wmvts-standalone.min.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function () {
             const state = {
-                canAddNewTags: '@(User.IsInRole(FreedomRole.RoleGM) || User.IsInRole(FreedomRole.RoleAdmin))' === 'True',
+                // canAddNewTags: '@(User.IsInRole(FreedomRole.RoleGM) || User.IsInRole(FreedomRole.RoleAdmin))' === 'True',
+				canAddNewTags: true,
                 currentModelId: -1,
                 search: {
                     isActiveTab: true,
@@ -230,7 +231,7 @@
 				}
                 state.currentModelId = data.FileId;
                 if (data.Type === "m2") {
-                    model = viewer.addM2Model(state.currentModelId);
+					model = viewer.addTextureVariantModel(state.currentModelId);
                     showM2Controls();
                 } else if (data.Type === "wmo") {
                     model = viewer.addWMOModel(state.currentModelId);
@@ -731,21 +732,24 @@
                     animSelect.show();
                 });
 
-                model.on("textureVariationsLoaded", (data) => {
-                    if(data.textureVariations.length === 0) {
+				model.on("textureVariationsLoaded", () => {
+					console.log("Called!");
+					const variations = model.textureVariations.textureVariations;
+                    if(variations.length === 0) {
                         return;
                     }
 
-                    for(let i = 0; i < data.textureVariations.length; i++) {
+                    for(let i = 0; i < variations.length; i++) {
                         const optionElement = document.createElement("option");
-                        const tvData = data.textureVariations[i];
+                        const tvData = variations[i];
                         const sourceName = tvData.displayType === 1 ? "CreatureDisplayInfo" : "ItemDisplayInfo"
-                        optionElement.text = (i+1) + ". " +  sourceName + " " + data.textureVariations[i].displayId;
+                        optionElement.text = (i+1) + ". " +  sourceName + " " + variations[i].displayId;
                         optionElement.value = i.toString();
                         texturesSelect.append(optionElement);
                     }
 
                     texturesSelect.on("change", () => {
+						console.log(parseInt(texturesSelect.val(), 10));
                         model.useTextureVariation(parseInt(texturesSelect.val(), 10));
                     });
 
@@ -980,6 +984,7 @@
                     }
                 }
                 saveSettings();
+				$("#cameraControl").blur()
             });
 
 
