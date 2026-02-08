@@ -1,6 +1,7 @@
 ﻿@{
     Layout = null;
 }
+@using System.Security.Claims;
 <div class="d-flex flex-column flex-shrink-0 p-3 h-100 text-bg-dark sidebar">
     <button class="toggle-btn">
         <i class="fa fa-chevron-left"></i>
@@ -42,7 +43,7 @@
             </a>
             <div class="collapse" id="collapseAccount">
                 <div class="ps-4">
-                    <a class="nav-link text-white" href="@Url.Action("ShowProfile", "Account")">
+                    <a class="nav-link text-white" href="@Url.Action("ShowProfile", "Account", new { id = User.FindFirstValue(ClaimTypes.NameIdentifier) })">
                         <i class="fa fa-user pe-2"></i>
                         <span class="">My profile</span>
                     </a>
