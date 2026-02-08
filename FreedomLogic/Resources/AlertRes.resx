@@ -141,6 +141,9 @@
   <data name="AlertSuccessPasswordReset" xml:space="preserve">
     <value>Password successfully reset.</value>
   </data>
+  <data name="AlertSuccessProfileChanged" xml:space="preserve">
+    <value>Profile succesfully updated!</value>
+  </data>
   <data name="AlertSuccessRegistration" xml:space="preserve">
     <value>Account has been successfully registered.</value>
   </data>

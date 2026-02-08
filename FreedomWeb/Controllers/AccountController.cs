@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -267,89 +266,32 @@ namespace FreedomWeb.Controllers
         }
         #endregion
 
-        #region CHANGE PASSWORD
-        [HttpGet]
-        public ActionResult ChangePassword()
-        {
-            var model = new ChangePasswordViewModel();
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await _userManager.FindByIdAsync(CurrentUserId);
-            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-            if (result.Succeeded)
-            {
-                SetAlertMsg(AlertRes.AlertSuccessPasswordChanged, AlertMsgType.AlertSuccess);
-                return RedirectToAction("Index", "Home");
-            }
-
-            AddErrors(result);
-
-            return View(model);
-        }
-        #endregion
-
-        #region CHANGE EMAIL
-        [HttpGet]
-        public ActionResult ChangeEmail()
-        {
-            var model = new ChangeEmailViewModel();
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangeEmail(ChangeEmailViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await _userManager.FindByIdAsync(CurrentUserId);
-            await _userManager.SetEmailAsync(user, model.Email.Trim());
-
-            SetAlertMsg(AlertRes.AlertSuccessEmailChanged, AlertMsgType.AlertSuccess);
-            return RedirectToAction("Index", "Home");
-        }
-        #endregion
-
-        #region CHANGE DISPLAY NAME
-        [HttpGet]
-        public async Task<ActionResult> ChangeDisplayName()
-        {
-            var model = new ChangeDisplayNameViewModel();
-            var user = await _userManager.FindByIdAsync(CurrentUserId);
-            model.CurrentDisplayName = user.DisplayName;
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangeDisplayName(ChangeDisplayNameViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            await _userManager.UpdateDisplayNameAsync(int.Parse(CurrentUserId), model.DisplayName.Trim());
-
-            SetAlertMsg(AlertRes.AlertSuccessDisplayNameChanged, AlertMsgType.AlertSuccess);
-            return RedirectToAction("Index", "Home");
-        }
-        #endregion
 
         #region PROFILE
+        private async Task<ProfileViewModel> GetViewModelForUserId(int? id)
+        {
+            var user = await _userManager.FindByIdAsync((id ?? 0).ToString());
+            _dataLoader.LoadExtraUserData(user);
+
+            if (user == null || user.UserData == null)
+            {
+                return null;
+            }
+
+            return new ProfileViewModel()
+            {
+                UserId = user.Id,
+                EditProfileViewModel = new EditProfileInfoViewModel()
+                {
+                    UserId = user.Id,
+                    Username = user.UserName,
+                    RegEmail = user.RegEmail,
+                    DisplayName = user.DisplayName,
+                    CreationDateTime = user.UserData.BnetAccount.Joined.ToString("yyyy-MM-dd")
+                }
+            };
+        }
+
         [HttpGet]
         public async Task<ActionResult> ShowProfile(int? id)
         {
@@ -359,23 +301,62 @@ namespace FreedomWeb.Controllers
                 return RedirectToAction("ShowProfile", "Account", new { id = newId });
             }
 
-            var user = await _userManager.FindByIdAsync((id ?? 0).ToString());
-            _dataLoader.LoadExtraUserData(user);
+            var model = await GetViewModelForUserId(id);
 
-            if (user == null || user.UserData == null)
+            if (model == null)
             {
+                return RedirectToAction("Index", "Home");
                 // TODO: Handle errors
                 //return RedirectToError(ErrorCode.NotFound);
             }
 
-            var model = new ProfileViewModel();
-            model.UserId = user.Id;
-            model.Username = user.UserName;
-            model.RegEmail = user.RegEmail;
-            model.DisplayName = user.DisplayName;
-            model.CreationDateTime = user.UserData.BnetAccount.Joined.ToString("yyyy-MM-dd");
-
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditProfile(EditProfileInfoViewModel model)
+        {
+            var userId = int.Parse(CurrentUserId);
+            if (!ModelState.IsValid)
+            {
+                var viewModel = await GetViewModelForUserId(userId);
+                viewModel.EditProfileViewModel = model;
+                return View("ShowProfile", model);
+            }
+
+            await _userManager.UpdateDisplayAndEmail(int.Parse(CurrentUserId), model.DisplayName.Trim(), model.RegEmail.Trim());
+
+            SetAlertMsg(AlertRes.AlertSuccessProfileChanged, AlertMsgType.AlertSuccess);
+            return RedirectToAction("ShowProfile", "Account", new { id = CurrentUserId });
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            var userId = int.Parse(CurrentUserId);
+            if (!ModelState.IsValid)
+            {
+                var viewModel = await GetViewModelForUserId(userId);
+                viewModel.ChangePasswordViewModel = model;
+                return View("ShowProfile", viewModel);
+            }
+
+            var user = await _userManager.FindByIdAsync(CurrentUserId);
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                SetAlertMsg(AlertRes.AlertSuccessPasswordChanged, AlertMsgType.AlertSuccess);
+                return RedirectToAction("ShowProfile", "Account", new { id = CurrentUserId });
+            }
+
+            AddErrors(result);
+
+            var viewModel2 = await GetViewModelForUserId(userId);
+            viewModel2.ChangePasswordViewModel = model;
+            return View("ShowProfile", viewModel2);
         }
         #endregion
 

@@ -1,0 +1,55 @@
+﻿@using System.Security.Claims;
+@model FreedomWeb.ViewModels.Accounts.EditProfileInfoViewModel
+@{
+    bool isUsersPage = User.FindFirstValue(ClaimTypes.NameIdentifier) == Model.UserId.ToString();
+    bool canViewSensitiveData = isUsersPage || User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin);
+}
+
+@using (Html.BeginForm("EditProfile", "Account", FormMethod.Post))
+{
+    @if (canViewSensitiveData)
+    {
+        <div class="mb-3 row">
+            @Html.LabelFor(m => m.Username, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.Username, htmlAttributes: new { @disabled = true, @class = "form-control" })
+            </div>
+        </div>
+        <div class="mb-3 row">
+            @Html.LabelFor(m => m.RegEmail, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+            <div class="col-sm-8">
+                @if (isUsersPage)
+                {
+                    @Html.TextBoxFor(m => m.RegEmail, htmlAttributes: new { @class = "form-control" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(m => m.RegEmail, htmlAttributes: new { @disabled = true, @class = "form-control" })
+                }
+            </div>
+        </div>
+    }
+    <div class="mb-3 row">
+        @Html.LabelFor(m => m.DisplayName, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+        <div class="col-sm-8">
+            @if (isUsersPage)
+            {
+                @Html.TextBoxFor(m => m.DisplayName, htmlAttributes: new { @class = "form-control" })
+            }
+            else
+            {
+                @Html.TextBoxFor(m => m.DisplayName, htmlAttributes: new { @disabled = true, @class = "form-control" })
+            }
+        </div>
+    </div>
+    <div class="mb-3 row">
+        @Html.LabelFor(m => m.CreationDateTime, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+        <div class="col-sm-8">
+            @Html.TextBoxFor(m => m.CreationDateTime, htmlAttributes: new { @disabled = true, @class = "form-control" })
+        </div>
+    </div>
+    @if (isUsersPage)
+    {
+        <button type="submit" class="btn btn-dark">Save changes</button>
+    }
+}

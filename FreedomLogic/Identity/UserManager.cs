@@ -23,10 +23,11 @@ namespace FreedomLogic.Identity
             _freedomDb = freedomDb;
         }
 
-        public async Task UpdateDisplayNameAsync(int userId, string displayName)
+        public async Task UpdateDisplayAndEmail(int userId, string displayName, string email)
         {
             var user = await _freedomDb.Users.FindAsync(userId);
             user.DisplayName = displayName;
+            user.RegEmail = email;
             await _freedomDb.SaveChangesAsync();
         }
     }

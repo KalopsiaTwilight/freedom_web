@@ -1,39 +1,20 @@
 @using System.Security.Claims;
 @model FreedomWeb.ViewModels.Accounts.ProfileViewModel
 @{
-    ViewBag.Title = Model.DisplayName + "'s profile";
-    bool viewSensittive = (User.FindFirstValue(ClaimTypes.NameIdentifier) == Model.UserId.ToString()) || User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin);
+    ViewBag.Title = Model.EditProfileViewModel.DisplayName + "'s profile";
+    bool isUsersPage = User.FindFirstValue(ClaimTypes.NameIdentifier) == Model.UserId.ToString();
+    bool canViewSensitiveData = isUsersPage || User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin);
 }
 
 <div class="row">
+    <div class="col-md-12">
+        <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
+    </div>
+</div>
+
+<div class="row">
     <div class="col-md-6">
-        @if (viewSensittive)
-        {
-            <div class="mb-3 row">
-                @Html.LabelFor(m => m.Username, htmlAttributes: new { @class = "col-sm-4 col-form-label"})
-                <div class="col-sm-8">
-                    @Html.TextBoxFor(m => m.Username, htmlAttributes: new { @readonly = true, @class = "form-control" })
-                </div>
-            </div>
-            <div class="mb-3 row">
-                @Html.LabelFor(m => m.RegEmail, htmlAttributes: new { @class = "col-sm-4 col-form-label"})
-                <div class="col-sm-8">
-                    @Html.TextBoxFor(m => m.RegEmail, htmlAttributes: new { @readonly = true, @class = "form-control" })
-                </div>
-            </div>
-        }
-        <div class="mb-3 row">
-            @Html.LabelFor(m => m.DisplayName, htmlAttributes: new { @class = "col-sm-4 col-form-label"})
-            <div class="col-sm-8">
-                @Html.TextBoxFor(m => m.DisplayName, htmlAttributes: new { @readonly = true, @class = "form-control" })
-            </div>
-        </div>
-        <div class="mb-3 row">
-            @Html.LabelFor(m => m.CreationDateTime, htmlAttributes: new { @class = "col-sm-4 col-form-label"})
-            <div class="col-sm-8">
-                @Html.TextBoxFor(m => m.CreationDateTime, htmlAttributes: new { @readonly = true, @class = "form-control" })
-            </div>
-        </div>
+        <partial name="EditProfile" model="@Model.EditProfileViewModel"></partial>
     </div>
     <div class="col-md-6">
         @if (User.IsInRole(FreedomLogic.Identity.FreedomRole.RoleAdmin))
@@ -54,3 +35,10 @@
         }
     </div>
 </div>
+
+<div style="margin-top: 2em"></div>
+
+@if (isUsersPage)
+{
+    <partial name="ChangePassword" model="@Model.ChangePasswordViewModel"></partial>
+}
