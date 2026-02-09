@@ -1,0 +1,72 @@
+﻿@model FreedomWeb.ViewModels.GameAccount.GameAccountOverviewViewModel
+@{
+    ViewBag.Title = "Game Accounts Overview";
+}
+<div class="row">
+    <div class="col-md-4 col-sm-6">
+        <div class="form-group mb-3">
+            <label for="">Game Account</label>
+            <div class="input-group">
+                @Html.DropDownList("ddl_account", new SelectList(Model.GameAccounts, "Id", "Name"), new { @class = "form-select" })
+            </div>
+            
+            @using (Html.BeginForm("AddGameAccount", "GameAccount", FormMethod.Post))
+            {
+                <partial name="_CustomValidationSummary" model="ViewData.ModelState"></partial>
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-dark mt-3">Add Gameaccount</button>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="py-3">
+    <h4>Characters</h4>
+</div>
+<div id="charactersRow" class="row">
+    <div class="col-md-8 col-lg-6">
+        <div id="characterList">
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        const accounts = {};
+        @foreach(var account in Model.GameAccounts)
+        {
+            <text>accounts['@account.Id'] = { id: @account.Id, name: '@account.Name', characters: [
+                @foreach(var character in account.Characters)
+                {
+                    <text>{ id: @character.Id, name: '@character.Name' }, </text>        
+                }
+            ]};
+            </text>
+        }
+
+        $(document).ready(function () {
+             let accountId = $("#ddl_account").val();
+             showCharacters();
+            
+
+            $("#ddl_account").on("change", () => {
+                accountId = $("#ddl_account").val();
+                showCharacters();
+            })
+
+            function showCharacters() {
+                $("#characterList").empty();
+                const characters = accounts[accountId].characters;
+                for(const character of characters) {
+                    const charDiv = $("<div class='d-flex justify-content-between'>")
+                    charDiv.append($("<p>" + character.name + "</p>"));
+                    const btnDiv = $("<div>");
+                    btnDiv.append($("<a class='btn btn-dark mx-3' href='/Armory/" + character.id + "'>Character Page</a>"))
+                    btnDiv.append($("<a class='btn btn-secondary' href='/GameAccount/CharacterTransfer?characterId=" + character.id + "'>Transfer</a>"));
+                    charDiv.append(btnDiv);
+                    $("#characterList").append(charDiv);
+                }
+            }
+        });
+    </script>
+}

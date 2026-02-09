@@ -38,51 +38,62 @@ namespace FreedomWeb.Controllers
             _dataLoader = dataLoader;
         }
 
-        // GET: Character
         [HttpGet]
-        public async Task<ActionResult> CharacterTransfer()
+        public async Task<ActionResult> Overview()
         {
-            var model = new CharacterTransferViewModel();
+            var model = new GameAccountOverviewViewModel();
             var user = await _userManager.FindByIdAsync(CurrentUserId);
             _dataLoader.LoadExtraUserData(user);
 
             var accounts = _accountManager.GetGameAccountsList(user.UserData.BnetAccount.Id);
-            List<Character> characters = new List<Character>();
-            foreach (GameAccount account in accounts)
-            {
-                characters.AddRange(_characterManager.GetAccountCharacters(account.Id));
-            }
 
-            model.CharacterSelectList = new List<SelectListItem>(
-                characters.Select(c => new SelectListItem()
+            model.GameAccounts = accounts.Select(x => new GameAccountViewModel()
+            {
+                Id = x.Id,
+                Name = $"WOW#{x.BnetAccountIndex}",
+                Characters = _characterManager.GetAccountCharacters(x.Id).OrderBy(x => x.Slot).Select(c => new GameAccountCharacterViewModel()
                 {
-                    Value = c.Id.ToString(),
-                    Text = c.Name,
-                    Selected = (c.Id == model.CharacterId)
-                }));
+                    Id = c.Id,
+                    Name = c.Name,
+                }).ToList()
+            }).ToList();
 
-            if (model.CharacterSelectList.Count == 0)
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> CharacterTransfer([FromQuery] string characterId)
+        {
+            if (string.IsNullOrEmpty(characterId) || !int.TryParse(characterId, out var charId))
             {
-                SetAlertMsg(ErrorRes.ModelErrNoCharactersToTransfer, AlertMsgType.AlertDanger);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Overview", "GameAccount");
             }
 
-            model.AccountSelectList = new List<SelectListItem>(
-                accounts.Select(c => new SelectListItem()
+            var model = new CharacterTransferViewModel();
+            var user = await _userManager.FindByIdAsync(CurrentUserId);
+            _dataLoader.LoadExtraUserData(user);
+
+            var character = _characterManager.GetCharacterById(charId);
+            model.CharacterId = charId;
+            model.CharacterName = character.Name;
+
+            var accounts = _accountManager.GetGameAccountsList(user.UserData.BnetAccount.Id);
+            model.AccountSelectList = [.. accounts.Select(c => new SelectListItem()
                 {
                     Value = c.Id.ToString(),
                     Text = $"WOW#{c.BnetAccountIndex}",
                     Selected = (c.Id == model.AccountId)
-                }));
+                })];
 
             if (model.AccountSelectList.Count == 0)
             {
                 SetAlertMsg(ErrorRes.ModelErrCharacterTransferAccountNotFound, AlertMsgType.AlertDanger);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Overview", "GameAccount");
             }
 
             return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -100,39 +111,27 @@ namespace FreedomWeb.Controllers
             {
                 ModelState.AddModelError("AccountId", ErrorRes.ModelErrCharacterTransferAccountNotFound);
             }
+
+
             var currentUser = await _userManager.FindByIdAsync(CurrentUserId);
             _dataLoader.LoadExtraUserData(currentUser);
 
             var accounts = _accountManager.GetGameAccountsList(currentUser.UserData.BnetAccount.Id);
-            List<Character> characters = new List<Character>();
-            foreach(GameAccount account in accounts)
-            {
-                characters.AddRange(_characterManager.GetAccountCharacters(account.Id));
-            }
 
-            model.CharacterSelectList = new List<SelectListItem>(
-                characters.Select(c => new SelectListItem()
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name,
-                    Selected = (c.Id == model.CharacterId)
-                }));
-            model.AccountSelectList = new List<SelectListItem>(
-               accounts.Select(c => new SelectListItem()
+            model.AccountSelectList = [.. accounts.Select(c => new SelectListItem()
                {
                    Value = c.Id.ToString(),
                    Text = c.Username,
                    Selected = (c.Id == model.AccountId)
-               }));
+               })];
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
             
-            if (characters
-                .Where(c => c.Id == model.CharacterId)
-                .FirstOrDefault() == null)
+            var character = _characterManager.GetCharacterById(model.CharacterId);
+            if (character == null || !accounts.Any(x => x.Id == character.GameAccountId))
             {
                 ModelState.AddModelError("CharacterId", ErrorRes.ModelErrCharacterTransferInvalidOwner);
                 return View(model);
@@ -143,8 +142,28 @@ namespace FreedomWeb.Controllers
 
             _dataLoader.LoadExtraCharData(movedCharacter);
             SetAlertMsg(string.Format(AlertRes.AlertCharacterTransfer, movedCharacter.Name, movedCharacter.CharData.GameAccount.Username), AlertMsgType.AlertSuccess);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Overview", "GameAccount");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddGameAccount()
+        {
+            var currentUser = await _userManager.FindByIdAsync(CurrentUserId);
+            _dataLoader.LoadExtraUserData(currentUser);
+
+            var accounts = _accountManager.GetGameAccountsList(currentUser.UserData.BnetAccount.Id);
+
+            var accountIndex = (byte)(accounts.Count + 1);
+
+            GameAccount gameAcc = _accountManager.CreateGameAccount(currentUser.UserData.BnetAccount.Id, accountIndex, currentUser.RegEmail, string.Empty);
+            _authDb.GameAccounts.Add(gameAcc);
+            await _authDb.SaveChangesAsync();
+
+            SetAlertMsg("Game account succesfully created!", AlertMsgType.AlertSuccess);
+            return RedirectToAction("Overview", "GameAccount");
+        }
+
 
         [HttpGet]
         public async Task<JsonResult> ListCharacters()

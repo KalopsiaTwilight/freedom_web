@@ -91,7 +91,7 @@ namespace FreedomLogic.Managers
             bnetAcc.ShaPassHash = bnetAccSha256Pass;
         }
 
-        public GameAccount CreateGameAccount(int bnetAccId, string regEmail, string password)
+        public GameAccount CreateGameAccount(int bnetAccId, byte accountIndex, string regEmail, string password)
         {
             if (bnetAccId == 0)
             {
@@ -99,7 +99,7 @@ namespace FreedomLogic.Managers
             }
 
             var salt = RandomNumberGenerator.GetBytes(32);
-            var username = string.Format("{0}#{1}", bnetAccId.ToString(), "1");
+            var username = string.Format("{0}#{1}", bnetAccId.ToString(), accountIndex);
             GameAccount gameAcc = new GameAccount()
             {
                 Username = username,
@@ -110,7 +110,7 @@ namespace FreedomLogic.Managers
                 Joined = DateTime.Now,
                 Expansion = GameExpansion.Shadowlands,
                 BnetAccountId = bnetAccId,
-                BnetAccountIndex = 1
+                BnetAccountIndex = accountIndex
             };
 
             return gameAcc;

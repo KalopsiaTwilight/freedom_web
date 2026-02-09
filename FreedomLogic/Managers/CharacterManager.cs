@@ -22,6 +22,11 @@ namespace FreedomLogic.Managers
             _extraLoader = extraLoader; 
         }
 
+        public Character GetCharacterById(int id)
+        {
+            return _charactersDb.Characters.FirstOrDefault(c => c.Id == id);
+        }
+
         public List<Character> GetAccountCharacters(int gameAccId)
         {
             return _charactersDb.Characters.Where(c => c.GameAccountId == gameAccId).ToList();

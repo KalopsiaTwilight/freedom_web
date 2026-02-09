@@ -9,7 +9,6 @@ namespace FreedomWeb.ViewModels.GameAccount
     {
         public CharacterTransferViewModel()
         {
-            CharacterSelectList = new List<SelectListItem>();
             AccountSelectList = new List<SelectListItem>();
             CharacterId = 0;
             AccountId = 0;
@@ -20,8 +19,8 @@ namespace FreedomWeb.ViewModels.GameAccount
 
         [Display(Name = "FieldCharacterToTransfer", ResourceType = typeof(CharacterRes))]
         public int CharacterId { get; set; }
+        public string CharacterName { get; set; }
 
         public List<SelectListItem> AccountSelectList { get; set; }
-        public List<SelectListItem> CharacterSelectList { get; set; }
     }
 }

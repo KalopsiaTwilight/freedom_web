@@ -76,6 +76,9 @@ namespace FreedomLogic.Entities
         [Column("race")]
         public CharRace Race { get; set; }
 
+        [Column("slot")]
+        public int Slot { get; set; }
+
         [Column("map")]
         public short MapId { get; set; }
 
