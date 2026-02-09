@@ -5,22 +5,20 @@ using FreedomLogic.Managers;
 using FreedomLogic.Resources;
 using FreedomLogic.Services;
 using FreedomWeb.Infrastructure;
-using FreedomWeb.ViewModels.Characters;
+using FreedomWeb.ViewModels.GameAccount;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace FreedomWeb.Controllers
 {
     [Authorize]
-    public class CharacterController : FreedomController
+    public class GameAccountController : FreedomController
     {
         private readonly UserManager<User> _userManager;
         private readonly DbCharacters _charactersDb;
@@ -29,7 +27,7 @@ namespace FreedomWeb.Controllers
         private readonly AccountManager _accountManager;
         private readonly ExtraDataLoader _dataLoader;
 
-        public CharacterController(UserManager<User> userManager, DbCharacters charactersDb, CharacterManager characterManager, 
+        public GameAccountController(UserManager<User> userManager, DbCharacters charactersDb, CharacterManager characterManager, 
             AccountManager accountManager, DbAuth authDb, ExtraDataLoader dataLoader)
         {
             _userManager = userManager;

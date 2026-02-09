@@ -1,15 +1,9 @@
-﻿using FreedomLogic.DAL;
-using FreedomLogic.Entities;
-using FreedomLogic.Identity;
-using FreedomLogic.Managers;
-using FreedomLogic.Resources;
+﻿using FreedomLogic.Resources;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
-namespace FreedomWeb.ViewModels.Characters
+namespace FreedomWeb.ViewModels.GameAccount
 {
     public class CharacterTransferViewModel
     {
