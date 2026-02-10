@@ -1,5 +1,5 @@
 ﻿using FreedomLogic.DAL;
-using FreedomLogic.Entities;
+using FreedomLogic.Entities.Characters;
 using FreedomLogic.Services;
 using FreedomUtils.DataTables;
 using Microsoft.EntityFrameworkCore;

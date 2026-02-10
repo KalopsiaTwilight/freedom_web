@@ -1,4 +1,4 @@
-﻿using FreedomLogic.Entities;
+﻿using FreedomLogic.Entities.Dbo;
 using FreedomLogic.Managers;
 using FreedomLogic.Resources;
 using FreedomUtils.MvcUtils;

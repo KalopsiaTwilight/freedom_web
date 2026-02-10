@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FreedomLogic.Entities
+namespace FreedomLogic.Entities.Dbo
 {
     public enum DboAccountLevel
     {

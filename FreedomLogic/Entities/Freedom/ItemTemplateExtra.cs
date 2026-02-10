@@ -1,14 +1,9 @@
-﻿using FreedomLogic.Entities;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.ComponentModel;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Metadata;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using FreedomLogic.Entities.Freedom;
 
-namespace FreedomLogic.Entities
+namespace FreedomLogic.Entities.Freedom
 {
 
 

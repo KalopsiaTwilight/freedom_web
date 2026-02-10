@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace FreedomLogic.Entities
+namespace FreedomLogic.Entities.Auth
 {
     [Table("account_banned")]
     public class AccountBan: EntityBase

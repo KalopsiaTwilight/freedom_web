@@ -4,7 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FreedomLogic.Entities
+namespace FreedomLogic.Entities.Auth
 {
     [Table("account")]
     public class GameAccount : EntityBase

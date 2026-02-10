@@ -1,11 +1,10 @@
 ﻿using FreedomLogic.Identity;
 using FreedomLogic.Infrastructure;
-using Microsoft.AspNetCore.Http.HttpResults;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FreedomLogic.Entities
+namespace FreedomLogic.Entities.Freedom
 {
     [Table("modelviewer_models")]
     public class ModelViewerModelData

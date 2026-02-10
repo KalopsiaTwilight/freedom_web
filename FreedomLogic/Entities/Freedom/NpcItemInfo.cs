@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FreedomLogic.Entities
+namespace FreedomLogic.Entities.Freedom
 {
     [Table("npc_to_itemid")]
     public class NpcItemInfo

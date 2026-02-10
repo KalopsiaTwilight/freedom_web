@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FreedomLogic.Entities
+namespace FreedomLogic.Entities.Auth
 {
     [Table("battlenet_accounts")]
     public class BnetAccount : EntityBase

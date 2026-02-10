@@ -1,4 +1,4 @@
-﻿using FreedomLogic.Entities;
+﻿using FreedomLogic.Entities.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreedomLogic.DAL

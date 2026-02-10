@@ -1,6 +1,6 @@
 ﻿using AspNetCoreGeneratedDocument;
 using FreedomLogic.DAL;
-using FreedomLogic.Entities;
+using FreedomLogic.Entities.Freedom;
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using FreedomUtils.DataTables;

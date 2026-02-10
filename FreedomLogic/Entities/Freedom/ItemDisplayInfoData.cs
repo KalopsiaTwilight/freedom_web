@@ -1,7 +1,7 @@
 ﻿using FreedomLogic.Infrastructure;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FreedomLogic.Entities
+namespace FreedomLogic.Entities.Freedom
 {
     [Table("item_to_displayid")]
     public class ItemDisplayInfoData : EntityBase

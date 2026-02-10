@@ -1,5 +1,5 @@
 ﻿using FreedomLogic.DAL;
-using FreedomLogic.Entities;
+using FreedomLogic.Entities.Auth;
 using FreedomLogic.Identity;
 using FreedomLogic.Resources;
 using FreedomLogic.TrinityCore;

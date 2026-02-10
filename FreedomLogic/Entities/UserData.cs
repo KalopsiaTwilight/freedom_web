@@ -1,4 +1,5 @@
 ﻿using FreedomLogic.DAL;
+using FreedomLogic.Entities.Auth;
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using System;

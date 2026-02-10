@@ -1,4 +1,5 @@
 ﻿using FreedomLogic.Entities;
+using FreedomLogic.Entities.Freedom;
 using FreedomLogic.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using System;

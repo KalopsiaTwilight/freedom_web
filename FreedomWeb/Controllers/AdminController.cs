@@ -24,7 +24,7 @@ using System.Text;
 using System.Xml;
 using FreedomUtils.DataTables;
 using FreedomWeb.ViewModels.Item;
-using FreedomLogic.Entities;
+using FreedomLogic.Entities.Dbo;
 
 namespace FreedomWeb.Controllers
 {

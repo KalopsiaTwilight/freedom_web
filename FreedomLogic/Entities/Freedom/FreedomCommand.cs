@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using FreedomUtils.MvcUtils;
 using Newtonsoft.Json;
 
-namespace FreedomLogic.Entities
+namespace FreedomLogic.Entities.Freedom
 {
     [Table("commands")]
     [Serializable]

@@ -1,4 +1,4 @@
-﻿using FreedomLogic.Entities;
+﻿using FreedomLogic.Entities.Freedom;
 
 namespace FreedomWeb.ViewModels.Item
 {

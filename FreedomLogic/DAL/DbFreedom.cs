@@ -1,4 +1,4 @@
-﻿using FreedomLogic.Entities;
+﻿using FreedomLogic.Entities.Freedom;
 using FreedomLogic.Identity;
 using Microsoft.EntityFrameworkCore;
 

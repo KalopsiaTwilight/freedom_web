@@ -1,4 +1,4 @@
-﻿using FreedomLogic.Entities;
+﻿using FreedomLogic.Entities.Freedom;
 using FreedomWeb.Models;
 using System;
 using System.Collections.Generic;

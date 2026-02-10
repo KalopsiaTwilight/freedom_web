@@ -1,5 +1,5 @@
 ﻿using FreedomLogic.DAL;
-using FreedomLogic.Entities;
+using FreedomLogic.Entities.Dbo;
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using FreedomLogic.Resources;

@@ -1,5 +1,5 @@
 ﻿using FreedomLogic.DAL;
-using FreedomLogic.Entities;
+using FreedomLogic.Entities.Auth;
 using FreedomLogic.Managers;
 using FreedomLogic.Services;
 using Microsoft.AspNetCore.Identity;

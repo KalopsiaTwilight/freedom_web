@@ -1,5 +1,7 @@
 ﻿using FreedomLogic.DAL;
 using FreedomLogic.Entities;
+using FreedomLogic.Entities.Auth;
+using FreedomLogic.Entities.Characters;
 using FreedomLogic.Identity;
 using FreedomLogic.Managers;
 using Microsoft.EntityFrameworkCore;

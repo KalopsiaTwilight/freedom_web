@@ -1,4 +1,7 @@
-﻿using FreedomLogic.Identity;
+﻿using FreedomLogic.Entities.Auth;
+using FreedomLogic.Entities.Characters;
+using FreedomLogic.Entities.Freedom;
+using FreedomLogic.Identity;
 using System.Collections.Generic;
 
 namespace FreedomLogic.Entities
