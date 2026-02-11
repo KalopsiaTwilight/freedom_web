@@ -1,5 +1,6 @@
 ﻿using FreedomLogic.Infrastructure;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -99,5 +100,11 @@ namespace FreedomLogic.Entities.Characters
 
         [NotMapped]
         public CharData CharData { get; set; }
+
+        public List<CharacterCustomization> Customizations { get; set; }
+
+        public List<CharacterInventorySlot> InventorySlots { get; set; }
+
+        public List<ItemInstance> Items { get; set; }
     }
 }

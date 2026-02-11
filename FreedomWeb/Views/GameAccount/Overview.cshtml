@@ -61,7 +61,7 @@
                     const charDiv = $("<div class='d-flex justify-content-between'>")
                     charDiv.append($("<p>" + character.name + "</p>"));
                     const btnDiv = $("<div>");
-                    btnDiv.append($("<a class='btn btn-dark mx-3' href='/Armory/" + character.id + "'>Character Page</a>"))
+                    btnDiv.append($("<a class='btn btn-dark mx-3' href='/Armory/Character/" + character.id + "'>Character Page</a>"))
                     btnDiv.append($("<a class='btn btn-secondary' href='/GameAccount/CharacterTransfer?characterId=" + character.id + "'>Transfer</a>"));
                     charDiv.append(btnDiv);
                     $("#characterList").append(charDiv);

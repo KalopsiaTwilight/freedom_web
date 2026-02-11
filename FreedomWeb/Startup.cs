@@ -50,6 +50,7 @@ namespace FreedomWeb
             services.AddDbContext<DbAuth>(options => options.UseMySQL(Configuration.GetConnectionString("AuthDb")));
             services.AddDbContext<DbCharacters>(options => options.UseMySQL(Configuration.GetConnectionString("CharactersDb")));
             services.AddDbContext<DbWorld>(options => options.UseMySQL(Configuration.GetConnectionString("WorldDb")));
+            services.AddDbContext<DbDbc>(options => options.UseMySQL(Configuration.GetConnectionString("DbcDb")));
             services.AddDbContext<DbDboAcc>(options => options.UseMySQL(Configuration.GetConnectionString("DboAcc")));
             services.AddDbContext<DbDboChar>(options => options.UseMySQL(Configuration.GetConnectionString("DboChar")));
 

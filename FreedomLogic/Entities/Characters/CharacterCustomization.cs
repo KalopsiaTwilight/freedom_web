@@ -12,5 +12,7 @@ namespace FreedomLogic.Entities.Characters
         public int CustomizationOptionId { get; set; }
         [Column("chrCustomizationChoiceID")]
         public int CustomizationChoiceId { get; set; }
+
+        public Character Character { get; set; }
     }
 }

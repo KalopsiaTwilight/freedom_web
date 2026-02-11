@@ -1,0 +1,193 @@
+﻿@model FreedomWeb.ViewModels.Armory.ArmoryCharacterViewModel
+@{
+    ViewBag.Title = "Character - " + Model.Name;
+}
+
+<div class="rounded p-3 bg-dark flex-grow-1" style="height:750px">
+    <div id="modelviewer_container" class="wmv_container">
+    </div>
+</div>
+
+
+@section Stylesheets {
+    <style>
+        .wmv_container {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+}
+
+@section scripts {
+<script src="/lib/wmvts/wmvts-standalone.min.js" asp-append-version="true"></script>
+<script>
+    const charData = {
+        id: @Model.CharacterId,
+        race: @Model.Race,
+        gender: @Model.Gender,
+        class: @Model.Class,
+        customizations: [],
+        items: []
+    };
+    @foreach (var option in Model.CustomizationOptions)
+    {
+        <text>charData.customizations.push({ optionId: @option.OptionId, choiceId: @option.ChoiceId });</text>
+    }
+    @foreach (var item in Model.Items)
+    {
+        <text>charData.items.push({ slot: @item.Slot, displayId: @item.DisplayId, displayId2: @item.DisplayId2, itemVisual: @item.ItemVisual });</text>
+    }
+
+    const wmvts = window["wmvts-standalone"];
+    const container = $("#modelviewer_container")[0];
+    const dataLoader = new wmvts.WoWModelServerDataProvider("https://cdn.wowfreedom-rp.com");
+    const progressReporter = new wmvts.SimpleProgressReporter(container)
+    const viewer = new wmvts.BrowserWoWModelViewer({
+        dataLoader,
+        progressReporter,
+        onError: (type, err) => {
+            notifyError("Something went wrong with the modelviewer.<br/>Please show a developer the following:<br/><br/>Type: " + type + "<br/>" + err)
+        },
+        canvas: {
+            container,
+            resizeToContainer: true,
+        },
+        scene: {
+            cameraFov: 90,
+            backgroundColor: [33/255,37/255,41/255, 1]
+        }
+    });
+    const modelId = charData.race * 2 - 1 + charData.gender;
+
+    const characterModel = viewer.addCharacterModel(modelId);
+
+    for(const option of charData.customizations) {
+        characterModel.setCustomizationChoice(option.optionId, option.choiceId);
+    }
+    for(const item of charData.items) {
+        let itemModel = characterModel.equipItem(item.slot, item.displayId, item.displayId2);
+        if (item.itemVisual) {
+            itemModel.setItemVisual(item.itemVisual);
+        }
+    }
+
+    window.model = characterModel;
+
+    const camera = viewer.useOrbitalCamera();
+    camera.minRadiusFactor *= 1;
+    camera.maxRadiusFactor *= 1;
+    camera.theta = 1.275
+
+    characterModel.once("loaded", () => {
+        const charBB = characterModel.worldBoundingBox;
+        const translation = [0, (charBB.max[1]-charBB.min[1])/2, 0];
+        camera.cameraTranslation = translation;
+    })
+
+    function showM2Controls() {
+        const container = $("<div class='wmvts-m2controls'>");
+        container.css({
+            position: "absolute",
+            bottom: "0px",
+            right: "10px",
+            width: "250px"
+        });
+
+        const animSelect = $("<select id='ddlAnimation' class='form-select'>");
+
+        const animSelectLabel = $("<label for='ddlAnimation'>Animation: </label>");
+        animSelectLabel.css({
+            width: "100%",
+            height: "1em",
+            color: "white"
+        })
+
+        container.append(animSelectLabel);
+        container.append(animSelect);
+
+        $(".wmv_container").append(container);
+
+        animSelectLabel.hide();
+        animSelect.hide();
+
+        characterModel.on("modelDataLoaded", () => {
+            const anims = characterModel.getAnimations()
+            for(const animId of anims) {
+                const optionElement = $("<option value='" + animId +  "'>" + wmvts.getAnimationName(animId) + " (" + animId + ")" +  "</option>");
+                animSelect.append(optionElement);
+            }
+
+            animSelect.on("change", () => {
+                model.useAnimation(parseInt(animSelect.val(), 10));
+                const animState = characterModel.animationState;
+                $("#wmv_anim_frame").attr('max', animState.currentAnimation.duration);
+                $("#wmv_anim_frame").val(animState.currentAnimActiveTime);
+            });
+            animSelectLabel.show();
+            animSelect.show();
+            showAnimControls();
+        });
+    }
+
+    function showAnimControls() {
+        const containerWidth = 300;
+        const container = $("<div class='wmvts-animcontrols'>");
+        const right = ($(".wmv_container").width() - containerWidth)/2
+
+        container.css({
+            position: "absolute",
+            bottom: "0px",
+            right: right + "px",
+            width: containerWidth + "px",
+        });
+
+        const updateSliderCallbackFn = () => {
+            const animState = characterModel.animationState;
+            $("#wmv_anim_frame").attr('max', animState.currentAnimation.duration);
+            $("#wmv_anim_frame").val(animState.currentAnimActiveTime);
+        }
+
+        const flexBox = $("<div class='d-flex align-items-center'>");
+
+        const playBtn = $('<button style="color: white;" class="btn btn-link"><i class="fa fa-play"></i></button>');
+        playBtn.on("click", () => {
+            characterModel.resumeAnimation(); 
+            $("#wmv_anim_frame").attr('disabled', 'true');
+            pauseBtn.show();
+            playBtn.hide();
+            viewer.renderer.on("afterUpdate", updateSliderCallbackFn)
+        })
+
+        const pauseBtn = $('<button style="color: white;" class="btn btn-link"><i class="fa fa-pause"></i></button>');
+        pauseBtn.on("click", () => {
+            characterModel.pauseAnimation();
+            $("#wmv_anim_frame").removeAttr('disabled');
+            playBtn.show();
+            pauseBtn.hide();
+            viewer.renderer.off("afterUpdate", updateSliderCallbackFn);
+        })
+
+
+        const slider = $('<input id="wmv_anim_frame" type="range" class="flex-grow-1 form-range" value=0 disabled>');
+        slider.on('input', () => {
+            characterModel.animationState.currentAnimActiveTime = parseInt(slider.val(), 10);
+        })
+
+        flexBox.append(pauseBtn);
+        flexBox.append(playBtn);
+        flexBox.append(slider);
+
+        playBtn.hide();
+
+        characterModel.on("loaded", () => {
+            viewer.renderer.on("afterUpdate", updateSliderCallbackFn)
+        });
+        
+        container.append(flexBox);
+        $(".wmv_container").append(container);
+    }
+
+    window.camera = camera;
+    showM2Controls();
+</script>
+}
