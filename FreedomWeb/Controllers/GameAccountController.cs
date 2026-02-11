@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -159,6 +157,32 @@ namespace FreedomWeb.Controllers
             GameAccount gameAcc = _accountManager.CreateGameAccount(currentUser.UserData.BnetAccount.Id, accountIndex, currentUser.RegEmail, string.Empty);
             _authDb.GameAccounts.Add(gameAcc);
             await _authDb.SaveChangesAsync();
+
+            // Set account access
+            GameAccountAccess access = new()
+            {
+                Id = gameAcc.Id,
+                GMLevel = currentUser.UserData.GameAccountAccess.GMLevel
+            };
+            _authDb.GameAccountAccesses.Add(access);
+            await _authDb.SaveChangesAsync();
+
+            // Test if user is banned, new account should then also be banned
+            var banInfo = _authDb.AccountBans.FirstOrDefault(x => x.GameAccount.BnetAccountId == currentUser.UserData.BnetAccount.Id);
+            if (banInfo != null)
+            {
+                var accountBan = new AccountBan()
+                {
+                    Id = gameAcc.Id,
+                    BanReason = banInfo.BanReason,
+                    Active = banInfo.Active,
+                    BannedBy = banInfo.BannedBy,
+                    BanDate = banInfo.BanDate,
+                    Unbandate = banInfo.Unbandate
+                };
+                _authDb.Add(accountBan);
+                await _authDb.SaveChangesAsync();
+            }
 
             SetAlertMsg("Game account succesfully created!", AlertMsgType.AlertSuccess);
             return RedirectToAction("Overview", "GameAccount");
