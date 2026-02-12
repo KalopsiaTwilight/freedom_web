@@ -99,7 +99,7 @@ namespace FreedomWeb.Controllers
                 var itemId = item.ItemInstance.ItemId;
 
                 int displayId1 = -1;
-                int displayId2 = 0;
+                int displayId2 = -1;
                 int itemVisual = 0;
 
                 var enchantmentStr = item.ItemInstance.Enchantments.Split(" ").FirstOrDefault();

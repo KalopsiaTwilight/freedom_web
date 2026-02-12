@@ -65,9 +65,13 @@
         characterModel.setCustomizationChoice(option.optionId, option.choiceId);
     }
     for(const item of charData.items) {
-        let itemModel = characterModel.equipItem(item.slot, item.displayId, item.displayId2);
-        if (item.itemVisual) {
-            itemModel.setItemVisual(item.itemVisual);
+        if (item.displayId2 >= 0) {
+            characterModel.equipItem(item.slot, item.displayId, item.displayId2);
+         } else {
+            let itemModel = characterModel.equipItem(item.slot, item.displayId);
+            if (item.itemVisual) {
+                itemModel.setItemVisual(item.itemVisual);
+            }
         }
     }
 
